@@ -205,6 +205,53 @@ def multi_channel_convolution1d(w, x, stride=1, dilation=1):
     return res
 
 
+def multi_channel_convolution2d(w, x, stride=(1, 1), dilation=(1, 1)):
+    """
+    Implementation of the 2D convolution operation
+    with multiple in- and output channels.
+
+    Parameters
+    ----------
+    w : (Co, Ci, R1, R2) ndarray
+        Weights for the 2D convolution.
+    x : (N, Ci, H, W) ndarray
+        Input data for the 2D convolution.
+    stride : tuple of ints, optional
+        2D strides for the convolution.
+    dilation : tuple of ints, optional
+        2D dilations for the convolution.
+
+    Returns
+    -------
+    corr : (N, Co, H', W') ndarray
+        2D cross-correlation of `x` and `w`.
+    """
+    w = np.array(w, copy=False, ndmin=4)
+    x = np.array(x, copy=False, ndmin=3)
+    c_out, c_in, r1, r2 = w.shape
+
+    if c_in != x.shape[-3]:
+        msg = "input channel dimensions do not match: {:d} != {:d}"
+        raise ValueError(msg.format(c_in, x.shape[-3]))
+
+    stride1, stride2 = stride
+    dil1, dil2 = dilation
+    k1 = dil1 * (r1 - 1) + 1
+    k2 = dil2 * (r2 - 1) + 1
+    l1_out = (x.shape[-2] - k1) // stride1 + 1
+    l2_out = (x.shape[-1] - k2) // stride2 + 1
+    res = np.zeros(x.shape[:-3] + (c_out, l1_out, l2_out), x.dtype)
+    for i, wi in enumerate(w.T):
+        i_dilated = i * dil2
+        i_slice = slice(i_dilated, i_dilated + l2_out * stride2, stride2)
+        for j, wj in enumerate(wi):
+            j_dilated = j * dil1
+            j_slice = slice(j_dilated, j_dilated + l1_out * stride1, stride1)
+            x_part = x[..., j_slice, i_slice]
+            res += np.einsum('...ijk,il->...ljk', x_part, wj, optimize=True)
+    return res
+
+
 def sig2col(x, w_shape, stride=1, dilation=1):
     """
     Represent signal so that each 'column' represents
@@ -244,3 +291,48 @@ def sig2col(x, w_shape, stride=1, dilation=1):
     v_shape = tuple(x_shape1) + tuple(out_shape2) + tuple(w_shape)
     _x = np.lib.stride_tricks.as_strided(x, v_shape, v_strides, writeable=False)
     return _x
+
+
+def convolution_dot(w, x, stride=1, dilation=1):
+    """
+    Implements ND convolution as a dot product using the 'im2col' trick.
+
+    Parameters
+    ----------
+    w : (Co, Ci, R1, R2, ..., Rn) ndarray
+        Weights for the ND convolution.
+    x : (N, Ci, L1, L2, ..., Ln) ndarray
+        Input data for the ND convolution.
+    stride : int or tuple of ints, optional
+        Strides for the ND convolution.
+        When providing a tuple of ints,
+        the length should match the number of dimensions N.
+    dilation : int or tuple of ints, optional
+        Dilations for the ND convolution.
+        When providing a tuple of ints,
+        the length should match the number of dimensions N.
+
+    Returns
+    -------
+    corr : (N, Co, L1', L2', ..., Ln') ndarray
+        ND cross-correlation of `x` and `w`.
+    """
+    w = np.array(w, copy=False, ndmin=3)
+    x = np.array(x, copy=False, ndmin=w.ndim - 1)
+    stride = np.asarray(stride)
+    dilation = np.asarray(dilation)
+
+    nd = w.ndim - 2
+    (c_out, c_in), w_shape2 = np.split(w.shape, [-nd])
+    x_shape1, _ = np.split(x.shape, [-nd])
+
+    if c_in != x_shape1[-1]:
+        msg = "input channel dimensions do not match: {:d} != {:d}"
+        raise ValueError(msg.format(c_in, x_shape1[-1]))
+
+    x = sig2col(x, w_shape2, stride=stride, dilation=dilation)
+
+    axes = [1] + [-i - 1 for i in reversed(range(nd))]
+    res = np.tensordot(x, w, axes=(axes, axes))
+    # assert -nd - 1 == 1, "code cannot be simplified"
+    return np.moveaxis(res, -1, -nd - 1)

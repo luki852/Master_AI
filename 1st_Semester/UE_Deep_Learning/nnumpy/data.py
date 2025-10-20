@@ -124,7 +124,7 @@ def get_iris_data(path=None):
     return x, y
 
 
-MNIST_URL = "https://ossci-datasets.s3.amazonaws.com/mnist/"
+MNIST_URL = "http://yann.lecun.com/exdb/mnist/"
 MNIST_RAW = ["train-images-idx3-ubyte.gz", "train-labels-idx1-ubyte.gz",
              "t10k-images-idx3-ubyte.gz", "t10k-labels-idx1-ubyte.gz"]
 

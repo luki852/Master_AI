@@ -4,7 +4,7 @@ import numpy as np
 
 from nnumpy.base import Module
 
-__all__ = ['Container']
+__all__ = ['Container', 'Sequential']
 
 
 class Container(Module):
@@ -207,3 +207,39 @@ class Container(Module):
 
     def compute_grads(self, grads, cache):
         raise NotImplementedError()
+
+
+class Sequential(Container):
+    """
+    NNumpy module that chains together multiple one-to-one sub-modules.
+
+    Examples
+    --------
+    Doubling a module could be done as follows:
+    >>> module = Module()
+    >>> seq = Sequential(module, module)
+
+    Modules can be accessed by index or by iteration:
+    >>> assert module is seq[0] and module is seq[1]
+    >>> mod1, mod2 = (m for m in seq)
+    >>> assert mod1 is module and mod2 is module
+    """
+
+    def __init__(self, *modules):
+        super().__init__()
+        for i, mod in enumerate(modules):
+            self.add_module(mod, name="module" + str(i))
+
+    def compute_outputs(self, x):
+        cached = []
+        for module in self:
+            x, cache = module.compute_outputs(x)
+            cached.insert(0, cache)
+
+        return x, cached
+
+    def compute_grads(self, grads, cache):
+        for module, c in zip(reversed(self), cache):
+            grads = module.compute_grads(grads, c)
+
+        return grads

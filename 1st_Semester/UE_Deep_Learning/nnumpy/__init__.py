@@ -19,10 +19,17 @@ __version__ = "2.0.0"
 
 __author__ = "Pieter-Jan Hoedt"
 __email__ = "hoedt@ml.jku.at"
-__copyright__ = "Copyright 2019-2024, JKU Institute for Machine Learning"
+__copyright__ = "Copyright 2019-2022, JKU Institute for Machine Learning"
+
+from . import initialisers as init
 
 from .base import *
 from .containers import *
+from .connections import *
+from .pooling import *
+from .activations import *
 from .losses import *
 from .optimisers import *
+from .normalisation import *
+from .regularisation import *
 from .reductions import *
