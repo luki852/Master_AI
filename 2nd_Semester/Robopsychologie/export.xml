@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:Sources xmlns:b="http://schemas.openxmlformats.org/officeDocument/2006/bibliography" xmlns="http://schemas.openxmlformats.org/officeDocument/2006/bibliography">
+  <b:Source>
+    <b:SourceType>Journal Article</b:SourceType>
+    <b:Title>The Role of Social Feedback in Technology Acceptance: A One-Week Diary Study with Exoskeleton Users at the Workplace</b:Title>
+    <b:Year>2025</b:Year>
+    <b:StandardNumber>15327590</b:StandardNumber>
+    <b:Publisher>Taylor and Francis Ltd.</b:Publisher>
+    <b:Pages>8210-8223</b:Pages>
+    <b:JournalName>International Journal of Human-Computer Interaction</b:JournalName>
+    <b:Volume>41</b:Volume>
+    <b:Issue>13</b:Issue>
+    <b:Author>
+      <b:Author>
+        <b:NameList>
+          <b:Person>
+            <b:First>Sandra Maria</b:First>
+            <b:Last>Siedl</b:Last>
+          </b:Person>
+          <b:Person>
+            <b:First>Martina</b:First>
+            <b:Last>Mara</b:Last>
+          </b:Person>
+          <b:Person>
+            <b:First>Barbara</b:First>
+            <b:Last>Stiglbauer</b:Last>
+          </b:Person>
+        </b:NameList>
+      </b:Author>
+      <b:Editor>
+        <b:NameList>
+        </b:NameList>
+      </b:Editor>
+    </b:Author>
+    <b:Tag>the-role-of-social-feedback-in-technology-acceptance:-a-one-week-diary-study-with-exoskeleton-users-at-the-workplace</b:Tag>
+  </b:Source>
+</b:Sources>
