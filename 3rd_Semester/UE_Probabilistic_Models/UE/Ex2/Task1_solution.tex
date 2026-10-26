@@ -1,0 +1,69 @@
+% English solution body for insertion below the existing Task 1 heading.
+% Uses standard LaTeX commands only. No additional packages are required.
+
+\subsection*{Conditional independence by d-separation}
+An independence statement is implied by the graph if it holds for every
+distribution that factorises according to the graph. A path is active given
+the observed variables if every non-collider on the path is unobserved and
+every collider is observed or has an observed descendant. The graph implies
+independence exactly when all paths between the queried nodes are blocked.
+
+\medskip
+\noindent
+\begin{tabular}{@{}lllp{0.57\linewidth}@{}}
+\hline
+ & Statement & Implied? & Graphical justification \\
+\hline
+(a) & $I\perp I$ & No &
+A non-degenerate random variable is not independent of itself. The graph
+does not require $I$ to be constant. \\[0.5em]
+(b) & $B\perp J$ & No &
+The directed path $B\to E\to H\to J$ is active. \\[0.5em]
+(c) & $F\perp G$ & Yes &
+All paths are blocked by unobserved colliders. In particular,
+$F\to D\to I\leftarrow E\leftarrow G$ is blocked at $I$. \\[0.5em]
+(d) & $C\perp E$ & No &
+The common-cause path $C\leftarrow B\to E$ is active. \\[0.5em]
+(e) & $A\perp H\mid J$ & No &
+The path $A\to C\to D\to I\to J\leftarrow H$ becomes active
+when the collider $J$ is observed. \\[0.5em]
+(f) & $C\perp E\mid B$ & Yes &
+Observing $B$ blocks the common-cause path. Every alternative path
+contains an unactivated collider at $I$ or $J$. \\[0.5em]
+(g) & $G\perp F\mid I,C$ & No &
+Observing $I$ activates the collider on
+$G\to E\to I\leftarrow D\leftarrow F$.
+The observed node $C$ is outside this path. \\[0.5em]
+(h) & $J\perp A\mid C,I$ & No &
+The path $A\to C\leftarrow B\to E\to H\to J$ is active:
+$C$ is an observed collider, and $I$ is outside the path. \\
+\hline
+\end{tabular}
+
+\medskip
+\noindent\textbf{Final answer: only (c) and (f) are implied by the graph.}
+``No'' means that the graph does not guarantee independence. Particular CPDs
+can still introduce additional independences.
+
+\subsection*{Detailed graphical reasoning for (h)}
+The conditioning set is $Z=\{C,I\}$. Consider the path
+\[
+ A\longrightarrow C\longleftarrow B\longrightarrow E
+ \longrightarrow H\longrightarrow J.
+\]
+At $C$, both adjacent arrows point into the node, so $C$ is a collider.
+Conditioning on $C$ activates this collider. The other internal nodes,
+$B$, $E$, and $H$, are non-colliders and none belongs to $Z$.
+The observed node $I$ does not lie on this path and therefore does not block it.
+Consequently, at least one active path connects $A$ and $J$ given $C,I$.
+Thus $J\perp A\mid C,I$ is \textbf{not implied}.
+
+\medskip
+\noindent\textit{Note on (a):} The assignment literally states $I\perp I$.
+For a discrete variable, independence from itself would require
+$P(I=i)=P(I=i)^2$ for every value $i$. Thus every such probability would
+have to be either zero or one. The graph imposes no such degeneracy.
+
+\medskip
+\noindent\textit{Reference:} UC Berkeley CS188, Section 6.5, D-Separation:
+\texttt{https://inst.eecs.berkeley.edu/\string~cs188/textbook/bayes-nets/d-separation.html}.
