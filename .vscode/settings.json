@@ -1,3 +1,8 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.workspaceSearchPaths": [
+        ".venv",
+        "*/.venv",
+        "3rd_Semester/UE_AI_and_Visualization/UE/Project/.venv"
+    ]
 }
