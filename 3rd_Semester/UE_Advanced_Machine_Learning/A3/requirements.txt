@@ -1,0 +1,7 @@
+numpy
+matplotlib
+scikit-learn
+torch
+SimpleITK
+pydicom
+jupyter
