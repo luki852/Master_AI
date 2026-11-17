@@ -1,0 +1,2506 @@
+                 Graphs
+Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• We now move to Sets to Graphs
+• Sets can be considered as “node-only” Graphs without edges
+• Graphs are a very versatile abstraction used ubiquitously in sciences
+• For many years, Geometric Deep Learning was nearly synonymous with Graph
+  Representation Learning
+Graphs = Systems of Relations and Interactions
+
+
+
+
+     Molecules           Interactomes            Social networks
+Why Graphs?
+
+• Simple mathematical abstraction for systems of relations or interactions
+• Very well developed theory
+• Many successful applications from chemistry to social media to even pure math
+• In many ways, graphs are the main modality of data we receive from Nature
+• Graph representation learning is likely critical on the path to Artificial General
+  Intelligence (AGI).
+Why Graphs?
+
+
+     “The image of the world around us, which we carry
+     in our head, is just a model. Nobody in his head
+     imagines all the world, government or country. He
+     has only selected concepts, and relationships between
+     them, and uses those to represent the real system.”
+                    —Jay Forrester on mental models (1971)
+                                                             Jay Wright Forrester
+
+
+
+
+Forrester 1971
+Origins of Graph Theory
+
+
+
+
+                                                                                L. Euler
+
+
+                  The soluton of the classical problem of the “Bridges of
+             Königsberg” by Euler in 1736 first showed the power of graphs to
+                                                                                1741
+                       abstract out the geometry (“geometria situs”)
+
+Euler 1741
+Origins of Topology
+
+
+Poincaré’s “analysis situs.”
+His famous Conjecture
+appeared in a supplement
+published in 1904.
+
+
+
+
+                               H. Poincaré   L. Euler
+
+
+                                1895         1741
+
+Euler 1741; Poincaré 1895
+Origin of the name “Graph”
+
+
+
+
+                                              J. Sylvester
+
+     The term “graph” appeared first in the
+     chemical context
+                                               1878
+
+Sylvester 1878
+GRAPHS: THE BASICS
+Types of Learning Tasks on Graphs
+
+
+
+
+                                                     ?
+
+
+
+
+  Graph regression     Node classification     Link prediction
+  water solubility?    who is a spammer      WTF (whom to follow)?
+Invariant vs Equivariant tasks
+
+
+
+
+    water solubility?            who is a spammer?
+GNNs = Parametric graph functions
+
+
+
+
+                                                           𝑓!                          𝑦
+
+
+               Graph+Features
+
+
+  Note: we use the term “GNN” to refer to general parametric graph functions. The particular class of GNNs we
+  consider are Message Passing Neural Networks (MPNNs). Petar Veličković argues that “it’s all message passing”
+Types of Learning Tasks on Graphs
+
+
+                                                𝐳! Node-wise
+
+
+                                                𝐳" Graph-wise
+                    GNN
+                                                𝐳!# Edge-wise
+
+   Input graph                      Embedding
+Transductive vs Inductive tasks
+
+
+
+                                                 ?
+                                                     ?            ?
+                                         ?
+                          ?                                                    ?
+                                             ?                        ?
+
+                                    ?                    ?
+
+
+
+     Training                  Transductive                     Inductive
+                               same graph,                   different graph
+                              different nodes
+Graphs: The Basics
+
+• A graph is a pair 𝐺 = 𝑉, 𝐸
+                                                          𝑢, 𝑣
+ • 𝑉 = vertices (or nodes)                            𝑢          𝑣
+ • 𝐸 ⊆ 𝑉×𝑉 = edges (or links). If 𝑢, 𝑣 ∈ 𝐸, we will
+   write 𝑢~𝑣
+• Edges in general are directed, i.e., we might
+  have 𝑢~𝑣 but not 𝑣~𝑢.
+Graphs: The Basics
+
+• A graph is a pair 𝐺 = 𝑉, 𝐸
+                                                      𝐱!
+                                                               𝑤!"
+ • 𝑉 = vertices (or nodes)                                 𝑢         𝑣
+ • 𝐸 ⊆ 𝑉×𝑉 = edges (or links). If 𝑢, 𝑣 ∈ 𝐸, we will
+   write 𝑢~𝑣
+• Edges in general are directed, i.e., we might
+  have 𝑢~𝑣 but not 𝑣~𝑢.
+• Nodes and edges can have attributes. We will
+  typically assume
+ • 𝑑-dimensional vector node features, denoted 𝐱$
+ • scalar edge weights, denoted 𝑤$%
+Extensions of Graphs
+
+
+
+
+    Multigraph         Hypergraph   Cellular complex
+Representations of Graphs as matrices
+
+                                   Feature
+                                  matrix 𝑛×𝑑          𝐱-
+                                                                1           2
+                                   1                                                         3
+                                   2
+                                   3
+                                   4
+                                                                                6
+                                   5
+                                                      4                                          7
+                                   6                                5
+                                   7
+                                   8                                                8
+                                   9
+                                   10                                   9
+                                   11                      10                           11
+
+
+                                        𝐗
+• Nodes indexed as 𝑉 = 1, … , 𝑛 in arbitrary order
+• Node features stacked row-wise in an 𝑛×𝑑 matrix 𝐗
+Representations of Graphs as matrices
+
+               Adjacency           Feature
+               matrix 𝑛×𝑛         matrix 𝑛×𝑑
+                                                               1           2
+         1                         1                                                        3
+         2                         2
+         3                         3
+         4                         4
+                                                                               6
+         5                         5
+                                                      4                                         7
+         6                         6                               5
+         7                         7
+         8                         8                                               8
+         9                         9
+         10                        10                                  9
+         11                        11                     10                           11
+
+
+                    𝐀                   𝐗
+• Nodes indexed as 𝑉 = 1, … , 𝑛 in arbitrary order
+• Node features stacked row-wise in an 𝑛×𝑑 matrix 𝐗
+• Graph structure represented by 𝑛×𝑛 adjacency matrix 𝐀 with 𝑎!# = 1 iff 𝑖~𝑗
+Representations of Graphs as matrices
+
+           Adjacency      Feature
+           matrix 𝑛×𝑛    matrix 𝑛×𝑑
+                                                 2           1
+      1                  1                                                    3
+      2                  2
+      3                  3
+      4                  4
+                                                                 6
+      5                  5
+                                        4                                         7
+      6                  6                           5
+      7                  7
+      8                  8                                           8
+      9                  9
+      10                 10                              9
+      11                 11                 10                           11
+
+
+               𝐀              𝐗
+
+           The ordering of nodes is arbitrary!
+What do we want now with Graphs?
+
+
+
+                   𝑓                        =𝑓
+
+
+• The function now also depends on edges (adjacency 𝐀) in addition to node features 𝐗
+
+• Permutation invariance:           𝑓 𝐏𝐗, 𝐏𝐀𝐏 & = 𝑓 𝐗, 𝐀
+
+• Permutation equivariance:         𝐅 𝐏𝐗, 𝐏𝐀𝐏 & = 𝐏𝐅 𝐗, 𝐀
+Invariant Graph Functions
+
+
+
+                                       5           10
+                                                                    7
+
+
+
+
+       𝑓 𝐏𝐗, 𝐏𝐀𝐏 ⊤ = 𝑓 𝐗, 𝐀
+                                                        6
+                              11                                        3
+                                           4
+                                                            9
+
+                                               8
+                                   1                            2
+Equivariant Graph Functions
+
+
+
+                                       1           2
+                                                                    3
+
+
+
+
+     𝐅 𝐏𝐗, 𝐏𝐀𝐏 ⊤ = 𝐏 𝐅 𝐗, 𝐀
+                                                       6
+                              4                                         7
+                                           5
+                                                           8
+
+                                               9
+                                  10                           11
+DeepSets
+
+
+
+
+           On sets, we can only process each node independently
+                              (or all together)
+Graph Neural Networks
+
+
+
+
+      On graphs, we have a notion of a neighbourhood of ever node
+                           𝒩! = 𝑗 ∈ 𝑉 ∶ 𝑖~𝑗
+Neighbour Aggregation
+                        neighbourhood
+                         𝒩/ = 𝑗: 𝑖~𝑗
+
+             multiset of                𝑖
+
+         neighbour features
+
+
+
+            𝐗 𝒩! = 𝐱𝐱!∈𝒩
+                     !∈𝒩!!
+Neighbour Aggregation
+
+
+
+              local function     𝑖
+
+
+                        𝐱,
+
+              ϕ         𝐗 𝒩!
+
+
+
+         permutation invariant
+GNN Layer
+
+
+
+
+                       − ϕ 𝐱- , 𝐗 𝒩" −
+                               ⋮
+            𝐅 𝐗, 𝐀 =   − ϕ 𝐱 , , 𝐗 𝒩! −
+                               ⋮
+                       − ϕ 𝐱 . , 𝐗 𝒩# −
+
+            permutation equivariant
+GNNs as an Instance of Geometric Deep Learning Blueprint
+
+  Graph 𝐺 = 𝑉, 𝐸       Node features 𝒳 𝐺     Functions ℱ 𝒳 𝐺
+
+
+
+
+                                                    𝐅
+
+ Permutation group    Permutation matrix      Message passing
+      𝜋 ∈ 𝑆.              𝐏𝐗, 𝐏𝐀𝐏 ⊤        𝐅 𝐏𝐗, 𝐏𝐀𝐏 ⊤ = 𝐏𝐅 𝐗, 𝐀
+GNN FLAVOURS
+Convolutional GNNs
+
+
+                                                  𝐱0                𝑎//
+                                                        𝑎/0
+                                                                    𝐱/      𝑎/1        𝐱1
+
+                                                                          𝑎/3
+                                                              𝑎/2
+                                                                                  𝐱3
+                                                         𝐱2
+
+
+
+                                                       𝜙 𝐱 , , - 𝑎,0 𝜓 𝐱0
+                                                               0∈𝒩!
+
+
+Defferard et al. 2016; Kipf, Welling 2016 (GCN)
+Convolutional GNNs
+
+
+                                                  𝐱0                𝑎//
+                                                        𝑎/0
+                                                                    𝐱/         𝑎/1         𝐱1
+
+                                                                             𝑎/3
+                                                              𝑎/2
+                                                                                      𝐱3
+                                                         𝐱2
+
+
+
+                                                       𝜙 𝐱 , , - 𝑎,0 𝜓 𝐱0
+                                                               0∈𝒩!
+                                                                            graph
+                                                                          adjacency
+Defferard et al. 2016; Kipf, Welling 2016 (GCN)
+Convolutional GNNs
+
+
+                                                  𝐱0                𝑎//
+                                                        𝑎/0
+                                                                    𝐱/         𝑎/1         𝐱1
+
+                                                                             𝑎/3
+                                                              𝑎/2
+                                                                                      𝐱3
+                                                         𝐱2
+
+
+
+                                                       𝜙 𝐱 , , - 𝑎,0 𝜓 𝐱0
+                                                               0∈𝒩!
+                                                                            graph         node-wise
+                                                                          adjacency    transformation
+Defferard et al. 2016; Kipf, Welling 2016 (GCN)
+Convolutional GNNs
+
+
+                                                  𝐱0                   𝑎//
+                                                           𝑎/0
+                                                                       𝐱/         𝑎/1         𝐱1
+
+                                                                                𝑎/3
+                                                                 𝑎/2
+                                                                                         𝐱3
+                                                            𝐱2
+
+
+
+                                                         𝜙 𝐱 , , - 𝑎,0 𝜓 𝐱0
+                                                                  0∈𝒩!
+                                                        node                   graph         node-wise
+                                                       feature               adjacency    transformation
+Defferard et al. 2016; Kipf, Welling 2016 (GCN)
+Convolutional GNNs
+
+
+                                                  𝐱0                   𝑎//
+                                                           𝑎/0
+                                                                       𝐱/         𝑎/1         𝐱1
+
+                                                                                𝑎/3
+                                                                 𝑎/2
+                                                                                         𝐱3
+                                                            𝐱2
+
+
+
+                                                         𝜙 𝐱 , , - 𝑎,0 𝐖𝐱0
+                                                                  0∈𝒩!
+                                                        node                   graph      node-wise linear
+                                                       feature               adjacency    transformation
+Defferard et al. 2016; Kipf, Welling 2016 (GCN)
+Convolutional GNNs
+
+
+                                                     𝐱0                  𝑎//
+• Simplest GNN                                               𝑎/0
+• Highly scalable                                                        𝐱/      𝑎/1        𝐱1
+
+• Industrial use cases                                                         𝑎/3
+                                                                   𝑎/2
+• Folklore: works only on                                                              𝐱3
+                                                             𝐱2
+  homophilic graphs
+
+
+                                                                   𝐗 ← 𝜎 𝐀𝐗𝐖
+
+                                                      nonlinear    diffusion    Channel mixing
+                                                      activation      𝑛×𝑛           𝑑×𝑑
+Defferard et al. 2016; Kipf, Welling 2016 (GCN)
+Rossi, Frasca et B 2020 (SIGN); Ying et al. 2018 (PinSAGE)
+Attentional GNNs
+
+
+                                                𝐱0                    𝛼//
+                                                         𝛼/0
+                                                                      𝐱/       𝛼/1        𝐱1
+
+                                                                            𝛼/3
+                                                                𝛼/2
+                                                                                     𝐱3
+                                                         𝐱2
+
+
+
+                                                     𝜙 𝐱 , , - 𝛼,0 𝐱 , , 𝐱0 𝜓 𝐱0
+                                                               0∈𝒩!
+                                                                       learnable attention
+                                                                            weights
+Monti et B 2017; Veličković et al. 2018 (GAT)
+Message-Passing GNNs
+
+
+                                                    𝐱0                    𝐦//
+                                                              𝐦/0
+                                                                          𝐱/       𝐦/1        𝐱1
+
+                                                                                𝐦/3
+                                                                    𝐦/2
+                                                                                         𝐱3
+                                                               𝐱2
+
+
+
+                                                              𝜙 𝐱 , , - 𝜓 𝐱 , , 𝐱0
+                                                                      0∈𝒩!
+                                                                                message from
+                                                                                node 𝑗 to node 𝑖
+Gilmer et al. 2017 (MPNN); Battaglia et al. 2018 (Graph Networks)
+Wang et B, Solomon 2018 (edgeconv)
+ Flavours of GNNs
+
+
+                  𝑎//                                    𝛼//                  𝐱0                𝐦//
+𝐱0                                     𝐱0
+      𝑎/0                                    𝛼/0                                    𝐦/0
+                  𝐱/    𝑎/1   𝐱1                         𝐱/    𝛼/1   𝐱1                         𝐱/      𝐦/1        𝐱1
+
+                        𝑎/3                                    𝛼/3                                    𝐦/3
+            𝑎/2                                    𝛼/2                                    𝐦/2
+                              𝐱3                                     𝐱3                                       𝐱3
+     𝐱2                                     𝐱2                                       𝐱2
+
+
+          Convolutional                            Attentional                     Generic Message Passing
+
+     𝜙 𝐱! , / 𝑎!# 𝜓 𝐱#             ⊆   𝜙 𝐱! , / 𝛼!# 𝐱! , 𝐱# 𝜓 𝐱#          ⊆         𝜙 𝐱! , / 𝜓 𝐱! , 𝐱#
+              #∈𝒩4                               #∈𝒩4                                      #∈𝒩4
+ Flavours of GNNs
+
+
+                  𝑎//                                    𝛼//                  𝐱0                𝐦//
+𝐱0                                     𝐱0
+      𝑎/0                                    𝛼/0                                    𝐦/0
+                  𝐱/    𝑎/1   𝐱1                         𝐱/    𝛼/1   𝐱1                         𝐱/      𝐦/1        𝐱1
+
+                        𝑎/3                                    𝛼/3                                    𝐦/3
+            𝑎/2                                    𝛼/2                                    𝐦/2
+                              𝐱3                                     𝐱3                                       𝐱3
+     𝐱2                                     𝐱2                                       𝐱2
+
+
+          Convolutional                            Attentional                     Generic Message Passing
+
+                  𝐀𝐗               ⊆                𝐀 𝐗 𝐗                 ⊆                𝓐 𝐗
+MAIN INGREDIENTS OF AN MPNN
+Main Ingredients of an MPNN
+
+                                            𝑗
+
+
+
+                                      𝑖
+
+
+
+
+                   𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                                  0∈𝒩!
+Main Ingredients of an MPNN
+
+                                                𝑗
+
+
+
+                                          𝑖
+
+
+
+
+                       𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                                      0∈𝒩!
+
+     Message passing
+        function
+Main Ingredients of an MPNN
+
+                                                𝑗
+
+
+
+                                          𝑖
+
+
+
+
+                       𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                                      0∈𝒩!
+
+     Message passing           Aggregation
+        function                operator
+Main Ingredients of an MPNN
+
+                                                𝑗
+
+
+
+                                          𝑖
+
+
+
+
+                       𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                                      0∈𝒩!
+
+     Message passing           Aggregation              Computational
+        function                operator                   graph
+Main Ingredients of an MPNN
+
+                                                𝑗
+
+
+
+                                          𝑖
+
+
+
+
+                       𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                                      0∈𝒩!
+
+     Message passing           Aggregation              Computational
+        function                operator                   graph
+EXPRESSIVE POWER OF GNNS
+Graph isomorphism
+
+
+
+
+                  𝐺 = 𝑉, 𝐸                           𝐺′ = 𝑉′, 𝐸′
+
+• Two graphs 𝐺 = 𝑉, 𝐸 and 𝐺′ = 𝑉′, 𝐸′ are isomorphic if there exists an edge-preserving
+  bijection φ: 𝑉 → 𝑉′ s.t. 𝑢~𝑣 in 𝐺 iff φ 𝑢 ~φ 𝑣 in 𝐺 )
+Graph isomorphism
+
+
+
+
+                     𝐺 = 𝑉, 𝐸                                    𝐺′ = 𝑉′, 𝐸′
+
+• Two graphs 𝐺 = 𝑉, 𝐸 and 𝐺′ = 𝑉′, 𝐸′ are isomorphic if there exists an edge-preserving
+  bijection φ: 𝑉 → 𝑉′ s.t. 𝑢~𝑣 in 𝐺 iff φ 𝑢 ~φ 𝑣 in 𝐺 )
+
+
+ Note: φ is not unique where the graph has symmetries (edge-preserving automorphism)
+Graph isomorphism
+
+
+
+
+                                       ≃
+                  𝐺 = 𝑉, 𝐸                           𝐺′ = 𝑉′, 𝐸′
+
+• Two graphs 𝐺 = 𝑉, 𝐸 and 𝐺′ = 𝑉′, 𝐸′ are isomorphic if there exists an edge-preserving
+  bijection φ: 𝑉 → 𝑉′ s.t. 𝑢~𝑣 in 𝐺 iff φ 𝑢 ~φ 𝑣 in 𝐺 )
+• A set of graphs isomorphic to each other is an isomorphism class
+• Complexity of computing graph isomorphism is an open question (“NP intermediate”:
+  not NP but also no polynomial time algorithm currently known)
+Attributed graph isomorphism
+
+
+
+
+                                          ≃
+                  𝐺 = 𝑉, 𝐸, 𝐗                        𝐺′ = 𝑉 8 , 𝐸 8 , 𝐗′
+
+• Two node-attributed graphs 𝐺 = 𝑉, 𝐸, 𝐗 and 𝐺′ = 𝑉 ) , 𝐸 ) , 𝐗′ are isomorphic if there
+  exists a bijection φ: 𝑉 → 𝑉′ s.t.
+• Structure preservation:     𝑢~𝑣 in 𝐺 iff φ 𝑢 ~φ 𝑣 in 𝐺 )
+                                    )
+• Feature preservation:       𝐱$ = 𝐱* $
+Universal Approximation on Graphs
+
+        Theorem: A class of functions is universally approximating permutation-
+        invariant functions on graphs with finite node features iff it can discriminate
+        graph isomorphisms.
+
+
+
+
+              Universal approximation on graphs is
+             equivalent to graph isomorphism testing
+
+Chen 2019
+What graphs can MPNNs represent?
+
+
+       Isomorphic
+           graphs                          MPNN
+
+
+
+
+                                                                  𝒴
+                                 Isomorphic graphs have identical representations
+        𝒢
+Adapted from Bevilacqua et al.
+(LoG Tutorial 2022)
+What graphs can MPNNs represent?
+
+
+       Isomorphic
+           graphs                          MPNN
+
+
+
+
+                                                                  𝒴
+                                 Isomorphic graphs have identical representation
+        𝒢
+                                 The converse is not true! (there might be
+Adapted from Bevilacqua et al.
+(LoG Tutorial 2022)
+                                 indistinguishable non-isomorphic graphs)
+Expressive power of MPNNs
+
+
+
+
+                                                       All graph-isomorphism
+                                                       discriminating functions
+                  Functions that can be
+                  computed by MPNN
+
+
+                                  All permutation-
+                                 invariant functions
+Adapted from Bevilacqua et al.
+(LoG Tutorial 2022)
+WEISFEILER-LEHMAN TEST
+Weisfeiler-Lehman Test
+
+
+
+
+                          A. Le(h)man   B. Weisfeiler
+
+
+
+
+Weisfeiler, Lehman 1968
+Weisfeiler-Lehman Test
+
+                   ϕ( ,{{ , , }})
+
+
+
+
+Weisfeiler, Lehman 1968
+Weisfeiler-Lehman Test
+
+                   ϕ( ,{{ , , }})
+
+
+
+
+                          ϕ( ,{{ , }})
+
+
+Weisfeiler, Lehman 1968
+Weisfeiler-Lehman Test
+
+                   ϕ( ,{{ , , }})
+
+
+
+
+                          ϕ( ,{{ , }})
+
+
+Weisfeiler, Lehman 1968
+Weisfeiler-Lehman Test
+
+                   ϕ( ,{{ , , }})
+
+
+
+
+                          ϕ( ,{{ , }})
+
+
+Weisfeiler, Lehman 1968
+Weisfeiler-Lehman Test
+                             ϕ( ,{{ , , }})
+                             ϕ( ,{{ , }})
+
+
+
+
+                          ϕ( ,{{ , }})
+
+
+Weisfeiler, Lehman 1968
+Weisfeiler-Lehman Test
+
+
+
+
+Weisfeiler, Lehman 1968
+Weisfeiler-Lehman Test
+
+
+
+
+Weisfeiler, Lehman 1968
+    non-isomorphic graphs that are WL-equivalent
+
+
+
+Necessary but insufficient condition for
+         graph isomorphism!
+What does WL test see?
+
+
+
+
+                         =
+What WL cannot test?
+
+     Example of non-isomorphic graphs that cannot be distinguished
+       by Weisfeiler-Lehman test (outputs “possibly isomorphic”)
+
+
+
+
+      r-regular graphs (deg=r at every node) with the same number of nodes
+What WL cannot test?
+
+     Example of non-isomorphic graphs that cannot be distinguished
+       by Weisfeiler-Lehman test (outputs “possibly isomorphic”)
+
+
+
+
+      Any induced connected pattern with ≥ 3 nodes (triangles, cycles, etc.)
+What WL cannot test?
+
+     Example of non-isomorphic graphs that cannot be distinguished
+       by Weisfeiler-Lehman test (outputs “possibly isomorphic”)
+
+
+
+
+               decalin                         bicyclopnetyl
+
+       Important implications e.g. in chemistry!
+Expressive power of Weisfeiler-Lehman
+
+                                                                      𝑓: 𝐺 ↦ #rings 𝐺
+
+                                               Functions depending
+                                               on counts of certain
+                                                  substructures
+
+
+                  Functions that can be
+                    computed by WL
+
+                                  All permutation-
+                                 invariant functions
+Adapted from Bevilacqua et al.
+(LoG Tutorial 2022)
+MPNNs vs WL
+
+• WL-test:     𝐱 , ← 𝜙 𝐱 , , 𝐱0 ∶ 𝑗 ∈ 𝒩,             𝑗
+
+
+  where 𝜙 is injective (hash function)           𝑖
+
+
+
+
+• MPNN:         𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                               0∈𝒩!
+
+
+
+
+        MPNN expressive power is upper-bounded
+           by the Weisfeiler-Lehman test
+MPNNs vs WL
+
+• WL-test:     𝐱 , ← 𝜙 𝐱 , , 𝐱0 ∶ 𝑗 ∈ 𝒩,              𝑗
+
+
+  where 𝜙 is injective (hash function)            𝑖
+
+
+
+
+• MPNN:         𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                               0∈𝒩!
+
+
+
+
+              When is MPNN as expressive as the
+                  Weisfeiler-Lehman test?
+Expressive power of MPNNs
+
+
+
+
+              Functions that can be            Functions depending
+               computed by some                on counts of certain
+                    MPNNs                         substructures
+
+                  Functions that can be
+                    computed by WL
+
+                                  All permutation-
+                                 invariant functions
+Adapted from Bevilacqua et al.
+(LoG Tutorial 2022)
+Are all Aggregators the same?
+
+
+
+
+      Input            max              mean          sum
+                    “skeleton”       Distribution
+                  of the multiset   of the multiset
+Are all Aggregators the same?
+
+
+
+
+    mean and max                 max             mean and max
+  fail to distinguish   fails to distinguish   fail to distinguish
+Graph Isomorphism Network (GIN)
+
+         Theorem: Assume graph node features are from a countable set. Then, an
+         MPNN with with injective aggregator □ , update function ϕ, and graph-wise
+         readout function, is as powerful as the Weisfeiler-Lehman test.
+
+
+   • Assumption of discrete countable features (often not the case in practice)
+   • Proof similar to DeepSets, with the difference that we now deal with multisets, where
+     popular injective set functions such as mean are not injective anymore
+   • GIN: uses an injective multiset function of the form
+
+                                  MLP    1 + 𝜖 𝐱 ! + J 𝐱#
+                                                    #∈𝒩 4
+
+Xu 2019; (Morris 2019)
+Expressive power of GIN (“best MPNN”)
+
+
+
+
+                  Functions that can be
+                   computed by GIN
+                            =                          More expressive
+                  Functions that can be                    GNNs
+                    computed by WL
+
+
+
+                                  All permutation-
+                                 invariant functions
+Adapted from Bevilacqua et al.
+(LoG Tutorial 2022)
+What to do with continuous features?
+
+• Many practical applications rely on assumption of continuous (uncountable) features
+• Most of the results we have seen (DeepSets, GINs, etc.) do not work in this setting!
+
+
+         Theorem: In order to discriminate between real multisets of size 𝑛, at least 𝑛
+         aggregators are needed.
+
+
+      Proof: relying on Borsuk-Ulam Theorem (continuous function from 𝕊6 to ℝ6 maps some pairs of antipodal
+      points to the same point)
+
+
+
+
+Corso et al. 2020
+Principal Neighbourhood Aggregation (PNA)
+
+• Use a combination of multiple aggregators defined as moments of neighbour features
+
+                                               𝐼           𝜇
+                                       = 𝑆 𝐷, 𝛼 = 1        𝜎
+                                                        ⨂ max
+                                         𝑆 𝐷, 𝛼 = −1      min
+                        +,- ./0   2
+    (scalers 𝑆 𝑑, 𝛼 =                 emphasize hub nodes and allow for aggregators like sum)
+                           1
+
+• Empirically good performance
+
+
+
+
+Corso et al. 2020
+Principal Neighbourhood Aggregation (PNA)
+
+
+
+
+                    Mean log error of different aggregators on different tasks
+Corso et al. 2020
+Towards More Expressive GNNs
+
+
+
+
+    Higher-order         Positional &                     Subgraph                          Topological
+      WL tests       Structural encoding                   GNNs                            message passing
+
+Maron et al. 2019      Monti, Otness et B 2018       Papp et al. 2021                      Bodnar, Frasca et B 2021
+Morris et al. 2019     Sato 2020                     Cotta et al. 2021
+                       Dwivedi et al. 2020           Zhao et al. 2021
+                       Bouritsas, Frasca et B 2020   Bevilacqua, Frasca et B, Maron 2021
+                       …many more                    Frasca et B, Maron 2022
+HIGHER-ORDER GNNs
+WL test
+
+          ϕ( ,{{ , }})
+
+
+
+
+    Node colour
+    refinement
+k-WL test
+                     • Colour adjacent k-tuples 𝐯 ∈ 𝑉 3 instead of nodes
+
+
+
+
+  𝐯
+
+
+
+   Subgraph colour
+     refinement
+k-WL test
+                        • Colour adjacent k-tuples 𝐯 ∈ 𝑉 3 instead of nodes
+                        • k-tuples are adjacent if they differ in one node; the
+                          jth neighbourhood of 𝐯 is defined as
+
+         1
+                            𝒩𝐯,# =   𝑣0 , … , 𝑣#60 , 𝑤, 𝑣#/0 , … , 𝑣3 ∶ 𝑤 ∈ 𝑉
+     𝐯
+                 𝒩𝐯,0
+ 2           3
+
+     Subgraph colour
+       refinement
+k-WL test
+                        • Colour adjacent k-tuples 𝐯 ∈ 𝑉 3 instead of nodes
+                        • k-tuples are adjacent if they differ in one node; the
+                          jth neighbourhood of 𝐯 is defined as
+
+         1
+                            𝒩𝐯,# =   𝑣0 , … , 𝑣#60 , 𝑤, 𝑣#/0 , … , 𝑣3 ∶ 𝑤 ∈ 𝑉
+     𝐯                  • For every tuple 𝐯 ∈ 𝑉 3 , update the colour
+                 𝒩𝐯,8
+ 2           3                          ϕ 𝑐𝐯 , 𝑐𝒩𝐯,9 , … , 𝑐𝒩 𝐯,:
+
+     Subgraph colour      where 𝑐𝒩 𝐯,; = 𝑐𝐰 ∶ 𝐰 ∈ 𝒩𝐯,#
+       refinement
+k-WL test
+                                    {{            ,                     }},{{ ,                           }}
+              ϕ
+                  (             ,
+                                                 {{                 ,                      }}                  )
+   Subgraph colour
+     refinement
+
+
+  Note: there are two slightly different versions of the high-dimensional WL test referred to as “k-WL” and
+  “folklore k-WL” that differ in the update step.
+What graphs can k-WL distinguish?
+
+
+
+
+                                                                  Strongly    4-CFI
+                                                        Regular
+                                                                  regular    graphs
+                           1-WL = 2-WL
+
+                                   3-WL (2-FWL)
+                                         4-WL (3-FWL)
+
+                                                  All graphs
+Babai, Mathon 1979 (k-WL)
+Cai, Fürer, Immerman 1992 (CFI graphs)
+What graphs cannot 3-WL distinguish?
+
+
+
+
+                              Strongly regular graphs cannot be distinguished by 3-WL
+
+Bouritsas, Frasca et B 2020
+What graphs cannot k-WL distinguish?
+
+
+
+
+                                         Cai-Fürer-Immerman (CFI) graphs
+
+Cai, Fürer, Immerman 1992 (CFI graphs)
+Various k-WL-like GNNs
+
+• k-GNNs mimics the k-WL test by working with subgraphs of size k:
+
+                                                             𝐱 𝐯 ← ϕ 𝐖0 𝐱 𝐯 + J 𝐖8 𝐱 𝐮
+                                                                            𝐮∈𝒩𝐯
+
+    where 𝒩𝐯 = 𝐮 ∈ 𝑉 3 ∶ 𝐮 ∩ 𝐯 = 𝑘 − 1
+• Complexity: 𝒪 𝑛 3
+• More efficient variants
+   • Sparse neighbourhoods
+   • Sparse sets of k-tuples
+
+
+
+Morris et al. 2019; Morris et al. 2020; Morris et al. 2022
+Towards More Expressive GNNs
+
+
+
+
+    Higher-order         Positional &                     Subgraph                          Topological
+      WL tests       Structural encoding                   GNNs                            message passing
+
+Maron et al. 2019      Monti, Otness et B 2018       Papp et al. 2021                      Bodnar, Frasca et B 2021
+Morris et al. 2019     Sato 2020                     Cotta et al. 2021
+                       Dwivedi et al. 2020           Zhao et al. 2021
+                       Bouritsas, Frasca et B 2020   Bevilacqua, Frasca et B, Maron 2021
+                       …many more                    Frasca et B, Maron 2022
+POSITIONAL ENCODING
+What does WL test see?
+
+
+
+
+                         =
+Node encoding
+
+
+
+
+                       ≠
+         X
+
+
+
+
+    “Colouring” nodes removes (some) ambiguity
+How to “colour” nodes?
+
+• Random
+• Substructure count
+• Laplacian/Adjacency eigenvectors
+• Gradients of global encoding (“direction”)
+• Shortest path distance
+• Diffusion kernel
+• Random walk kernel
+• …many more
+Random node features
+
+• rMPNN: Attach a random feature to every node of the graph, then apply MPNN
+• Output of rMPNN is a random variable
+• Not permutation invariant! (only in expectation)
+
+         Probabilistic Universal Approximation: Let 𝑓 be a permutation-invariant
+         graph function. Then, for all ε, 𝛿 > 0, there exists an rMPNN 𝑓f that ε, 𝛿 -
+         approximates 𝑓, in the sense that
+                                  P 𝑓 𝐺 − 𝑓f 𝐺     ≤ε ≥1−𝛿
+
+• Embedding dimension 𝒪 𝑛 8 𝛿
+• Extensions to equivariant functions, weighted graphs, etc.
+Abboud et al. 2021; Sato 2021
+Graph Substructure Network (GSN)
+
+• Choose a bank of substructures containing graphs 𝐻 of size 𝑘 = 𝒪 1
+• Count the occurrence of each 𝐻 in every node/edge of the input graph
+   • Subgraph counts
+   • Induced subgraph counts
+
+
+                              𝐻=subgraph                                𝐻=induced
+                                 of 𝐺                                  subgraph of 𝐺
+                              𝑉: ⊆ 𝑉, 𝐸: ⊆ 𝐸                             𝐸: = 𝐸 ∩ 𝑉: ×𝑉:
+
+ 𝐻 = 𝑉; , 𝐸;
+                                                 𝐺 = 𝑉, 𝐸
+Bouritsas, Frasca et B 2020
+Graph Substructure Network (GSN)
+
+• Choose a bank of substructures containing graphs 𝐻 of size 𝑘 = 𝒪 1
+• Count the occurrence of each 𝐻 in every node/edge of the input graph
+• Use the counts as additional node/edge features
+
+                                         1       1                     1           1
+                                             2
+                                   1                    1    1                         1
+                                                                           1   1
+                                   1                    1    1                         1
+                                             2
+                                         1        1                    1           1
+    substructure bank
+
+Bouritsas, Frasca et B 2020
+Graph Substructure Network (GSN)
+
+• Choose a bank of substructures containing graphs 𝐻 of size 𝑘 = 𝒪 1
+• Count the occurrence of each 𝐻 in every node/edge of the input graph
+• Use the counts as additional node/edge features
+
+
+
+
+    substructure bank
+
+Bouritsas, Frasca et B 2020
+Graph Substructure Network (GSN)
+
+• Choose a bank of substructures containing graphs 𝐻 of size 𝑘 = 𝒪 1
+• Count the occurrence of each 𝐻 in every node/edge of the input graph
+• Use the counts as additional node/edge features
+• Complexity: precomputation (substructure counting, which is worse case is 𝒪 𝑛 3 but
+  in practice much more optimistic) + standard MPNN (linear complexity 𝒪 𝐸 ~𝒪 𝑛 )
+
+
+         Theorem: GSN is strictly more expressive than WL if
+         • 𝐻 is not a star graph, and counting is done using subgraph matching; or
+         • 𝐻 is of size 𝑘 ≥ 3, and counting is using induced subgraph matching.
+
+
+Bouritsas, Frasca et B 2020
+Graph Substructure Network (GSN)
+
+• Choose a bank of substructures containing graphs 𝐻 of size 𝑘 = 𝒪 1
+• Count the occurrence of each 𝐻 in every node/edge of the input graph
+• Use the counts as additional node/edge features
+• Complexity: precomputation (substructure counting, which is worse case is 𝒪 𝑛 3 but
+  in practice much more optimistic) + standard MPNN (linear complexity 𝒪 𝐸 ~𝒪 𝑛 )
+
+
+                              Theorem: GSN is not less expressive than 3-WL.
+
+
+      Proof: by example
+
+
+
+Bouritsas, Frasca et B 2020
+What graphs can GSN distinguish?
+
+
+
+
+                       Strongly Regular (SR) graphs cannot be distinguished by 3-WL
+                            but can be distinguished by GSN with 4-clique count
+Bouritsas, Frasca et B 2020
+What graphs can GSN distinguish?
+
+
+
+
+                                      GSN with 4-            Strongly
+                                      clique count           regular
+
+                              1-WL = 2-WL
+
+                                 3-WL (2-FWL)
+
+
+                                                All graphs
+Bouritsas, Frasca et B 2020
+What graphs can GSN distinguish hypothetically?
+
+
+
+
+                                                             Strongly
+                                                             regular
+
+                              1-WL = 2-WL
+
+                                 3-WL (2-FWL)
+                                     4-WL (3-FWL)
+
+                                                All graphs
+Bouritsas, Frasca et B 2020
+What graphs can GSN distinguish hypothetically?
+
+
+
+
+                                                             Strongly   GSN with 𝑘 = 𝑛 − 1
+                                                             regular      subgraphs if the
+                                                                        Graph Reconstruction
+                              1-WL = 2-WL                                 Conjecture holds
+
+                                 3-WL (2-FWL)
+                                     4-WL (3-FWL)
+
+                                                All graphs
+Bouritsas, Frasca et B 2020
+Graph Substructure Network in practice
+
+
+                                                                            MPNN
+                                                           paths
+                                                                   trees
+                                                                            GSN
+
+                                                                           cycles
+
+
+
+
+               Molecule property prediction on ZINC
+               using GSN with different substructures
+Bouritsas, Frasca et B 2020
+Slide adapted from Bevilacqua et al. (LoG 2022 tutorial)
+Graph Substructure Network in practice
+
+
+
+
+                                                              Molecule of caffeine
+
+                                                             Substructure =
+                                                           application-specific
+                                                             inductive bias
+               Molecule property prediction on ZINC
+               using GSN with different substructures
+Bouritsas, Frasca et B 2020
+Slide adapted from Bevilacqua et al. (LoG 2022 tutorial)
+Towards More Expressive GNNs
+
+
+
+
+    Higher-order         Positional &                     Subgraph                          Topological
+      WL tests       Structural encoding                   GNNs                            message passing
+
+Maron et al. 2019      Monti, Otness et B 2018       Papp et al. 2021                      Bodnar, Frasca et B 2021
+Morris et al. 2019     Sato 2020                     Cotta et al. 2021
+                       Dwivedi et al. 2020           Zhao et al. 2021
+                       Bouritsas, Frasca et B 2020   Bevilacqua, Frasca et B, Maron 2021
+                       …many more                    Frasca et B, Maron 2022
+SUBGRAPH GNNs
+Subgraph GNNs
+
+
+
+           X    X
+
+
+
+           X    X
+                WL colouring   colour histogram
+Subgraph GNNs
+
+
+
+
+                                                                                WL colouring                   colour histogram
+
+                   Graph perturbation allows to distinguish between structures
+                       otherwise indistinguishable by Weisfeiler-Lehman
+
+Papp et al. 2021; Cotta et al. 2021; Zhao et al. 2021 Bevilacqua, Frasca et B, Maron 2022; Frasca et B, Maron 2022
+Collection of Subgraphs
+
+
+
+
+{{                          1.
+
+
+
+
+                                              5.
+                                                               2.
+
+
+
+
+                                                                    6.
+                                                                         3.
+
+
+
+
+                                                                              7.
+                                                                                    4.
+
+
+
+
+                                    A multiset of subgraphs obtained by edge deletion
+                                                                                         }}
+Bevilacqua, Frasca et B, Maron 2022; Frasca et B, Maron 2022
+Collection of Subgraphs
+
+
+
+
+            {{                                1.
+
+
+
+
+                                              4.
+                                                               2.
+
+
+
+
+                                                               5.
+                                                                              3.
+
+
+
+
+                                                                              6.
+                                    A multiset of subgraphs obtained by node deletion
+                                                                                        }}
+Bevilacqua, Frasca et B, Maron 2022; Frasca et B, Maron 2022
+Graph Reconstruction Conjectures
+
+         Graph Reconstruction Conjecture: A graph
+         𝐻 is said to be a reconstruction of
+         𝐺 (denoted 𝐻~𝐺) if they have the same
+         multiset (deck) of node-removed subgraphs
+         (cards). If 𝐺 and 𝐻 are two finite, undirected,
+         simple graphs with at least three vertices and
+         𝐻 is the reconstruction of 𝐺, then 𝐻 ≃ 𝐺.                                                           P. Kelly                       S. Ulam
+
+
+
+                     Collection of subgraphs determines the
+                            graph isomorphism class
+Kelly 1942 (PhD thesis where the Conjecture appeared); Kelly 1957 (reconstruction from k-subgraphs); McKay 1997 (proof for small graphs);
+Nýdl 2001 (k-reconstructability for certain graph families)
+Graph Reconstruction Conjectures
+
+         Graph Reconstruction Conjecture: A graph
+         𝐻 is said to be a reconstruction of
+         𝐺 (denoted 𝐻~𝐺) if they have the same
+         multiset (deck) of node-removed subgraphs
+         (cards). If 𝐺 and 𝐻 are two finite, undirected,
+         simple graphs with at least three vertices and
+         𝐻 is the reconstruction of 𝐺, then 𝐻 ≃ 𝐺.                                                          P. Kelly   S. Ulam
+
+   • Proven for small graphs with 𝑛 ≤ 11 nodes
+   • Open question in general
+   • Generalisations for subgraphs of size 𝑛 − 𝑘
+Kelly 1942 (PhD thesis where the Conjecture appeared); McKay 1997 (proof for small graphs);
+Kelly 1957 (reconstruction from k-subgraphs); Nýdl 2001 (k-reconstructability for certain graph families)
+Equivariant Subgraph Aggregation Networks
+                                                         𝑆6                         𝑆6
+
+
+
+
+  input graph
+                             {{ }}                 𝑆3
+
+
+                                                       multiset of subgraphs
+                                                                               𝑆3
+
+                                                                                Tensor representation
+
+
+                                 Symmetry group of subgraph colection 𝐺 = 𝑆. ×𝑆=
+Bevilacqua, Frasca et B, Maron 2022; Frasca et B, Maron 2022
+B et al. 2022
+Towards More Expressive GNNs
+
+
+
+
+    Higher-order         Positional &                     Subgraph                          Topological
+      WL tests       Structural encoding                   GNNs                            message passing
+
+Maron et al. 2019      Monti, Otness et B 2018       Papp et al. 2021                      Bodnar, Frasca et B 2021
+Morris et al. 2019     Sato 2020                     Cotta et al. 2021
+                       Dwivedi et al. 2020           Zhao et al. 2021
+                       Bouritsas, Frasca et B 2020   Bevilacqua, Frasca et B, Maron 2021
+                       …many more                    Frasca et B, Maron 2022
+TOPOLOGICAL MESSAGE PASSING
+Cell complexes
+
+
+
+
+       Set       Graph   Cell (CW)
+                         complex
+Topological Message Passing
+
+                                • Lift the graph into a cell complex
+                        2-dim
+                                • Hierarchical message passing
+
+                                • Strictly more expressive than
+                                  Weisfeiler-Lehman
+                        1-dim
+
+
+
+
+                        0-dim
+
+Bodnar, Frasca et B. 2021
+                         1-CLIP /                                                                          stochastic (results in expectation)                          ∞-CLIP/
+                         rMPNN                                                  k-CLIP                                                                                  RP-GNN
+
+
+
+
+                                                                                                                      (k–1)-Folklore GNN (/-         𝛅-k-LWL+
+(k
+
+
+
+
+                                                                k-SAN                                                                 PPGN)                          k-IGN / k-GNN
+  -W
+
+
+
+
+                                     (k-CL)-CWN
+    L)
+
+
+
+
+                                                                                                                                                 (k–2)-OSAN
+
+            H-GSN                          ?
+(3
+
+
+
+
+                                 ?                                                                                                                            ?
+                                                                            PPGN                                                       3-IGN / 3-GNN
+  -W
+
+
+
+
+                                                            ?
+    L)
+
+
+
+
+                           (3-IC)-CWN
+                                                     Graphormer                      SUN
+
+                                                     ?
+                                                                                   DSS-GNN
+                ?                                                       ?
+                                                     𝛅-2-LWL+
+                DGN              ?                                                                                                                         Caveats
+                                                                              DS-GNN / 1-OSAN
+                                                                                                                                                         convergence
+(1
+
+
+
+
+          MPNN / GIN                               2-IGN / 2-GNN
+   -W
+
+
+
+
+                                                                                                                                                         tuning / selection
+     L)
+
+
+
+
+                                                                                      ?
+                                                                                                                                                         preprocessing
+                                                                                                                                                         invariance
+                GCN                                                             node-based
+                                                                              Subgraph GNNs                                                              unknown relation
+expr.
+
+
+
+
+                                                                                                                                                     ?
+
+                                          message-passing                                                                                            ?
+                                                                                                                                                         unproven low./upp.
+                                                                                                                                                 ?
+            t
+                    Source: Bevilacqua, Frasca, Maron: LoG Tutorial 2022             higher-order (beyond pairwise)
+Takeaways
+
+• Message-Passing GNNs are upper-bounded in their expressive power by the
+  Weisfeiler-Lehman graph isomorphism test
+• Several ways to enhance expressive power:
+ • Higher-order WL-tests
+ • Structural and positional encoding
+ • Subgraph aggregation methods
+ • Graph lifting to simplicial/cellular complexes & topological message passing
+
+• Generalisation power of GNNs is an open question
+• Next: is Weisfeiler-Lehman formalism the end of story? (No!)
+Key Concepts
+
+• Graph isomorphism
+• Weisfeiler-Lehman tests
+• Positional and structural coding
+• Reconstruction Conjectures
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 4.1 “Graphs and
+  sets” and Section 5.3 “Graph neural networks”
+• C. Morris et al., Weisfeiler and Leman go Machine Learning: The Story so far,
+  arXiv:2112.099992, 2021. Introductory text on k-WL tests and various equivalent GNNs
+• B. Bevilacqua, F. Frasca, H. Maron, Exploring the practical and theoretical landscape of
+  expressive GNNs, LoG tutorial 2022. Expressive power and advanced GNN architectures
+Additional References
+
+• Z. Chen et al., On the equivalence between graph isomorphism testing and function
+  approximation with GNNs, NeurIPS 2019. Universal approximation in GNNs
+• K. Xu et al., How powerful are graph neural networks?, ICLR 2019. Proof of equivalence
+ between WL-test and MPNN + GIN architecture
+• M. Bronstein, L. Cotta, F. Frasca, H. Maron, Using subgraphs for more expressive
+  GNNs, Towards Data Science blog post 2021. Diverse subgraph methods + Reconstruction
+ conjectures
+• C. Bodnar, F. Frasca, et al., Weisfeiler and Lehman go cellular: CW networks, NeurIPS
+  2021. Topological message passing
+Main Ingredients of an MPNN
+
+                                                𝑗
+
+
+
+                                          𝑖
+
+
+
+
+                       𝐱 , ← 𝜙 𝐱 , , , , - 𝜓 𝐱 , , 𝐱0
+                                      0∈𝒩!
+
+     Message passing           Aggregation              Computational
+        function                operator                   graph
+                         Weisfeiler-Lehman hierarchy
+
+
+                               k-WL    CFI graphs           k-GNNs
+increasingly expressive test
+
+
+
+
+                                                            Maron et al. 2020; Morris et al. 2019
+
+
+
+
+                               3-WL
+                                                            Subgraph Union Network
+                                                            Frasca et B 2022
+                                      strongly regular
+                               2-WL
+
+                               1-WL      d-regular          MPNNs
+                                                            Xu et al. 2019
+
+                                GNN expressive power
+Weisfeiler, Lehman 1968 (2-WL); Babai, Mathon 1979 (k-WL)
+Cai, Furer, Immerman 1992 (CFI graphs)
+                         Weisfeiler-Lehman hierarchy
+
+
+                               k-WL    CFI graphs
+increasingly expressive test
+
+
+
+
+                                                             1 triangle
+
+
+                               3-WL
+                                                                                                  2 triangles
+                                                                                                  1 4-clique
+                                      strongly regular
+                               2-WL
+
+                               1-WL      d-regular
+
+                                GNN expressive power                Structural encoding
+Weisfeiler, Lehman 1968 (2-WL); Babai, Mathon 1979 (k-WL);          Bouritsas, Frasca et B 2020
+Cai, Furer, Immerman 1992 (CFI graphs)
+                         Weisfeiler-Lehman hierarchy                  Graphs may be unfriendly for
+                                                                      message passing resulting in
+                               k-WL                                          “bottlenecks”
+                                       CFI graphs
+                               3-WL
+increasingly expressive test
+
+
+
+
+                                                           Gap between
+                               2-WL   strongly regular   Theory & Practice
+
+                               1-WL      d-regular
+
+                                GNN expressive power                             “Graph rewiring”
+                                                                      Alon, Yahav 2020 (bottlenecks); Hamilton et al. 2017 (neighbour
+Weisfeiler, Lehman 1968 (2-WL); Babai, Mathon 1979 (k-WL);            sampling); Klicpera et al. 2019 (diffusion); Topping, Di Giovanni
+Cai, Fürer, Immerman 1992 (CFI graphs)                                et B 2022 (Ricci flow); Deac et al. 2022 (expanders)
+                                      MORE       STRUCTURE
+
+
+
+
+            CNN          Equivariant GNN      Subgraph GNN       Cellular GNN   Positional encoding
+        canonical node    +data symmetry     product symmetry     high-order     +extra features
+           ordering            group              group            complex
+
+
+
+
+                   LESS INTERACTION                             MORE INTERACTION
+
+
+
+DeepSet/PointNet                              GNN                                      Transformer
+    no graph                               input graph                               learnable graph
+                                      MORE       STRUCTURE
+
+
+
+
+            CNN          Equivariant GNN      Subgraph GNN      Cellular GNN   Positional encoding
+        canonical node    +data symmetry     product symmetry    high-order     +extra features
+           ordering            group              group           complex
+
+
+
+
+                   LESS INTERACTION
+
+
+
+DeepSet/PointNet                              GNN             Graph rewiring          Transformer
+    no graph                               input graph     precomputed graph        learnable graph
+TRANSFORMERS
+What graph should we use in GNNs?
+
+
+
+                    LESS INTERACTION                 MORE INTERACTION
+
+
+
+     DeepSet                              GNN                                 ?
+  no graph at all                      input graph                      Complete graph
+
+– Throws away                                                      + Learn the “right”
+  important data                                                     graph for the task
+                                                                   – High complexity
+                                                                   – “Too much flexibility”
+Transformers
+
+• Assume the graph is complete (every node is connected to every node)
+• Apply a Convolutional GNN:
+
+
+                                 ϕ 𝐱 ! , J 𝑎!# ψ 𝐱#
+                                       #∈𝒩 4
+Transformers
+
+• Assume the graph is complete (every node is connected to every node)
+• Apply a Convolutional GNN:
+                                        <
+
+                                 ϕ 𝐱 ! , J 𝑎!# ψ 𝐱#
+                                       #;0
+
+                                       equal for every node!
+Transformers
+
+• Assume the graph is complete (every node is connected to every node)
+• Apply an Attentional GNN:
+                                          <
+
+                                  ϕ 𝐱 ! , J 𝛼 𝐱 ! , 𝐱# ψ 𝐱#
+                                         #;0
+
+• Attention weights = learned graph adjacency on the downstream task
+• Transformer architecture, which has recently become predominant in NLP task, is a
+  special type of GNN!
+
+
+
+
+Vaswani et al. 2017; Joshi 2020
+Transformers
+
+• Assume the graph is complete (every node is connected to every node)
+• Apply an Attentional GNN:
+                                          <
+
+                                  ϕ 𝐱 ! , J 𝛼 𝐱 ! , 𝐱# , 𝐩! , 𝐩# ψ 𝐱#
+                                         #;0
+
+• Attention weights = learned graph adjacency on the downstream task
+• Transformer architecture, which has recently become predominant in NLP task, is a
+  special type of GNN!
+• Tasks in NLP often require position-dependent functions (not permutation-invariant),
+  which is achieved through positional encoding
+
+Vaswani et al. 2017; Joshi 2020
+Transformers
+
+
+
+
+Vaswani et al. 2017; Joshi 2020
+Positional encoding
+      Position
+
+
+
+
+                                      Embedding dimension
+
+                 Typical positional encoding used in Transformers on a 1D grid
+Positional encoding
+
+
+                                                                Unique?          Complexity
+
+                    Substructures of size 𝑘                        Yes             𝒪 𝑛3 *
+
+                    𝑘 Laplacian eigenvectors                        No         𝒪 𝑛 8 ÷ 𝒪 𝑛 = **
+                                                               23 sign flips
+
+                    Random Walk kernels                            Yes         𝒪 𝑛 8 ÷ 𝒪 𝑛 = ∗∗
+
+
+
+
+*In practice better for many substructures such as triangles
+**Depending on the sparsity of the Laplacian
+                     geometric
+                 (local structure)
+
+
+
+
+                                                Supervision
+                                                  signal
+
+
+                                     semantic
+
+Wang et B 2018
+Differentiable Graph Module
+
+
+
+
+                  Differentiable Graph Module (DGM) allowing to construct the graph
+                               from the data and use it for feature learning
+
+
+
+
+Kazi, Cosmo et B 2020                Disease classification accuracy
+Latent Simplicial Complex Learning
+
+
+
+
+Battiloro et B, Scardapane, Di Lorenzo 2024   Differentiable Cell Complex Module
+OVERSQUASHING &
+ GRAPH REWIRING
+What graph should we use in GNNs?
+
+
+
+
+     DeepSet           Classical MPNN         Transformers
+  no graph at all        input graph         complete graph
+
+– Throws away                             + Learn the “right”
+  important data                            graph for the task
+                        Graph rewiring
+                       add/remove edges   – High complexity
+                                          – Hard to generalise
+What graph should we use in GNNs?
+
+
+
+
+                                    𝐺
+What graph should we use in GNNs?
+
+
+
+
+                                                                     𝐺′
+
+
+
+                                  • Preserve locality (“input graph inductive bias”)
+                                  • Preserve sparsity (computational efficiency)
+                                  • Improve connectivity (to reduce over-squashing)
+
+Barbero, Velingker, Saberi, B, Di Giovanni 2023
+“Failure of Message Passing to propagate
+       information on the graph”
+Over-squashing
+
+
+
+
+                                 In small-world graphs metric ball volume grows
+                                          exponentially with ball radius
+
+
+                                           graph topology
+                   Over-squashing = Fast volume growth
+                                  + Long-range interactions
+                                                  ta s k
+Alon, Yahav 2020
+Over-squashing
+
+• Consider an MPNN of the form
+                                                                                                                                            𝑥0
+
+
+
+
+                                                                                                                                       de
+                                                    3/0                    3                3
+
+
+
+
+                                                                                                                                   no
+                                               𝐱!             = 𝜎 𝐖0 𝐱 !       + J 𝑎!# 𝐖8 𝐱 #                                     nt
+                                                                                                                             ta
+                                                                                  #                                 a   d is
+   • 𝐿 = depth (number of layers)
+
+
+
+
+                                                                                                             from
+   • 𝑝 =width (hidden dimension)
+   • Nonlinearity 𝜎 is 𝑐> -Lipschitz-continuous                                                      d     a te
+                                                                                                  up
+   • 𝑤 = maximum element of weight matrices 𝐖0, 𝐖8                                                𝑥/
+
+       Theorem (Sensitivity bound): For any 𝑖, 𝑗 ∈ 𝑉                                            Over-squashing: small Jacobian
+                                 ?                                                                     =            >
+                          ?𝐱 4                                                                   𝜕𝐱 / /𝜕𝐱0                indicates poor
+                                 @     ≤ 𝑐A 𝑤𝑝            A
+                                                               𝐈 + 𝐀 A!#
+                          ?𝐱 ;                                                                  information propagation from
+                                     0   model topology                                         input node
+Topping, Di Giovanni et B 2021; Di Giovanni et B 2023
+Preventing over-squashing
+
+                                             ?
+                                      ?𝐱 4
+                                          @        ≤ 𝑐A 𝑤𝑝 A 𝐈 + 𝐀 A!#
+                                      ?𝐱 ;
+                                                 0   model topology
+
+• Width 𝑝 helps mitigate over-squashing (potentially at the risk of worse generalization)
+• Depth 𝐿 does not help
+   • If 𝐿~diam 𝐺 , over-squashing occurs between distant nodes
+   • If 𝐿 ≫ 1, we transition from over-squashing to vanishing gradients
+• Topology of 𝐺 has the largest effect on over-squashing, which occurs
+   • Between nodes with high effective resistance Res 𝑖, 𝑗 ∝ 𝜏 𝑖, 𝑗 = commute time
+   • On graphs with small Cheeger constant ℎ 𝐺 = energy required to disconnect the graph into
+     two communities)
+   • Edges with strongly negative discrete Ricci curvature 𝜅 𝑖, 𝑗
+Di Giovanni et B 2023
+Effective Resistance & Commute Time
+
+• Commute time 𝜏 𝑖, 𝑗 = expected number of steps a random walk on a graph starting
+  from node 𝑖 will take to reach node 𝑗 and come back
+• Effective resistance Res 𝑖, 𝑗 = voltage difference between nodes 𝑖 and 𝑗 if a unit
+  current flows through the graph where every edge has unit resistance
+
+
+
+                                  𝜏 𝑖, 𝑗 = 2 𝐸 Res 𝑖, 𝑗
+
+
+
+
+Chandra et al. 1996
+Cheeger constant
+
+• The Cheeger constant of a graph 𝐺 = 𝑉, 𝐸 is defined as
+                             𝑖, 𝑗 ∈ 𝐸 s. t. 𝑖 ∈ 𝑈 and 𝑗 ∈ 𝑉 ∖ 𝑈
+                 ℎ 𝐺 = min
+                       B⊂D          min vol 𝑈 , vol 𝑉
+    where vol 𝑈 = ∑#∈B 𝑑! .
+
+
+
+
+(Cheeger 1970)
+Cheeger constant
+
+• The Cheeger constant of a graph 𝐺 = 𝑉, 𝐸 is defined as
+                             𝑖, 𝑗 ∈ 𝐸 s. t. 𝑖 ∈ 𝑈 and 𝑗 ∈ 𝑉 ∖ 𝑈
+                 ℎ 𝐺 = min
+                       B⊂D          min vol 𝑈 , vol 𝑉
+    where vol 𝑈 = ∑#∈B 𝑑! .
+
+
+
+
+(Cheeger 1970)
+Cheeger constant
+
+• The Cheeger constant of a graph 𝐺 = 𝑉, 𝐸 is defined as
+                             𝑖, 𝑗 ∈ 𝐸 s. t. 𝑖 ∈ 𝑈 and 𝑗 ∈ 𝑉 ∖ 𝑈
+                 ℎ 𝐺 = min
+                       B⊂D          min vol 𝑈 , vol 𝑉
+    where vol 𝑈 = ∑#∈B 𝑑! .
+
+• Energy required to disconnect 𝐺 into separate communities
+  (”bottleneck” if ℎ is small)
+                                         EA "
+• Cheeger inequality: 2ℎ 𝐺 ≥ 𝜆0 >               , where 𝜆0 is the first non-
+                                           8
+   zero eigenvalue (“spectral gap”) of the normalised graph Laplacian
+
+
+(Cheeger 1970)
+Preventing over-squashing
+
+                                    ?
+                             ?𝐱 4
+                                 @        ≤ 𝑐A 𝑤𝑝 A 𝐈 + 𝐀 A!#
+                             ?𝐱 ;
+                                        0   model topology
+
+
+                                                                𝑥/
+                        𝑥/
+
+
+                             𝑥0
+                                                                     𝑥0
+
+
+
+
+Di Giovanni et B 2023
+When oversquashing might occur?
+
+
+
+
+      Clique                Grid   Tree
+Ricci Curvature on Manifolds
+
+
+
+
+                       𝑝      𝑞
+
+
+
+
+             Spherical (>0)          Euclidean (=0)       Hyperbolic (<0)
+
+                                  “geodesic dispersion”
+
+Ricci 1903
+Graph analogues of Ricci curvature
+
+
+               𝑘
+
+
+
+                   𝑞
+       𝑝
+
+
+
+
+     Clique (>0)            Grid (=0)   Tree (<0)
+Graph Ricci curvature
+
+• Multiple definitions of curvature on graphs, two main
+   • Forman (combinatorial)
+   • Ollivier (optimal transport)
+• Balanced Forman Curvature of edge 𝑖~𝑗 in simple unweighted graph is
+
+   • κ 𝑖, 𝑗 =0 if min 𝑑! , 𝑑# = 1, otherwise                                             Max number of 4-cycle based at i~j
+                                              Triangles based at i~j                         traversing the same node
+
+                       8       8            ♯∆ !,#               ♯∆ !,#                 F9
+                                                                                       MCDE                        #
+   • κ 𝑖, 𝑗 =              +        +2                   +                      +                    ♯!□ 𝑖, 𝑗   + ♯□ 𝑖, 𝑗    −2
+                      .4       .;        FGH . 4 ,. ;          FIJ{. 4 ,. ; }       FGH{. 4 ,. ; }
+
+   Degree of i                                                                                            Neighbours of i forming a 4-cycle
+                                                                                                            based at i~j (w/o diagonals)
+
+
+Forman 2003; Ollivier 2007; Topping, di Giovanni, et B. 2021
+Graph Ricci curvature
+
+• Multiple definitions of curvature on graphs, two main
+   • Forman (combinatorial)
+   • Ollivier (optimal transport)
+• Balanced Forman Curvature of edge 𝑖~𝑗 in simple unweighted graph behaves
+  similarly to the continuous Ricci curvature
+
+
+
+
+                   M                                                          6                               H
+   Cycle 𝐶M :                 𝐶H : 1            𝐶6KL : 0       Clique 𝐾6 :         Grid 𝐺6 : 0   Tree 𝑇G :         −2
+                   N                                                         6J-                             GI-
+
+Forman 2003; Ollivier 2007; Topping, di Giovanni, et B. 2021
+What contributes to over-squashing?
+
+    Theorem: (informal) strong negatively-curved edges contribute to over-squashing.
+
+
+
+
+                                𝑘
+
+
+
+                                        𝑞
+                  𝑝
+
+
+
+
+            Clique (>0)                                               Grid (=0)                              Tree (<0)
+Topping, Di Giovanni et B 2021; *No contradiction to using expander graphs (which have negative curvature)
+Curvature-based rewiring
+
+Input: graph 𝐺 = 𝑉, 𝐸 , temperature 𝜏 > 0, (optional 𝐶)
+• For edge 𝑖~𝑗 with smallest κ 𝑖, 𝑗                                        𝑙
+                                                               𝑘
+   • Calculate the improvement 𝛿3N = κ"O 𝑖, 𝑗 − κ 𝑖, 𝑗 from
+     adding edge 𝑘~𝑙 with 𝑘 ∈ 𝐵0 𝑖 and 𝑙 ∈ 𝐵0 𝑗
+                                                                   𝑖   𝑗
+
+   • Sample index 𝑘, 𝑙 with probability Softmax 𝜏𝛿3N and add
+     edge 𝑘~𝑙 to 𝐸 )
+• (optional) Remove edge 𝑖~𝑗 with largest Ric 𝑖, 𝑗 > 𝐶
+Output: new graph 𝐺 ) = 𝑉, 𝐸 )
+
+
+
+Topping, di Giovanni, et B. 2021
+Ricci flow
+
+• Ricci flow: “diffusion of the Riemannian metric”
+                             𝜕𝑔!#
+                                  = 𝑅!#
+                              𝜕𝑡
+
+
+
+
+                                                         G. Ricci-Curbastro   R. Hamilton
+
+              Evolution of a manifold under Ricci flow
+
+
+
+Ricci 1903; Hamilton 1988;
+                                           G. Perelman   G. Ricci-Curbastro   R. Hamilton
+
+
+
+
+Ricci 1903; Hamilton 1988; Perelman 2003
+                   Curvature- vs Diffusion-based Rewiring
+
+
+
+
+                                                                                                                      Node: max Jacobian from 2-hops
+Edge: Ricci curvature
+
+
+
+
+                                        Original                                     DIGL        Curvature rewiring
+                                      Cornell graph                                +308% edges   +36% / -36% edges
+
+
+
+                   Topping, di Giovanni, et B. 2021; Klicpera et al. 2019 (DIGL)
+What contributes to over-squashing?
+
+     Theorem: (informal) large commute-time distances contribute to over-squashing.
+
+
+ • Spectral rewiring:1,2 increase the Cheeger
+   constant of the graph (“clusteredness”),
+   which leads to lower commute time
+ • Spatial rewiring:3-5 inserting edges reduces
+   the total effective resistance of the graph
+                                                                                                               T
+
+
+
+
+                                                                                                                   Commute
+   (=commute-time distance up to scale)
+
+
+
+
+                                                                                                                     time
+ • Bounded-degree expanders6 have commute                                                                      0
+
+   time 𝑂 |𝐸| ; over-squashing effect is                                                      Original                       Spectral           Spatial
+   independent on the size of the graph                                                        graph                         rewiring          rewiring
+
+
+Di Giovanni, Giusti, Barbero, Luise, Lio’, B 2023
+1
+  Arnaiz-Rodriguez et al. 2022 (DiffWire); 2Karhadkar et al. 2022; 3Abboud et al. 2022; 4Mialon et al. 2022; 5Abu-El-Haija et al. 2019; 3Deac et al. 2022 (EGP) & many more
+Graph Rewiring Approaches
+
+
+
+
+   Connectivity Diffusion               Discrete Ricci flow                 Expander Propagation
+          (DIGL)                              (SDRF)                               (EGP)
+        Gasteiger et al. 2019          Topping, Di Giovanni et B. 2022            Deac et al. 2022
+
+• KNN graph on PPR embedding        • Remove negatively-curved edges     • Fixed expander graph
++ Good for homophilic graphs        + Good for both homophilic and       • Alternate MP on original and
+                                      heterophilic graphs                  new graph
+– Bad for heterophilic graphs
+– Drastically different graph       + “Surgical” rewiring                + Optimal graph for MP
+                                    – Curvature is computationally       – No relation to input graph
+                                      expensive                          – No permutation equivariance
+
+                                No relation to the task!
+Why it is important to consider the task?
+
+
+
+
+      Van der Waals interactions            Coulomb interactions
+
+               ∝ 𝑟 608                             ∝ 𝑟 60
+
+
+              Same graph+features, different task
+     Whether the graph is good depends on the task!
+LONG-RANGE INTERACTIONS &
+    EXPRESSIVE POWER
+Long-range interactions in graph tasks
+
+• Task = a function 𝑓 𝐗 on the node features of a graph 𝐺
+• The interaction between features in nodes 𝑖 and 𝑗 required for the task is given by
+
+
+                                                                               𝜕8𝑓 𝐗
+                                    Mixing of 𝑓: mixO 𝑖, 𝑗 = max max                   R
+                                                                 𝐗   0Q2,RQ.   𝜕𝑥!2 𝜕𝑥#
+
+
+
+   • 𝑓 𝐗 = 𝜙 𝐱! + 𝜙 𝐱# is fully separable, thus mixO 𝑖, 𝑗 = 0
+   • 𝑓 𝐗 = 𝜙 𝐱! , 𝐱#                mixing depends on how non-linear 𝜙 is
+
+
+Di Giovanni, Rusch, B, Deac, Lackenby, Mishra, Veličković 2023
+Capacity bounds
+
+                                           A60
+                                                                 &
+                      mixO 𝑖, 𝑗 ≤ J 𝑐A 𝑤 8A6360 𝑤 𝐒 A63              diag 𝟏& 𝐒 3 𝐒 A63 + 𝐶𝐐3
+                                                                                             !#
+                      task        3;0   model                            topology
+
+
+
+
+  What is the capacity of MPNN required for a given task?
+                model + topology                 mixing
+
+
+Di Giovanni, Rusch, B, Deac, Lackenby, Mishra, Veličković 2023
+Capacity bounds
+
+                                           A60
+                                                                     &
+                      mixO 𝑖, 𝑗 ≤ J 𝑐A 𝑤 8A6360 𝑤 𝐒 A63                  diag 𝟏& 𝐒 3 𝐒 A63 + 𝐶𝐐3
+                                                                                                   !#
+                                           3;0
+
+
+
+                     Bound on weights 𝑤                                      Bound on depth 𝐿
+
+                   𝑑FIJ mixO 𝑖, 𝑗
+                                                      0/. !,#            𝜏 𝑖, 𝑗   |𝐸|
+                𝑤≥                                                𝐿≥            +       𝛼mixO 𝑖, 𝑗 − 𝛽
+                    𝑐8     𝑞                                              4𝑐8     𝑑! 𝑑#
+
+        • 𝑑FIJ =min node degree                                  • 𝑑! =degree of node 𝑖
+        • Fixed depth 𝐿 = 𝑑 𝑖, 𝑗 /2                              • 𝛼, 𝛽 =model-related constants
+        • 𝑞 =number of paths of length 𝑑 𝑖, 𝑗                    • 𝐸 =number of edges
+          between 𝑖 and 𝑗                                        • Bounded weights
+Di Giovanni, Rusch, B, Deac, Lackenby, Mishra, Veličković 2023
+Capacity bounds
+
+                                           A60
+                                                                      &
+                      mixO 𝑖, 𝑗 ≤ J 𝑐A 𝑤 8A6360 𝑤 𝐒 A63                   diag 𝟏& 𝐒 3 𝐒 A63 + 𝐶𝐐3
+                                                                                                    !#
+                                           3;0
+
+
+
+                     Bound on weights 𝑤                                       Bound on depth 𝐿
+
+                   𝑑FIJ mixO 𝑖, 𝑗
+                                                      0/. !,#             𝜏 𝑖, 𝑗   |𝐸|
+                𝑤≥                                                𝐿≥             +       𝛼mixO 𝑖, 𝑗 − 𝛽
+                    𝑐8     𝑞                                               4𝑐8     𝑑! 𝑑#
+
+
+           “weights need to be large enough                      • Depth must be ~commute time 𝜏 𝑖, 𝑗
+           to allow mixing”                                      • Rewiring tries to improve 𝜏
+                                                                 • 𝜏 can be as large as 𝑂 𝑛 = , which implies
+                                                                   impossibility statements
+Di Giovanni, Rusch, B, Deac, Lackenby, Mishra, Veličković 2023
+New way of characterising expressive power
+
+
+
+
+    Expressive power (informal): MPNN with 𝐿 ≤ 𝑛
+    layers cannot learn tasks that require high mixing
+    among features at nodes with large commute time.
+
+
+                                                                 A. Lehman   B. Weisfeiler
+
+
+
+
+Di Giovanni, Rusch, B, Deac, Lackenby, Mishra, Veličković 2023
+EXOTIC MESSAGE PASSING
+               𝜓
+       𝜓
+               ⊕   𝜓
+
+What       𝜓       𝜓
+                       𝜓
+               𝜓
+                       ⊕       𝜓
+
+What + Where       𝜓           𝜓
+
+
+                           𝜓
+What + Where + When
+                                    Classical MPNN   Graph Transformer
+Gutteridge, Di Giovanni et B 2023
+                              Dynamic Rewiring   Dynamic Rewiring + delay
+Gutteridge, Di Giovanni et B 2023 (DRew)                (𝝼DRew)
+Experimental validation
+                                                              Table 1
+
+                                Peptides-func   Peptides-struct   PCQM-Contact     PascalVOC-SP
+                       Model
+                                    AP "            MAE #               MRR "           F1 "
+         Classical MPNN         0.6069±0.0035    0.3357±0.0006     0.3242±0.0008    0.2860±0.0085
+Rewiring+MPNN (DIGL)            0.6830±0.0026    0.2616±0.0018     0.1707±0.0021    0.2921±0.0038
+Multi-hop (MixHop-GCN)         0.6843±0.0049     0.2614±0.0023     0.3250±0.0010    0.2506±0.0133
+ Graph Transformer (GT)         0.6326±0.0126   0.2529±0.0016      0.3174±0.0020    0.2694±0.0098
+GraphGPS (GT+MPNN)              0.6535±0.0041   0.2500±0.0005     0.3337±0.0006    0.3748±0.0109
+                 ⌫DRew-MPNN    0.7150±0.0044    0.2536±0.0015     0.3442±0.0006    0.3314±0.0024
+
+                               Evaluation on Long-Range Graph Benchmark
+
+
+
+Gutteridge et B 2023
+Cooperative Message Passing
+
+                     S                S                                B           I
+                                                      S                                            I
+
+
+
+
+                                          S                                            S
+        S                                                      L                                       I
+                                                          S
+                           S                                               S
+
+                                              S                                            L
+
+
+                                S                                              B
+                                                  S                I                           I
+                S
+
+
+
+         Standard Message Passing                             Cooperative Message Passing
+            each node Broadcasts & Listens                     each node individually decides
+
+Finkelshtein, Huang, B, Ceylan 2023
+Cooperative Message Passing
+
+
+
+
+           Broadcast &                Listen   Broadcast   Isolate
+              Listen
+Finkelshtein, Huang, B, Ceylan 2023
+Cooperative Message Passing
+                                                           r
+
+                                                       s   u
+                                                   u   r
+                                                           s
+                                               v       v
+                                                   w
+                                                           w
+
+
+
+                                      MPNN
+
+                                                           r
+
+                                                       s   u
+                                                   u   r
+                                                           s
+                                               v       v
+                                                   w
+                                                           w
+
+
+Finkelshtein, Huang, B, Ceylan 2023
+                                      Co-GNN
+Takeaways
+
+• Input graph is not necessarily the best choice for message passing
+• Graph rewiring separates input & computational graphs in attempt to avoid over-
+  squashing
+• Various rewiring techniques based on
+ • Discrete Ricci curvature
+ • Commute time / resistance distances
+ • Spectral properties such as ”connectedness”
+• The graph structure impacts the expressive power of MPNN, which can be captured
+  through the mixing ability of the GNN
+• Advanced rewiring: dynamic (DReW) or implicit (cooperative GNNs)
+Key Concepts
+
+• Transformers and latent graph learning
+• Graph rewiring
+• Graph Ricci curvature
+• Commute time
+• Dynamic rewiring
+• Co-operative GNNs
+Main References
+
+• C. Joshi, Transformers are Graph Neural Networks, 2021
+• M. Bronstein, Beyond Message Passing: a Physics-Inspired Paradigm for Graph Neural
+  Networks, The Gradient 2022. blog post on various exotic versions of message passing
+• M. Bronstein, Graph Neural Networks through the lens of Differential Geometry and
+  Algebraic Topology, Towards Data Science 2022.
+• M. Bronstein, Over-squashing, Bottlenecks, and Graph Ricci curvature, Towards Data
+  Science 2022.
+• M. Bronstein, Dynamically Rewired Delayed Message Passing GNNs, Towards Data
+  Science 2023.
+• M. Bronstein, Co-operative Graph Neural Networks, Towards Data Science 2023.
+

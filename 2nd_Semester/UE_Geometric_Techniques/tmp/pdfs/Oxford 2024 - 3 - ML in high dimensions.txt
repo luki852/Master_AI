@@ -1,0 +1,976 @@
+Learning in High Dimension
+    Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• Supervised machine learning has three sources of error: approximation, estimation,
+  and optimisation
+• Dealing with high-dimensional inputs requires strong notions of regularity
+• Standard function classes based on local/global continuity are dimensionality-cursed
+• This will bring us to the need for a new geometric type of regularity, which is at the
+  core of Geometric Deep Learning
+{cat,dog}
+(Supervised) Machine Learning = glorified curve fitting
+                   𝑦
+                                        ?
+
+                                                     𝑓∗
+
+
+                                                                     𝑥
+
+
+
+
+          Given a set of observations 𝑥! , 𝑦! $   !"# of some function 𝑓
+                                                                         ∗
+
+          (“training set”) predict its values at previously unseen points
+(Supervised) Machine Learning = glorified curve fitting
+                 𝑦
+
+
+
+
+                                                   𝑥
+
+
+
+
+How the function
+  looks like?
+(Supervised) Machine Learning = glorified curve fitting
+                 𝑦
+
+
+
+
+                                                   𝑥
+
+
+
+
+How the function       How the sampling
+  looks like?            looks like?
+(Supervised) Machine Learning = glorified curve fitting
+                   𝑦
+
+
+
+
+                                                   𝑥
+
+
+
+
+How the function       How the sampling         How to find the
+  looks like?            looks like?               fitting?
+   approximation            estimation            optimisation
+BASICS OF STATISTICAL
+ MACHINE LEARNING
+Problem setting
+
+• Inputs 𝑥! ∈ 𝒳 typically high dimensional (e.g. 𝒳 = ℝ& , 𝑑 ≫ 1)
+• Labels 𝑦! ∈ 𝒴
+ • Regression:          𝒴= ℝ
+ • Classification:      𝒴= 1, … , 𝐾
+ • Structured prediction: 𝒴= 𝒳
+Examples of Supervised Learning problems
+
+
+
+
+                 –0.07                 cat
+
+
+
+   Regression            Classification      Structured prediction
+  (solubility logP)      (binary: cat/dog)    (image segmentation)
+Data
+
+• Data distribution 𝑃 𝑥, 𝑦
+ • Distribution 𝑃 is unknown during learning
+                                                  𝑥'
+
+ • Samples assumed to be drawn i.i.d.
+ • Often forms a low-dimensional structure in 𝒳
+   (“manifold assumption”)                             𝑥#
+Manifold Assumption
+
+
+
+
+Tenenbaum, De Silva, Langford 2000
+Error metric
+
+• Loss function ℓ: 𝒴×𝒴 → ℝ satisfying ℓ 𝑦, 𝑦′ ≥ 0 and ℓ 𝑦, 𝑦 = 0
+ • Classification loss:   ℓ 𝑦, 𝑦′ ≥ 1!"!#
+
+ • Regression loss:       ℓ 𝑦, 𝑦′ = 𝑦 − 𝑦′ $
+
+• Given a function 𝑓: 𝒳 → 𝒴, the loss ℓ 𝑓 𝑥 , 𝑦 is a random variable
+Error metric
+
+• Loss function ℓ: 𝒴×𝒴 → ℝ satisfying ℓ 𝑦, 𝑦′ ≥ 0 and ℓ 𝑦, 𝑦 = 0
+• Population risk (or error) of 𝑓
+
+             ℛ 𝑓 = 𝔼ℓ 𝑓 𝑥 , 𝑦 = 4           ℓ 𝑓 𝑥 , 𝑦 d𝑃 𝑥, 𝑦
+                                      𝒳×𝒴
+
+
+                   = 𝔼+ 𝔼,|+ ℓ 𝑓 𝑥 , 𝑦 |𝑥 = 4 4 ℓ 𝑓 𝑥 , 𝑦 d𝑃,|+ 𝑦 d𝑃+ 𝑥
+                                                  𝒳   𝒴
+                        Conditioning on 𝑥
+Error metric
+
+• Loss function ℓ: 𝒴×𝒴 → ℝ satisfying ℓ 𝑦, 𝑦′ ≥ 0 and ℓ 𝑦, 𝑦 = 0
+• Population risk (or error) of 𝑓
+
+             ℛ 𝑓 = 𝔼ℓ 𝑓 𝑥 , 𝑦 = 𝔼+ 𝔼,|+ ℓ 𝑓 𝑥 , 𝑦 |𝑥
+
+
+• Bayes optimal estimator minimises the error point-wise
+                             𝑓 ∗ 𝑥 = argmin 𝔼*|, ℓ 𝑧, 𝑦 |𝑥
+                                        .∈𝒴
+
+ • Defined via distribution 𝑃, which is unknown in practice
+ • 𝑓 ∗ may be arbitrarily complex
+                Conditional
+label space 𝒴
+
+                distribution
+                  𝑃 𝑦|𝑥
+                                   𝑓 𝑥   Joint distribution
+                                              𝑃 𝑥, 𝑦
+
+
+
+                                                                     𝑓
+
+
+
+
+                               𝑥                              𝑥′     input space 𝒳
+                                         Data distribution
+                                              𝑃𝒳 𝑥
+
+                                                              DOGS
+                               CATS
+Model class
+
+• Hypothesis (or model) class is a subset of functions ℱ = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ
+ • Polynomials of degree 𝑘:     𝑓0 𝑥 = ∑2!"1 𝜃! 𝑥 !
+ • Neural networks of certain type (with 𝜃 being layer weights)
+Model class
+
+• Hypothesis (or model) class is a subset of functions ℱ = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ
+
+• Model complexity (or capacity) is some non-negative function 𝛾: Θ → ℝ allowing to
+  order the functions in ℱ according to their “complexity”
+ • Weight decay             𝛾 𝜃 = 𝜃 33         in a linear model 𝑓0 𝑥 = 𝜃, 𝑥
+
+ • Number of neurons in a neural network
+                                                             '
+ • Sobolev norm             𝛾 𝜃 = ∫ℝ 1 + 𝜔' 5 𝑓80 𝜔              d𝜔
+
+   Sobolev space 𝐻 % = 𝑊 %,$ is a generalization of the Lebesgue space 𝐿$ (square-integrable functions) accounting
+   for the function’s derivatives
+   Note: confusingly, 𝑓0 here denotes the Fourier transform of 𝑓
+Model class
+
+• Hypothesis (or model) class is a subset of functions ℱ = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ
+
+• Model complexity (or capacity) is some non-negative function 𝛾: Θ → ℝ allowing to
+  order the functions in ℱ according to their “complexity”
+ • Weight decay         𝛾 𝜃 = 𝜃 33     in a linear model 𝑓0 𝑥 = 𝜃, 𝑥
+
+ • Number of neurons in a neural network
+                                                   '
+ • Sobolev norm         𝛾 𝜃 = ∫ℝ 1 + 𝜔' 5 𝑓80 𝜔        d𝜔
+
+ • Implicitly defined through optimisation algorithm (e.g. gradient descent of under-determined
+   least-squares problem converges to interpolating solution with minimum 𝐿'-norm)
+Empirical risk
+
+• Empirical risk (or error) replaces the expectation of the loss with an average on the
+                          $
+ training set   𝑥! , 𝑦!   !"# :
+                                             $
+                                       1
+                                  B
+                                  ℛ 𝑓 = E ℓ 𝑓 𝑥! , 𝑦!
+                                       𝑁
+                                            !"#
+ • Generalisation gap = ℛ; 𝑓 − ℛ 𝑓
+ • ℛ; 𝑓 is a random function serving an unbiased estimator of ℛ 𝑓
+                          #
+ • Variance 𝜎 𝑓 ~𝒪        $
+                                                  '
+ • Hoeffding inequality 𝑃 ℛ; 𝑓 − ℛ 𝑓 > 𝜀 ≤ 2𝑒 6'7 $
+   “ℛ; 𝑓 = ℛ 𝑓 is probably approximately correct”                         𝑁→∞        ℛ; 𝑓
+ • Tells how good a given 𝑓 is but not the model class ℱ
+                                                                      𝜀   ℛ 𝑓    𝜀
+   (more delicate analysis: VC dimension, Rademacher complexity)
+Empirical risk minimisation
+
+                                                                                                $
+• Supervised learning = minimisation of the empirical risk over a training set        𝑥! , 𝑦!   !"#
+  w.r.t. the parameters of a model class ℱ = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ :
+
+                                       𝜃B ∈ argmin ℛB 𝑓0
+                                              0∈8
+
+ in hope that the estimator 𝑓F = 𝑓09 generalises well, i.e., excess risk ℛ 𝑓F − ℛ 𝑓 ∗ is small
+
+ • Usually a non-convex problem, can be solved only approximately!
+ • Achieving a small training error ℛ; 𝑓09 fundamentally depends on the richness of the model
+   class (often, number of parameters Θ )
+ • Deep learning typically operates in overparametrised regime ( Θ ≫ 𝑁), where multiple solutions
+   are possible
+ • How to make an informed choice among these solutions?
+Regularisation
+
+• Regularisation (or capacity control): find the “simplest” solution by restricting the
+  model capacity (“Occam’s razor principle”)
+
+ • Constrained form:           𝜃8: = argmin ℛ; 𝑓0     s.t. 𝛾 𝜃 ≤ 𝛿
+                                      0∈8
+
+
+ • Penalised form:             𝜃8 = argmin ℛ; 𝑓0 + 𝜆𝛾 𝜃
+                                     0∈8
+
+
+ • Interpolation form:         𝜃8 = argmin 𝛾 𝜃      s.t. ℛ; 𝑓0 = 0
+                                     0∈8
+
+ • Implicit form: stems from the optimisation algorithm
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗ = ℛ 𝑓F − min ℛ 𝑓0 + min ℛ 𝑓0 − ℛ 𝑓 ∗
+                                   ; 0 <:               ; 0 <:
+
+                                     best model
+                                      𝑓( ∗ ∈ ℱ)
+
+  Note: Here we assume for simplicity the min is attained (more generally, should be inf)
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗ = ℛ 𝑓F − ℛ 𝑓0 ∗ + ℛ 𝑓0 ∗ − ℛ 𝑓 ∗
+
+                                     approximation error
+                                     “how expressive ℱ) is”
+                                         ℛ
+
+
+
+                                 𝑓∗
+               𝑓0 ∗ approx.
+
+              Best              Ideal
+              model           solution
+    ℱ4
+Model class
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗ = ℛ 𝑓F − ℛ 𝑓0 ∗ + ℛ 𝑓0 ∗ − ℛ 𝑓 ∗
+
+                                     approximation error
+                                     “how expressive ℱ) is”
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗ = ℛ 𝑓F − ℛB 𝑓F + ℛB 𝑓09 − ℛ 𝑓0 ∗ + ℛB 𝑓F − ℛB 𝑓09 + ℛ 𝑓0 ∗ − ℛ 𝑓 ∗
+
+                                                      optimisation error approximation error
+                                                     “how far 𝑓0 is from 𝑓(+ ” “how expressive ℱ) is”
+                                                                   ℛ
+
+
+                         𝑓09
+                                                           𝑓∗
+                                         𝑓0 ∗ approx.
+     Initial   𝑓F       tim
+     guess         op                                     Ideal
+                                        Best
+            Trained                                     solution
+                                        model
+           estimator           ℱ4
+                          Model class
+ℛB
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗ = ℛ 𝑓F − ℛB 𝑓F + ℛB 𝑓09 − ℛ 𝑓0 ∗ + ℛB 𝑓F − ℛB 𝑓09 + ℛ 𝑓0 ∗ − ℛ 𝑓 ∗
+
+                           ℛ5 𝑓(+ = min ℛ5 𝑓 ≤ ℛ5 𝑓( ∗    optimisation error approximation error
+                                   , ( -)
+                                                         “how far 𝑓0 is from 𝑓(+ ” “how expressive ℱ) is”
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗ ≤ ℛ 𝑓F − ℛB 𝑓F + ℛB 𝑓0 ∗ − ℛ 𝑓0 ∗ + ℛB 𝑓F − ℛB 𝑓09 + ℛ 𝑓0 ∗ − ℛ 𝑓 ∗
+
+                                                      optimisation error approximation error
+                                                     “how far 𝑓0 is from 𝑓(+ ” “how expressive ℱ) is”
+Error decomposition
+
+• Excess risk of the estimator 𝑓F ≈ 𝑓09 obtained by (approximate) constrained empirical
+ risk minimisation over a nested family of functions ℱ: = 𝑓0 : 𝒳 → 𝒴 ∶ 𝜃 ∈ Θ, 𝛾 𝜃 ≤ 𝛿
+
+
+
+  ℛ 𝑓F − ℛ 𝑓 ∗ ≤ 2 sup ℛB 𝑓0 − ℛ 𝑓0 + ℛB 𝑓F − ℛB 𝑓09 + ℛ 𝑓0 ∗ − ℛ 𝑓 ∗
+                   ; 0 <:
+
+                        estimation error           optimisation error approximation error
+                    “how far the empirical risk   “how far 𝑓0 is from 𝑓(+ ” “how expressive ℱ) is”
+                   is from the population risk”
+                                                                    ℛ
+
+
+                   𝑓09
+                                                            𝑓∗
+                                          𝑓0 ∗ approx.
+         𝑓F       tim
+             op               ℛ; − ℛ =
+                                         Best              Ideal
+      Trained             estimation
+                                         model           solution
+     estimator           ℱ4
+                    Model class
+ℛB
+                                                      ℛ
+
+
+     𝑓09
+                                              𝑓∗
+                            𝑓0 ∗ approx.
+                ℛ; − ℛ =
+                           Best              Ideal
+            estimation
+                           model           solution
+           ℱ4
+     Model class
+ℛB
+                                                       ℛ
+
+
+     𝑓09
+                                               𝑓∗
+                           𝑓0 ∗   approx.
+              ℛ; − ℛ =
+                          Best                Ideal
+             estimation
+                          model             solution
+           ℱ4/<
+     Model class
+ℛB
+Classical Bias-Variance tradeoff
+
+
+                                                             n
+    error
+
+
+
+
+                                                        io
+                                                     at
+                                           a   lis            n
+                                        er            at
+                                                         io
+                               g   en
+                                              tim
+                                         es
+
+
+
+
+                            approximation
+                         model complexity
+Classical Bias-Variance tradeoff
+
+            Underfitting     Overfitting
+    error
+
+
+
+
+                           model complexityinterpolation threshold
+Modern Bias-Variance tradeoff: “Double Descent”
+          error
+
+
+
+
+                              “classical”
+
+
+
+
+                                            interpolation threshold
+                                                                      “modern”
+                               regime
+                                                                       regime
+
+
+
+
+                                                                        model complexity
+Neal et al. 2018; Belkin et al. 2019
+THE STORY IN HIGH
+   DIMENSIONS
+“Glorified curve fitting”
+
+                    𝑦
+
+
+
+
+                                             𝑥#
+          𝑥'
+
+
+               𝑥>
+
+      underlying assumption of function “regularity”
+Nearest-neighbour classifier
+
+                     𝑥'
+
+
+
+
+                                       𝑥#
+
+
+             “my neighbours are similar to me”
+Nearest-neighbour classifier
+
+                     𝑥'
+
+
+
+                                      𝑟=0.5
+
+
+
+
+                                              𝑥#
+
+
+
+                          vol 𝐵! ℝ"   ≈ 0.785
+Nearest-neighbour classifier
+
+                     𝑥'
+
+
+
+                                      𝑟=0.5
+
+
+
+
+                                              𝑥#
+
+
+
+             𝑥?           vol 𝐵! ℝ#   ≈ 0.524
+Nearest-neighbour classifier
+
+                     𝑥'
+
+
+
+
+                                             𝑥#
+           𝑥?
+
+                          vol 𝐵! ℝ!$   ≈ 0.002
+                   𝑥>
+      “[dimensionality is] a curse which has hung over
+      the head of the physicist and astronomer for many
+      a year. ”
+                                     — Dynamic Programming
+
+
+                                                             R. Bellman
+
+
+
+
+Bellman 1957
+        Curse of dimensionality
+
+Approximation   Estimation   Optimisation
+CURSE IN ESTIMATION
+Learning Lipschitz functions
+
+• A function 𝑓: 𝒳 ⊆ ℝ& → ℝ is 𝜷-Lipschitz if |𝑓 𝑥 − 𝑓 𝑥 @ | ≤ 𝛽 𝑥 − 𝑥 @
+
+ • 𝛽 = Lip 𝑓 is the Lipschitz constant of 𝑓
+ • Strong form of uniform continuity
+ • Global property (unlike simple continuity)
+
+
+
+
+  Reminder:
+  𝑓 is continuous at 𝑥 if ∀𝜀 > 0 ∃𝛿 > 0 s.t. ∀𝑥 # 𝑥 − 𝑥 # < 𝛿 ⟹ 𝑓 𝑥 − 𝑓 𝑥 # < 𝜀.
+  𝑓 is uniformly continuous if ∀𝜀 > 0 ∃𝛿 > 0 s.t. ∀𝑥, 𝑥 # 𝑥 − 𝑥 # < 𝛿 ⟹ 𝑓 𝑥 − 𝑓 𝑥 #   < 𝜀.
+Learning Lipschitz functions
+
+• A function 𝑓: 𝒳 ⊆ ℝ& → ℝ is 𝜷-Lipschitz if |𝑓 𝑥 − 𝑓 𝑥 @ | ≤ 𝛽 𝑥 − 𝑥 @
+
+ • 𝛽 = Lip 𝑓 is the Lipschitz constant of 𝑓
+ • Strong form of uniform continuity
+ • Global property (unlike simple continuity)
+
+
+
+       How many samples 𝑁 are needed to approximate a
+          Lipschitz function in ℝ% with accuracy 𝜀?
+Learning Lipschitz functions: Lower bound
+
+• Consider a 1-Lipschitz function constructed as a
+  superpositions of blobs placed at the corners 𝐻F =                                          +1
+
+    𝑧G , … , 𝑧F ∶ 𝑧H = ±1 of a 𝑑-dimensional hypercube
+                                                                                      −1           +1
+                     𝑓 𝑥 = E 𝑐. 𝜑 𝑥 − 𝑧               𝑐. = ±1
+                            .∈A .
+                                                                                              −1
+• Assume 𝑓 is sampled at 𝑁 samples
+
+                                                                                   𝔼 𝑓 − 0$
+                                                                                         𝑓
+Exercise: prove that if 𝑁 ≪ 2 then any estimator 𝑓0 will incur a relative error of
+                               /
+                                                                                            =Θ 1
+                                                                                     𝔼𝑓$
+
+
+Von Luxburg, Bosquet 2004
+Learning Lipschitz functions: Lower bound
+
+• Consider a 1-Lipschitz function constructed as a
+  superpositions of blobs placed at the corners 𝐻F =            +1
+
+    𝑧G , … , 𝑧F ∶ 𝑧H = ±1 of a 𝑑-dimensional hypercube
+                                                           −1        +1
+                     𝑓 𝑥 = E 𝑐. 𝜑 𝑥 − 𝑧    𝑐. = ±1
+                            .∈A .
+                                                                −1
+• Assume 𝑓 is sampled at 𝑁 samples
+
+
+                            Learning Lipschitz functions is a
+                            dimensionality-cursed problem
+Von Luxburg, Bosquet 2004
+CURSE IN APPROXIMATION
+Simple Perceptrons
+               𝑤1
+          𝑥1
+               𝑤$
+          𝑥$
+                          +           𝑦 = sign 𝐰 ! 𝐱
+               𝑤/
+          𝑥/
+               𝑏 = 𝑤/01
+          1
+
+
+
+
+               F. Rosenblatt   M. Minsky   S. Papert
+Shallow Perceptrons
+
+• Two-layer perceptron with a non-polynomial activation function 𝜎
+
+                          ℱ = 𝑓 𝑥 = E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B )
+                                       B<C
+
+
+
+                                      𝑏#
+                                             𝜎
+                                 𝑤#              𝑣#
+                                      +
+                             𝑥
+                                      𝑏C     ⋮        +   𝑦
+                                 𝑤C              𝑣C
+                                      +
+Shallow Perceptrons
+
+• Two-layer perceptron with a non-polynomial activation function 𝜎
+
+                              ℱ = 𝑓 𝑥 = E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B )
+                                           B<C
+
+• Parametrised by weights 𝐖, 𝐛, 𝐯
+• Various definitions of capacity, e.g.
+ • Number of neurons:   𝛾 𝑓 =𝑚
+
+ • Path norm:           𝛾 𝑓 = ∑ 𝑣B    𝑤B + 𝑏B
+Shallow Perceptrons are universal approximators
+
+• Two-layer perceptron with a non-polynomial activation function 𝜎
+
+                                                  ℱ = 𝑓 𝑥 = E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B )
+                                                                           B<C
+
+
+
+
+         Universal Approximation Theorem: ℱ is dense
+         in the class of continuous 𝑑-dimensional
+         functions w.r.t. the uniform compact topology
+
+
+    𝐴 ⊆ 𝑋 is dense in 𝑋 if 𝐴̅ = 𝑋, where 𝐴̅ = 𝐴 ∪ lim2→4 𝑎2 : 𝑎2 ∈ 𝐴
+                                                                                                         G. Cybenko                  K. Hornik
+Hilbert 1990 (Thirteenth Problem); Kolmogorov 1956; Arnold 1957 (“Superposition Theorem”); Hecht-Nielsen 1987 (first use in neural networks)
+Cybenko 1989; Funahashi 1989; Hornik et al. 1989; Barron 1993; Leshno et al. 1993; Maiorov 1999; Pinkus 1999
+Shallow Perceptrons are universal approximators
+
+• Two-layer perceptron with a non-polynomial activation function 𝜎
+
+                                                  ℱ = 𝑓 𝑥 = E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B )
+                                                                           B<C
+
+
+
+
+         Universal Approximation Theorem: ℱ can
+         uniformly approximate any continuous 𝑑-
+         dimensional function on a compact set to any
+         desired accuracy 𝜀.
+
+
+                                                                                                         G. Cybenko                  K. Hornik
+Hilbert 1990 (Thirteenth Problem); Kolmogorov 1956; Arnold 1957 (“Superposition Theorem”); Hecht-Nielsen 1987 (first use in neural networks)
+Cybenko 1989; Funahashi 1989; Hornik et al. 1989; Barron 1993; Leshno et al. 1993; Maiorov 1999; Pinkus 1999
+Shallow Perceptrons are universal approximators
+
+• Two-layer perceptron with a non-polynomial activation function 𝜎
+
+                          ℱ = 𝑓 𝑥 = E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B )
+                                         B<C
+
+
+                   𝑏#                            𝑦
+              𝑤#         𝑣#
+                   +
+          𝑥
+                   𝑏'          +     𝑦                    𝑣#
+              𝑤'          𝑣'
+                   +
+                                                                         𝑥
+                                                            E      E
+                                                           6F5    6F'
+                                                              5      '
+Shallow Perceptrons are universal approximators
+
+• Two-layer perceptron with a non-polynomial activation function 𝜎
+
+                          ℱ = 𝑓 𝑥 = E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B )
+                                         B<C
+
+                 +
+                     ⋮                           𝑦
+
+                 +
+          𝑥                    +     𝑦
+
+                 +
+                     ⋮                                               𝑥
+                 +
+Shallow Perceptrons are universal approximators
+
+        Universal Approximation Theorem: 𝜎 is not polynomial iff for every
+        continuous function 𝑓: 𝐾 ⊂ ℝ& → ℝ defined on a compact set 𝐾 and 𝜀 > 0, there
+        exists a two-layer Perceptron with 𝑚 neurons and weights 𝐖, 𝐛, 𝐯 s.t.
+
+                                         max 𝑓 𝑥 − E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B ) < 𝜀
+                                         +∈G
+                                                    B<C
+
+
+   • Fixed number of layers (“bounded depth”)
+   • Does not tell how many neurons 𝑚 are needed (“arbitrary width”)
+   • Existence result: does not tell how to find the weights
+   • There are stronger results, including bounded depth and width
+Cybenko 1989; Hornik 1991; Pinkus 1999
+Shallow Perceptrons are universal approximators
+
+        Universal Approximation Theorem: 𝜎 is not polynomial iff for every
+        continuous function 𝑓: 𝐾 ⊂ ℝ& → ℝ defined on a compact set 𝐾 and 𝜀 > 0, there
+        exists a two-layer Perceptron with 𝑚 neurons and weights 𝐖, 𝐛, 𝐯 s.t.
+
+                             max 𝑓 𝑥 − E 𝑣B 𝜎(𝑤BD 𝑥 + 𝑏B ) < 𝜀
+                             +∈G
+                                         B<C
+
+
+
+
+                     What is the relation between dimension 𝑑,
+                      number of neurons 𝑚, and the error 𝜀?
+Cybenko 1989; Hornik 1991
+Approximation rates
+
+• Bound on the approximation error
+
+                                           𝜀 = inf    sup     𝑓 𝑥 −𝑔 𝑥
+                                                I∈ℱ +∈G⊂ℝ .
+
+
+   w.r.t. 𝑑, 𝑚 for different classes of functions
+
+                                                                                 '
+  • Sobolev class         𝑓 ∈ 𝐻 5 ℝ& = 𝑓 ∈ 𝐿' ℝ& ∶ ∫ℝ. 1 + 𝜔 ' 5 𝑓8 𝜔                d𝜔 < ∞
+      error is exponential 𝜀 = 𝒪 𝑚65/&                      dimensionality-cursed!
+
+     “functions with sufficiently many derivatives”
+
+
+
+
+Maiorov 1999
+Approximation rates
+
+• Bound on the approximation error
+
+                                       𝜀 = inf   sup     𝑓 𝑥 −𝑔 𝑥
+                                           I∈ℱ +∈G⊂ℝ .
+
+
+   w.r.t. 𝑑, 𝑚 for different classes of functions
+
+                                                                             '
+   • Sobolev class          𝑓 ∈ 𝐻 5 ℝ& = 𝑓 ∈ 𝐿' ℝ& ∶ ∫ℝ. 1 + 𝜔 ' 5 𝑓8 𝜔          d𝜔 < ∞
+      error is exponential 𝜀 = 𝒪 𝑚65/&                 dimensionality-cursed!
+
+                                                            '
+   • Barron class           𝑓 ∈ 𝑓 ∈ 𝐿' ℝ& ∶ ∫ℝ. 𝜔 ' 𝑓8 𝜔        d𝜔 < ∞
+      error is 𝜀 = 𝒪 𝑚6#                               too strong assumption in practice!
+
+Maiorov 1999; Barron 1993
+CURSE IN OPTIMISATION
+How hard is optimisation in high dimensions?
+
+• Finding a global optimum of a generic high-dimensional function is NP-hard
+
+
+
+
+                                                                   local minimum
+             loss
+
+
+
+
+                                                         local minimum
+                                   global minimum
+
+                                      input space 𝒳
+How hard is optimisation in high dimensions?
+
+• Finding a global optimum of a generic high-dimensional function is NP-hard
+
+
+
+
+                                                                   bad local minimum
+             loss
+
+
+
+
+                                                         good local minimum
+                                   global minimum
+
+                                      input space 𝒳
+How hard is optimisation in high dimensions?
+
+• Finding a global optimum of a generic high-dimensional function is NP-hard
+• Deep neural networks have more benign landscapes with no “bad local minima”
+             loss
+
+
+
+
+                                                         good local minimum
+                                   global minimum
+
+                                      input space 𝒳
+How hard is optimisation in high dimensions?
+
+• Finding a global optimum of a generic high-dimensional function is NP-hard
+• Deep neural networks have more benign landscapes with no “bad local minima”
+ • Most local minima are equivalent and yield similar test performance
+ • The probability of finding a “bad” local minimum decreases with network depth
+ • Finding the global minimum on the training set (as opposed to one of the many good local
+   ones) is not useful in practice and may lead to overfitting
+How hard is optimisation in high dimensions?
+
+
+
+                                                                                              depth
+                                                                                                25
+                                                                                                50
+                            count
+
+
+
+
+                                                                                                100
+                                                                                                250
+                                                                                                500
+
+
+
+
+                                                            loss
+
+Choromanska et al. 2015
+
+
+
+
+                          Strict saddle property [choromanska], All local minima are global
+How hard is optimisation in high dimensions?
+
+• Finding a global optimum of a generic high-dimensional function is NP-hard
+• Deep neural networks have more benign landscapes with no “bad local minima”
+   • Most local minima are equivalent and yield similar test performance
+   • The probability of finding a “bad” local minimum decreases with network depth
+   • Finding the global minimum on the training set (as opposed to one of the many good local
+     ones) is not useful in practice and may lead to overfitting
+• Gradient descent can efficiently find local minima in high dimension
+
+           Typical result: Noisy gradient descent can find 𝜀-approximate second-order
+           stationary points of a 𝛽-smooth loss function in 𝒪l 𝛽 log𝑑/𝜀 ' iterations.
+
+Jin 2017
+GEOMETRIC REGULARITY
+Findings so far: classical notions of regularity are of little use!
+
+• Lipschitz class is too large: estimation error is dimensionality-cursed
+
+
+
+
+                                 𝑓09
+
+                                                        𝑓0 ∗        𝑓∗
+                                ℛ; − ℛ = ∝ 𝜀 6&
+                                   estimation           approximation
+           ℛB
+                                                                ℛ
+                                  ℱ = Lip
+Findings so far: classical notions of regularity are of little use!
+
+• Lipschitz class is too large: estimation error is dimensionality-cursed
+• Sobolev class is too small: approximation error is dimensionality-cursed
+
+
+
+
+                                 𝑓09
+
+                                                   𝑓0 ∗                   𝑓∗
+                                       ℛ; − ℛ =             𝜀 ∝ 𝑚 6%//
+                                   estimation             approximation
+           ℛB
+                                            5
+                                                                     ℛ
+                                   ℱ=𝐻
+Geometric priors
+
+
+       𝑥'
+
+
+
+
+                   𝑥#
+                        𝑥   𝑓   𝑦
+Geometric priors
+
+
+                   signals 𝒳 Ω
+
+
+
+                          𝑥 𝑢
+                                 𝑥   𝑓   𝑦
+                     𝑢
+
+                    domain Ω
+Takeaways
+
+• Learning in high dimensions is plagued by the curse of dimensionality
+• Impossible without assumptions (“priors”)
+• Classical assumptions of regularity (from low-dimensional analysis) are not
+  appropriate priors
+• Geometric priors: inputs are signals defined over low-dimensional geometric domains
+• Next lectures: how to incorporate geometric priors into neural network architectures
+  (“Geometric Deep Learning”)
+Key Concepts
+
+• Approximation, Estimation & Optimisation errors
+• Bias-Variance tradeoff
+• Curse of dimensionality
+• Universal approximation
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 2 “Learning in
+  high dimensions”
+• O. Bosquet, S. Boucheron, G. Lugosi, Introduction to statistical learning theory, Lecture
+  Notes in Computer Science 3176, Springer, 2004. Basics of statistical ML
+• U. von Luxburg, O. Bosquet, Distance-based classification with Lipschitz functions,
+  JMLR 5:669–695, 2004. Bounds for Lipschitz functions
+• A. Pinkus, Approximation theory of the MLP model in neural networks, Acta Numerica
+  8:143–195, 1999. Universal approximation results for neural networks
+Background Pre-Read
+
+• A. Bronstein, Probability and statistics: a survival guide, Course notes. Refresher of
+ probability & statistics for ML
+

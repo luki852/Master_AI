@@ -1,0 +1,1264 @@
+                   Grids
+Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• Grids as special case of graphs, providing more structure
+• Translation symmetry
+• Convolutions are linear translation-equivariants
+• Fourier transform diagonalises convolution operators and offers a spectral view dual to
+  the spatial one
+• Geometric stability and the need for multiscale representation (wavelets)
+• Wavelet Scattering as a simple instance of the Geometric Deep Learning blueprint
+• Convolutional Neural Networks
+Geometric Deep Learning Blueprint
+
+     domain Ω             signals 𝒳 Ω         functions ℱ 𝒳 Ω
+
+
+
+
+                                                     𝑓
+
+ domain symmetry       group representation    𝐺-invariance /
+    group 𝐺                    𝜌 𝐺             𝐺-equivariance
+Popular architectures as instances of the Blueprint
+
+
+ Architecture           Domain Ω            Symmetry Group 𝐺
+ CNN                    Grid                Translation
+ Spherical CNN          Sphere / SO(3)      Rotation SO(3)
+ Intrinsic / Mesh CNN   Manifold / Mesh     Isometry Iso(Ω) /
+                                            Gauge Symmetry SO(2)
+ GNN                    Graph               Permutation S!
+ Deep Sets              Set                 Permutation S!
+ Transformer            Complete Graph      Permutation S!
+ LSTM                   1D Grid             Time warping
+Geometric Deep Learning Building Blocks
+
+• Linear equivariant: 𝐵: 𝒳 Ω → 𝒳′ Ω satisfying 𝐵 𝑔𝑥 = 𝑔𝐵 𝑥
+
+• Nonlinearity: 𝜎: 𝒳 → 𝒳 applied element-wise, 𝜎𝑥 𝑢 = 𝜎 𝑥 𝑢
+
+                                         0
+• Local pooling (coarsening): 𝑃: 𝒳 Ω → 𝒳 Ω
+
+• Invariant layer (global pooling): 𝐴: 𝒳 → 𝒴 satisfying 𝐴 𝑔𝑥 = 𝐴 𝑥
+Geometric Deep Learning Building Blocks
+
+• Linear equivariant: 𝐵: 𝒳 Ω → 𝒳′ Ω satisfying 𝐵 𝑔𝑥 = 𝑔𝐵 𝑥
+
+• Nonlinearity: 𝜎: 𝒳 → 𝒳 applied element-wise, 𝜎𝑥 𝑢 = 𝜎 𝑥 𝑢
+
+                                         0
+• Local pooling (coarsening): 𝑃: 𝒳 Ω → 𝒳 Ω
+
+• Invariant layer (global pooling): 𝐴: 𝒳 → 𝒴 satisfying 𝐴 𝑔𝑥 = 𝐴 𝑥
+Grid = Graph
+
+
+
+
+               grid = ring graph   periodic b.c.
+Translation on Grid with periodic b.c. = Cyclic group
+
+• Ω = 0, … , 𝑛 − 1 = ℤ!
+• 1D translations with periodic boundary conditions for the cyclic group 𝐺 = 𝑍!
+• Modulo 𝑛 arithmetics:
+ • 𝑔: Ω → Ω:          𝑢 ↦ 𝑢 + 1 mod 𝑛
+ • 𝑔"#: Ω → Ω:        𝑢 ↦ 𝑢 − 1 mod 𝑛
+ • 𝑔$ : Ω → Ω:        𝑢 ↦ 𝑢 + 𝑘 mod 𝑛
+
+• Note that Ω ≅ 𝐺 (i.e., every translation group element can be identified with a point
+  on the domain). This is exception rather than rule!
+Multidimensional Grids
+
+
+
+
+           2-dimensional
+   Ω = 0, … , 𝑛 − 1 ⨂ 0, … , 𝑛 − 1
+             𝐺 = 𝑍! ×𝑍!
+Multidimensional Grids
+
+
+
+
+           2-dimensional             d-dimensional
+   Ω = 0, … , 𝑛 − 1 ⨂ 0, … , 𝑛 − 1   Ω = 0, … , 𝑛 − 1 ⨂&
+             𝐺 = 𝑍! ×𝑍!               𝐺 = 𝑍! × … ×𝑍!
+Signals on Grids
+
+• Space of signals on 1D grid: 𝒳 Ω = 𝑥: Ω → ℝ ≅ ℝ!
+• Represented as 𝑛-dimensional vectors 𝐱 = 𝑥' , … , 𝑥!"#
+
+
+
+
+Note: in this lecture, for convenience we will be using indices 0, … , 𝑛 − 1
+“Lifting”
+
+            Group representation
+             𝜌 𝑔 :𝒳 Ω → 𝒳 Ω
+
+
+
+
+                 group
+                 𝑔: Ω → Ω
+Shift operator
+
+                                                      1
+                                                            1
+
+                                  =                               1
+                                                                       1
+                                                                             1
+                                                1
+
+
+
+
+Note: Observe that the adjacency matrix of the directed ring graph is exactly the shift operator. We will use it
+when defining graph convolutions.
+Shift operator
+
+                          1
+                              1
+                 𝐒=               1
+                                      1
+                                          1
+                      1
+Shift operator
+
+                 𝑥#         1                   𝑥'
+                 𝑥(             1               𝑥#
+                 𝑥)                 1           𝑥(
+                 𝑥* =                   1       𝑥)   “Left shift”
+                 𝑥+                         1   𝑥*
+                 𝑥'     1                       𝑥+
+Shift operator
+
+                                             1
+                                                 1
+                             𝐒( =                     1
+                                                          1
+                                    1
+                                         1
+
+• For every 𝑔 ∈ 𝑍! its representation is given by 𝜌 𝑔 = 𝐒 $ for some 𝑘
+Shift operator
+
+                                                           1
+                                       1
+                                𝐒, =       1
+                                               1
+                                                   1
+                                                       1
+
+• For every 𝑔 ∈ 𝑍! its representation is given by 𝜌 𝑔 = 𝐒 $ for some 𝑘
+
+• Inverse element: 𝐒 "# = 𝐒 ,
+Shift operator
+
+                                     𝑥+                                 1   𝑥'
+                                     𝑥'        1                            𝑥#
+                                     𝑥#                 1                   𝑥(
+                                     𝑥( =                   1               𝑥)   “Right shift”
+                                     𝑥)                         1           𝑥*
+                                     𝑥*                             1       𝑥+
+
+
+• For every 𝑔 ∈ 𝑍! its representation is given by 𝜌 𝑔 = 𝐒 $ for some 𝑘
+
+• Inverse element: 𝐒 "# = 𝐒 ,
+• 𝐒 is an orthogonal matrix satisfying 𝐒 , 𝐒 = 𝐒𝐒 , = 𝐈 (and consequently, as we will see,
+  has orthogonal eigenvectors)
+
+Exercise: prove that 𝐺 is commutative, i.e., 𝑔ℎ = ℎ𝑔.
+2D Shift operator
+
+                          1
+                              1
+                 =                 1
+                                       1
+                                            1
+                     1
+
+• Images 𝒳 Ω ≅ ℝ!×.
+• Represented as 𝑛×𝑚-dimensional matrices 𝐗
+• Shifts can be applied from the left (row-wise or vertical)
+2D Shift operator
+
+                         1                                               1
+                              1                             1
+                                  1                             1
+                 =
+                                       1                             1
+                                           1
+                     1
+
+• Images 𝒳 Ω ≅ ℝ!×.
+• Represented as 𝑛×𝑚-dimensional matrices 𝐗
+• Shifts can be applied from the left (row-wise or vertical) or from the right (column-wise
+  or horizontal): 𝐘 = 𝐒 $ 𝐗𝐒 "/
+• Alternatively, stacking the image column-wise 𝐱 = vec 𝐗 and using the Kronecker
+ product: vec 𝐒 $ 𝐗𝐒 "/ = 𝐒 / ⨂𝐒 $ vec 𝐗
+                                1
+                                    1
+                                        1
+                                            1
+                                                1
+                            1
+                                                        1
+                                                            1
+                                                                1
+                                                                    1
+                                                                        1
+                                                    1
+=                                                                               1
+                                                                                    1
+                                                                                        1
+                                                                                            1
+                                                                                                1
+                                                                            1
+        1
+            1
+                1
+                    1
+                        1
+    1
+Functions of Signals on Grids
+
+• Space of functions on grid signals ℱ 𝒳 Ω   = 𝑓: 𝒳 Ω → 𝒴
+Functions of Signals on Grids
+
+• Space of functions on grid signals ℱ 𝒳 Ω    = 𝑓: ℝ! → 𝒴
+
+• From the Geometric Deep Learning Blueprint, we know that it is sufficient to consider
+  local linear invariants and equivariants (that can be then combined with element-wise
+  nonlinearities and pooling)
+ • Linear invariants: 𝑓: ℝ! → ℝ
+ • Linear equivariants: 𝐅: ℝ! → ℝ!
+Linear Invariants
+
+• Linear translation invariant is a function of the form 𝑓 𝐱 = 𝐱, 𝐯 for some 𝐯 ∈ ℝ! ,
+  satisfying
+
+                           𝐒 $ 𝐱, 𝐯 = 𝐱, 𝐯 for all 𝐱 ∈ ℝ! and 𝑘 = 0, … , 𝑛 − 1
+
+
+
+
+                                𝐱, 𝐯 is translation invariant iff 𝐯 = 𝟏.
+
+
+Exercise: prove that 𝐯 must satisfy 𝐒𝐯 = 𝐯.
+Linear Equivariants
+
+• Linear translation equivariant is a function of the form 𝐅 𝐱 = 𝐂𝐱 for some matrix
+  𝐂 ∈ ℝ!×! , satisfying
+                     𝐂𝐒 $ 𝐱 = 𝐒 $ 𝐂𝐱 for all 𝐱 ∈ ℝ! and 𝑘 = 0, … , 𝑛 − 1
+
+
+
+
+  𝐂𝐱 is translation-equivariant iff 𝐂 commutes with the shift operator, 𝐂𝐒 = 𝐒𝐂.
+
+
+
+                  How do such matrices 𝐂 look like?
+CONVOLUTION
+Linear Equivariants
+
+           !"#
+
+ 𝐒𝐂 01 = O 𝑠0,$ 𝑐$,1
+           $2'
+                                  𝑖-1,𝑖−1    𝑖-1,𝑖
+
+
+                                              𝑖,𝑖     𝑖,𝑖+1
+
+
+                                                     𝑖+1,𝑖+1
+
+
+                                         1   𝑘 =𝑖+1
+                               𝑠0$ = R
+                                         0     else
+Note: all indices are mod 𝑛.
+Linear Equivariants
+                                      …
+
+           !"#
+
+ 𝐒𝐂 01 = O 𝛿0"$4# 𝑐$,1 = 𝑐04#,1
+           $2'
+
+           !"#
+
+ 𝐂𝐒 01 = O 𝑐0,$ 𝛿$"14# = 𝑐0,1"#
+           $2'                              𝑖,𝑗−1 𝑖, 𝑗
+
+                                                  𝑖+1,𝑗
+Since we assumed commutativity (𝐒𝐂 = 𝐂𝐒),
+we have
+
+                    𝑐04#,1 = 𝑐0,1"#
+
+Note: all indices are mod 𝑛.                              …
+Linear Equivariants
+                                      …
+
+           !"#
+
+ 𝐒𝐂 01 = O 𝛿0"$4# 𝑐$,1 = 𝑐04#,1
+           $2'
+
+           !"#
+
+ 𝐂𝐒 01 = O 𝑐0,$ 𝛿$"14# = 𝑐0,1"#
+           $2'                              𝑖,𝑗−1 𝑖, 𝑗
+
+                                                  𝑖+1,𝑗
+Since we assumed commutativity (𝐒𝐂 = 𝐂𝐒),
+we have
+
+                    𝑐04#,1 = 𝑐0,1"#
+
+Note: all indices are mod 𝑛.                              …
+𝑏   𝑐    . .   .   𝑎
+𝑎   𝑏    𝑐.    .   .
+
+.   .   .𝑎     𝑏   𝑐
+𝑐   .   . .    𝑎   𝑏
+vector of parameters 𝛉
+
+
+                           𝑏   𝑐    . .   .   𝑎
+                           𝑎   𝑏    𝑐.    .   .
+
+                           .   .   .𝑎     𝑏   𝑐
+                           𝑐   .   . .    𝑎   𝑏
+                         circulant matrix 𝐂 𝛉
+                        .
+          𝜃! 𝜃.#$"     𝜃"
+          𝜃" 𝜃!.
+𝐂 𝛉 𝐱 =               .    𝐱
+                     𝜃! .
+          𝜃#$"          𝜃!
+            .
+          #$"
+𝐂 𝛉 𝐱 % = + 𝜃%$& )*+ , 𝑥&
+          &'!
+Convolution
+
+
+
+                    #$"
+         𝐱 ⋆ 𝛉 % = + 𝜃%$& )*+ , 𝑥&
+                    &'!
+
+
+     Linear translation equivariants are convolutions
+Who invented convolution?
+
+
+
+
+                                           P.-S. De Laplace                                         J. B. D’Alembert
+
+
+
+    résultante1                              composizione2                                          Faltung3 convolution4
+1   Cailler 1899; 2Volterra 1910; 3Doetsch 1923; 4Winter 1934; Doetsch 1937; Gardner, Barnes 1942
+                                                                                                          свёртка
+Geometric Deep Learning Blueprint
+
+      2D grid Ω         images 𝒳 Ω ≅ ℝ!×!    functions ℱ 𝒳 Ω
+
+
+
+
+                                                    ⋆
+
+ Translation (cyclic)     Shift operator 𝐒     Convolutions
+       group                 𝐒𝐱 0 = 𝑥0"#      𝐒𝐱 ⋆ 𝐲 = 𝐒 𝐱 ⋆ 𝐲
+The story so far
+
+• Linear translation equivariants are convolutions (=circulant matrices)
+• Convolution emerges from translational symmetry
+• Grids are special cases of graphs, but with more structure
+• We will now study the properties of convolutions and whether linear invariants are
+  sufficient on their own for doing ML on grids (Answer: no!)
+Trivial 𝐺 = 𝑒   Translation   Permutation
+  𝒪 𝑛 ( DOF      𝒪 𝑛 DOF       𝒪 1 DOF
+Equivariants on Grids vs Graphs
+
+                         𝑗
+
+
+
+                 𝑖                …    𝑖-1    𝑖     𝑖+1   …
+
+
+
+
+         General Graph                       Grid
+
+
+
+      ϕ 𝐱$ , 𝐱𝐱!∈𝒩
+               !∈𝒩66                       $%&,, 𝐱
+                                  ϕ 𝐱$ , 𝐱𝐱$%&   𝐱$'&
+                                                   $'&
+Equivariants on Grids vs Graphs
+
+                         𝑗
+
+
+
+                   𝑖              …    𝑖-1    𝑖     𝑖+1   …
+
+
+
+
+         General Graph                       Grid
+           permutation                  translation
+
+      ϕ 𝐱$ , 𝐱𝐱!∈𝒩
+               !∈𝒩66              ϕ 𝐱$%& , 𝐱$ , 𝐱$'&
+Linear Equivariants on Grids vs Graphs
+
+                         𝑗
+
+
+
+                   𝑖                      …   𝑖-1    𝑖     𝑖+1   …
+
+
+
+
+         General Graph                              Grid
+           permutation                         translation
+
+      𝑏𝐱$ + +                 𝐱!         𝑎𝐱$%& + 𝑏𝐱$ + 𝑐𝐱$'&
+                       !∈𝒩6
+Linear Equivariants on Grids vs Graphs
+
+
+
+    𝑏    𝑎    . .   .   𝑎                𝑏   𝑐       . .   .   𝑎
+    𝑎    𝑏    𝑎.    .   .                𝑎   𝑏       𝑐.    .   .
+
+    .    .   .𝑎     𝑏   𝑎                .   .     .𝑎      𝑏   𝑐
+    𝑎    .   . .    𝑎   𝑏                𝑐   .     . .     𝑎   𝑏
+      “Graph convolution”                        Convolution
+FOURIER TRANSFORM
+Commutativity & Joint Diagonalisation
+
+ Fact from Linear Algebra: Two matrices 𝐀 and 𝐁 commute (i.e., 𝐀𝐁 = 𝐁𝐀) iff they
+ are jointly diagonalizable (i.e., there exists a single invertible matrix 𝚽 such that
+ 𝚽 "# 𝐀𝚽 and 𝚽 "# 𝐁𝚽 are diagonal).
+
+
+
+Since our linear translation equivariants 𝐂 commute with
+shift 𝐒, we can look at the eigenvectors and eigenvalues of
+                     the shift matrix 𝐒
+Commutativity & Joint Diagonalisation
+
+  Fact from Linear Algebra: Two matrices 𝐀 and 𝐁 commute (i.e., 𝐀𝐁 = 𝐁𝐀) iff they
+  are jointly diagonalizable (i.e., there exists a single invertible matrix 𝚽 such that
+  𝚽 "# 𝐀𝚽 and 𝚽 "# 𝐁𝚽 are diagonal).
+
+
+
+• Since 𝐒 is orthogonal (𝐒𝐒 , = 𝐒 , 𝐒 = 𝐈), it has orthogonal eigendecomposition of the form
+                                      𝐒 = 𝚽𝚲𝚽 ∗ , where
+ • 𝚽 = 𝛟', … , 𝛟!"# is the matrix of orthogonal eigenvectors (𝚽∗𝚽 = 𝐈)
+ • 𝚲 = diag 𝜆', … , 𝜆!"# is the diagonal matrix of the corresponding eigenvalues
+
+• Since 𝐒 is not symmetric (𝐒 ≠ 𝐒 , ), we expect complex eigenvalues/eigenvectors
+• Commuting matrices have same eigenvectors but different eigenvalues
+Eigenvalues & Eigenvectors of the Shift matrix
+
+• Let 𝐱 ≠ 𝟎. Then, for all 𝑖 mod 𝑛:
+                    𝐒𝐱 = 𝜆𝐱           ⟺   𝑥04# = 𝜆𝑥0
+
+
+
+
+Note: all indices are mod 𝑛.
+Eigenvalues & Eigenvectors of the Shift matrix
+
+• Let 𝐱 ≠ 𝟎. Then, for all 𝑖 mod 𝑛:
+                   𝐒 ! 𝐱 = 𝜆! 𝐱            ⟺              𝑥04! = 𝑥0 = 𝜆! 𝑥0
+
+• Since at least one 𝑥$ ≠ 0, we have 𝜆! = 1, from which it follows that the eigenvalues
+  of 𝐒 are the complex roots of unity
+                                  𝜆$ = e(67$/! for 𝑘 = 0, … , 𝑛 − 1
+
+• We can now use 𝑥041 = 𝜆1 𝑥0 to express the entries of the 𝑘th eigenvector of 𝐒:
+                                                     1
+                                         𝛟$ 14' = 𝜆$ 𝛟$ '
+
+
+Note: all indices are mod 𝑛.
+Eigenvalues & Eigenvectors of the Shift matrix
+
+• Let 𝐱 ≠ 𝟎. Then, for all 𝑖 mod 𝑛:
+                   𝐒 ! 𝐱 = 𝜆! 𝐱                ⟺                𝑥04! = 𝑥0 = 𝜆! 𝑥0
+
+• Since at least one 𝑥$ ≠ 0, we have 𝜆! = 1, from which it follows that the eigenvalues
+  of 𝐒 are the complex roots of unity
+                                     𝜆$ = e(67$/! for 𝑘 = 0, … , 𝑛 − 1
+
+• We can now use 𝑥041 = 𝜆1 𝑥0 to express the entries of the 𝑘th eigenvector of 𝐒:
+                               𝛟$ = 𝑐 1, e(67$/! , e(67($/! , … , e(67 !"# $/!
+  where 𝑐 = 1⁄ 𝑛 such that 𝛟$ = 1.
+Note: all indices are mod 𝑛.
+Discrete Fourier Transform
+
+
+                                             1      1                  1
+                                                    (6              (6
+                                                    7              7   !"#
+                                        1    1    e !             e !
+                                 𝚽=          ⋮          ⋮    ⋱
+                                        𝑛
+                                                                   (6
+                                                    (6            7   !"# $
+                                             1
+                                                  7
+                                                 e !
+                                                       !"#       e !
+
+                             • Columns of 𝚽 form an orthogonal basis, referred
+                               to as the Fourier basis
+                             • Multiplication of a vector 𝐱g = 𝚽 ∗ 𝐱 is called the
+                               Discrete Fourier Transform (DFT) of 𝐱
+Fourier Transform
+
+
+
+
+                    J. Fourier
+
+
+                    1822
+
+Fourier 1822
+Geometric intuition
+
+
+                                           !"#
+
+                                       𝐱 = O 𝐞0 , 𝐱 𝐞0   (𝑛D Pythagoras)
+        𝐞0
+                   𝐱 = 𝑥' , … , 𝑥!"#       02'
+
+
+          𝐞0 , 𝐱
+Geometric intuition
+
+
+                                                 !"#
+
+                                             𝐱 = O 𝛟0 , 𝐱 𝛟0 = 𝚽𝚽 ∗ 𝐱
+    𝛟0            𝐱 = 𝑥' , … , 𝑥!"#              02'
+
+
+   𝑥g0 = 𝛟0 , 𝐱                       • Parceval theorem:
+                                         𝐱g , 𝐲g = 𝚽 ∗ 𝐱 ∗ 𝚽 ∗ 𝐲 = 𝐱 ∗ 𝚽𝚽 ∗ 𝐲 = 𝐱, 𝐲
+                                      • Plancherel theorem (special case):
+                                                        𝐱g = 𝐱
+                                        i.e., Fourier transform is an isometry
+Convolution in the Fourier domain
+
+• DFT diagonalises the shift operator 𝐒 and all matrices commuting with it (linear
+  translation-equivariants we called circulant matrices or convolutions)
+                                       𝐂 = 𝚽𝚲𝚽 ∗
+• Express convolution in the Fourier basis
+                             𝐂𝐱 = 𝐂𝚽𝚽 ∗ 𝐱 = 𝚽𝚲𝚽 ∗ 𝚽 𝚽 ∗ 𝐱
+Convolution in the Fourier domain
+
+• DFT diagonalises the shift operator 𝐒 and all matrices commuting with it (linear
+  translation-equivariants we called circulant matrices or convolutions)
+                                          𝐂 = 𝚽𝚲𝚽 ∗
+• Express convolution in the Fourier basis
+                               𝐂𝐱 = 𝐂𝚽𝚽 ∗ 𝐱 = 𝚽 𝚲g𝐱
+ • Convolution becomes element-wise product in Fourier basis! (“DFT diagonalises convolution”)
+ • The Fourier basis matrices 𝚽, 𝚽∗ have a highly-redundant structure, allowing to compute
+   𝐱A = 𝚽∗𝐱 (forward DFT) and 𝐱 = 𝚽A𝐱 (inverse DFT) in complexity 𝒪 𝑛 log𝑛 rather than 𝒪 𝑛( .
+ • Such methods are known as Fast Fourier Transforms (FFT) and have been the bread-and-
+   butter of digital signal processing since the late 1960s
+Fast Fourier Transform
+
+                                                  𝑥3%/0/1
+                                   𝑥%                               +%        𝑥3%
+                                                  𝑥3(/0/1           𝑤2
+                                   𝑥(   𝑛/2 FFT                     +(
+                                                                    𝑤2
+                                                                              𝑥3(
+                                                  𝑥3)/0/1
+                                   𝑥)    (even)                     +)
+                                                                    𝑤2
+                                                                              𝑥3)
+                                                   𝑥3*/0/1
+                                   𝑥*                               +*        𝑥3*
+                                                  𝑥3%&''        𝑤2+ 𝑤2
+                                   𝑥+                               +         𝑥3+
+                                                                  ,
+                                                  𝑥3(&''        𝑤2
+                                   𝑥,   𝑛/2 FFT                 𝑤2-
+                                                                    +         𝑥3,
+                                                  𝑥3)&''
+                                   𝑥-    (odd)                      +         𝑥3-
+                                                  𝑥3*&''        𝑤2.
+                                   𝑥.                               +         𝑥3.
+
+                                                                       )6
+                                                             𝑤23 = 𝑒 45 2 3
+
+
+(Gauss 1805); Cooley, Tukey 1965
+DFT of Convolution
+
+• Last remaining bit: how do the eigenvalues of 𝐂 = 𝚽𝚲𝚽 ∗ look like?
+• Recall that 𝐂 = 𝐂 𝛉 constructed from circularly-shifted column vectors 𝛉
+• Let us express 𝐂𝛟$ =𝜆$ 𝛟$ :
+
+                      𝜃'   𝜃!"#       𝜃#         1                        1
+                                  ⋯               (6
+                                                 7 $
+                                                                           (6
+                                                                          7 $
+                      𝜃#    𝜃'        𝜃(        𝑒 !                      𝑒 !
+                                                           = 𝜆$
+                          ⋮       ⋱    ⋮         ⋮                        ⋮
+                                             (6                      (6
+                      𝜃!"# 𝜃!"(   ⋯   𝜃'    7   $ !"#                7  $ !"#
+                                           𝑒 !                     𝑒 !
+                  (6              (6
+                  7  $           7 $ !"#
+ 𝜆$ = 𝜃' + 𝜃!"# 𝑒  !   + ⋯ + 𝜃# 𝑒 !
+                                                     !"#
+                  (6             (6                              (6
+                "7 $           "9 $ !"#                     "7      $/
+     = 𝜃' + 𝜃# 𝑒 ! + ⋯ + 𝜃!"# 𝑒 !                = O 𝜃/ 𝑒         !    = 𝜃o$
+                                                     /2'
+DFT of Convolution
+
+• Last remaining bit: how do the eigenvalues of 𝐂 = 𝚽𝚲𝚽 ∗ look like?
+• Recall that 𝐂 = 𝐂 𝛉 constructed from circularly-shifted column vectors 𝛉
+
+
+
+
+                                                                            s 𝚽∗.
+  A circulant matrix can be expressed in the Fourier domain as 𝐂 𝛉 = 𝚽 diag 𝛉
+       Circulant matrix
+             𝐂 𝛉
+ 𝐱                           𝛉⋆𝐱
+
+𝚽 𝚽 ∗ DFT           IDFT 𝚽 𝚽 ∗
+
+ 𝐱>                          < = 𝐱>
+                             𝛉
+           𝜃@8 .   .
+             . ⋱ .
+             . . 𝜃@!
+      Element-wise product
+CONTINUOUS CASE
+Continuous Fourier Transform
+
+• Let 𝑥, 𝑦 ∈ 𝐿( ℝ
+• Continuous convolution
+                                               4:
+
+                              𝑥 ⋆ 𝑦 𝑢 = w 𝑥 𝑣 𝑦 𝑢 − 𝑣 d𝑣
+                                           ":
+• Continuous Fourier Transform
+                       4:                                   4:
+
+              𝑥g 𝜉 = w 𝑥 𝑢 𝑒 "(67;< d𝑢 … … … . . 𝑥 𝑢 = w 𝑥g 𝜉 𝑒 4(67;< d𝜔
+                      ":                                   ":
+ • 𝜔 = 2𝜋𝜉 is often referred to as frequency
+ • Continuous Fourier basis: orthogonal functions 𝜙; 𝑢 = 𝑒 4(67;< s.t. 𝜙; , 𝜙= = δ 𝜉 − 𝜁
+ • Fourier transform: orthogonal projection on the basis 𝑥A 𝜉 = 𝑥, 𝜙;
+Continuous Fourier Transform: Properties
+
+
+• Shift               𝑥 𝑢−𝑣               Phase          𝑒 "(67;> 𝑥g 𝜉
+                      ?
+• Derivative               𝑥 𝑢            Moment         i𝜔 𝑥g 𝜉
+                      ?<
+
+• Convolution         𝑥⋆𝑦 𝑢               Product        𝑥g 𝜉 | 𝑦g 𝜉
+• Product             𝑥|𝑦 𝑢               Convolution    𝑥g 𝜉 ⋆ 𝑦g 𝜉
+                                                         #        ;
+• Scaling             𝑥 𝛼𝑢 , 𝛼 > 0        Inv. Scaling       𝑥g
+                                                         @        @
+
+• Parseval theorem:          g 𝑦g
+                      𝑥, 𝑦 = 𝑥,
+• Plancherel theorem: 𝑥 = 𝑥g (isometry)
+Harmonics and Deltas
+
+                            𝑥                                  𝑥3
+
+
+
+
+                                0                     𝑢                        𝜉'                            𝜉
+
+
+                            Space                                                   Frequency
+
+
+                       𝑥 𝑢 = e(60;7 <                                         𝑥g 𝜉 = 𝛿 𝜉 − 𝜉'
+
+
+
+Note: Dirac delta is a “generalised function.” It can be regarded as a linear functional on Hilbert space.
+Harmonics and Deltas
+
+              𝑥               𝑥3
+
+
+
+
+                  0   𝑣   𝑢                    𝜉'                  𝜉
+
+
+              Space                                 Frequency
+                                           4:
+
+           𝑥 𝑢 =𝛿 𝑢−𝑣              𝑥g 𝜉 = w 𝛿 𝑢 − 𝑣 𝑒 "(67;< d𝑢 = 𝑒 "(67;>
+                                          ":
+Localisation in Space and Frequency
+
+
+                 𝜎B                      𝜎BA
+
+                            𝑢                     𝜉
+               Space                  Frequency
+
+
+                                       1    𝜉
+               𝑥 𝛼𝑢                      𝑥g
+                                       𝛼 𝛼
+Localisation in Space and Frequency
+
+
+                 𝜎B                      𝜎BA
+
+                            𝑢                     𝜉
+               Space                  Frequency
+
+
+                                       1    𝜉
+               𝑥 𝛼𝑢                      𝑥g
+                                       𝛼 𝛼
+Localisation in Space and Frequency
+
+
+                    𝜎B                         𝜎BA
+
+                              𝑢                         𝜉
+                   Space                    Frequency
+
+
+
+
+                            " "       $
+                           𝜎! 𝜎!# ≥
+                                    $%& !
+
+Exercise: prove.
+Spectrogram, or Windowed Fourier Transform
+
+              𝑥                𝑥3
+
+
+
+
+                           𝑢           𝜉'                𝜉
+
+
+              Space                          Frequency
+Spectrogram, or Windowed Fourier Transform
+
+                    𝑥
+
+
+
+
+                                                   Frequency 𝜉
+                                           𝑢
+
+
+                    Space
+
+                                                                   Space 𝑣
+
+• Windowed Fourier Transform: FT applied to a signal multiplied by a local window ℎ,
+  shifted to different positions 𝑣
+                                      4:
+
+                            𝑥gC 𝑣, 𝜉 = w ℎ 𝑢 − 𝑣 𝑥 𝑢 𝑒 "(67;< d𝑢
+                                      ":
+Spectrogram, or Windowed Fourier Transform
+
+                    𝑥
+
+
+
+
+                                                   Frequency 𝜉
+                                           𝑢
+
+
+                    Space
+
+                                                                   Space 𝑣
+
+• Windowed Fourier Transform: FT applied to a signal multiplied by a local window ℎ,
+  shifted to different positions 𝑣
+                                      4:
+
+                            𝑥gC 𝑣, 𝜉 = w ℎ 𝑢 − 𝑣 𝑥 𝑢 𝑒 "(67;< d𝑢
+                                      ":
+Spectrogram, or Windowed Fourier Transform
+
+                    𝑥
+
+
+
+
+                                                   Frequency 𝜉
+                                           𝑢
+
+
+                    Space
+
+                                                                   Space 𝑣
+
+• Windowed Fourier Transform: FT applied to a signal multiplied by a local window ℎ,
+  shifted to different positions 𝑣
+                                      4:
+
+                            𝑥gC 𝑣, 𝜉 = w ℎ 𝑢 − 𝑣 𝑥 𝑢 𝑒 "(67;< d𝑢
+                                      ":
+Spectrogram, or Windowed Fourier Transform
+
+                    𝑥
+
+
+
+
+                                                   Frequency 𝜉
+                                           𝑢
+
+
+                    Space
+
+                                                                   Space 𝑢
+
+• Windowed Fourier Transform: FT applied to a signal multiplied by a local window ℎ,
+  shifted to different positions 𝑣
+                                      4:
+
+                            𝑥gC 𝑣, 𝜉 = w ℎ 𝑢 − 𝑣 𝑥 𝑢 𝑒 "(67;< d𝑢
+                                      ":
+GEOMETRIC STABILITY
+Fourier invariants
+
+• Geometric Deep Learning Blueprint: compose linear equivariants with non-linear
+  element-wise functions to obtain non-linear invariants
+• Fourier Transform modulus:
+                                                   𝑓 𝑥 = 𝑥g
+  is a non-linear translation invariant
+
+Proof: Use the property of the FT transforming shift 𝑥 𝑢 − 𝑣 into complex phase 𝑒 4)859: 𝑥3 𝜉 . Taking the absolute
+value then removes the complex phase.
+Fourier invariants
+
+• Geometric Deep Learning Blueprint: compose linear equivariants with non-linear
+  element-wise functions to obtain non-linear invariants
+• Fourier Transform modulus:
+                                          𝑓 𝑥 = 𝑥g
+  is a non-linear translation invariant
+
+
+
+                             Is this invariant stable?
+Reminder: Approximate Group Invariance
+
+
+                                   𝑓
+                        A
+         A    A    A
+    A
+
+
+
+    𝒳                                    𝒴
+Reminder: Approximate Group Invariance
+
+
+
+
+                              Translation                            Warping
+
+• The translation group is a subgroup of a much bigger group of diffeomorphisms
+  (“warpings”) 𝜏: Ω → Ω acting in the plane
+• The smoothness of 𝜏 (Dirichlet energy) measures how “far” it is from translation
+
+                                ∇𝜏 ( = w     ∇𝜏 𝑢   (
+                                                        d𝑢 =0
+                                        ℝ$
+Stability of Fourier modulus: 1D example
+                                                                       𝑠𝜉'
+
+                                                              𝜎B
+                                                                                        1 + 𝑠 𝜎B
+
+                        0                𝑢                    𝜉'             1 + 𝑠 𝜉'         𝜉
+
+
+                       Space                                       Frequency
+
+
+• Let 𝑥 𝑢 = ℎ 𝑢 𝑒 (E7<7 < be a signal concentrated around frequency 𝜉' with bandwidth 𝜎B
+• Warping 𝜏𝑥 𝑢 = 𝑥 1 + 𝑠 𝑢 , with 𝑠 ≪ 1
+• If 1 + 𝑠 𝜉' − 𝜉' = 𝑠 𝜉' ≫ 2 + 𝑠 𝜎B , then   𝑥g − 𝜏…𝑥   =𝒪        𝑥
+  i.e.,   𝑥g − 𝜏…𝑥 / 𝑥 = 𝒪 1 rather than 𝒪 𝑠 , indicating that this invariant is unstable!
+Exercise: prove.
+What do we learn from this example?
+
+• Low frequencies are stable
+• High frequencies are unstable (dilation
+
+
+
+
+                                            Frequency 𝜉
+  affects them more)
+• Removing high frequencies looses
+  information
+• Key challenge: how to “stabilise” high
+  frequencies without loosing
+  information?                                            Space 𝑢
+
+
+
+
+Image: Mallat (IPAM lectures)
+WAVELETS & MULTISCALE ANALYSIS
+Wavelets
+
+
+
+
+                                                                                           I. Daubechies                    S. Mallat
+
+
+
+
+Haar 1909; Gabor 1946; Grossman, Morlet 1984 (invented the term), Meyer 1990 (2017 Abel prize for wavelets); Daubechies 1988; Mallat 1989; Coifman 1991
+Wavelet Transform
+
+
+
+                            𝑢
+
+               Space
+
+
+           Mother wavelet
+
+               𝜓 𝑢
+Wavelet Transform
+
+
+
+                                   𝑢
+
+                  Space
+
+
+      Dilated and translated wavelet
+                          𝑢−𝑎
+         𝜓F 𝑢 = 𝜆"#/( 𝜓
+                           𝜆
+                                               4:
+                                                        𝑣−𝑢
+     Wavelet Transform:    𝑊𝑥 𝑢, 𝜆 = 𝜆"#/( w        𝜓       𝑥 𝑣 d𝑣
+                                           ":            𝜆
+Wavelet Transform
+                          𝜓;! 𝑢                  𝜙> 𝜉   𝜓>; 𝜉         𝜓>;! 𝜉
+
+                  𝜓; 𝑢
+                                            LP           BP            BP
+
+                                   𝑢             0       𝜆              𝜆′     𝜉
+
+                 Space                                          Frequency
+
+
+     Dyadically dilated and translated wavelet
+                          𝑢−𝑎
+         𝜓F 𝑢 = 𝜆"#/( 𝜓                   𝜆 = 2"1 , 𝑎 = 2"1 𝑘
+                           𝜆
+
+     Discrete Wavelet Transform:       𝑐1$ = 𝑊𝑥 2"1 𝑘, 2"1 𝑘
+Wavelets vs Fourier vs Windowed Fourier
+
+
+
+
+                        frequency 𝜉
+
+
+
+
+                                                     frequency 𝜉
+frequency 𝜉
+
+
+
+
+              space 𝑢                  space 𝑢                     space 𝑢
+
+              Fourier             Windowed Fourier                 Wavelet
+Organisation of the brain
+
+
+
+
+                            D. Hubel     T. Wiesel
+
+
+                                  1959
+
+Hubel, Wiesel 1959; 1962
+Wavelet Transform
+
+                                             4:
+                                                         𝑣−𝑢
+                 𝑊𝑥 𝑢, 𝜆 = 𝜆"#/( w                𝜓          𝑥 𝑣 d𝑣 ,       𝜆 = 2"1 , 𝑢 = 2"1 𝑘
+                                          ":              𝜆
+• Convolution with a filter bank 𝑊𝑥 = 𝑥 ⋆ 𝜙, 𝑥 ⋆ 𝜓F F where 𝜙 is LP filter (“averaging”)
+                                             (                 (
+• Appropriate design choice 𝜙o 𝜉                 + ∑F 𝜓oF 𝜉        = 1 guarantees unitarity
+
+                                                         𝑊𝑥 = 𝑥 .
+
+                                      𝜙> 𝜉       𝜓>; 𝜉
+
+
+
+
+                                      0                                        𝜉
+Question why do we care about unitarity (energy preservation)?
+Wavelet Transform
+
+                                              4:
+                                                       𝑣−𝑢
+                  𝑊𝑥 𝑢, 𝜆 = 𝜆"#/( w                𝜓       𝑥 𝑣 d𝑣 ,             𝜆 = 2"1 , 𝑢 = 2"1 𝑘
+                                             ":         𝜆
+• Convolution with a filter bank 𝑊𝑥 = 𝑥 ⋆ 𝜙, 𝑥 ⋆ 𝜓F F where 𝜙 is LP filter (“averaging”)
+
+• Appropriate design choice guarantees unitarity 𝑊𝑥 = 𝑥 .
+• 𝑥 ⋆ 𝜓F is translation-equivariant
+                    4:
+•    𝑥 ⋆ 𝜓F # = ∫": 𝑥 ⋆ 𝜓F 𝑢 d𝑢 is a stable and translation-invariant… however, it
+    looses a lot of information!
+
+
+Note: Absolute value is special, and can be derived from deformation stability + unitarity (see Mallat’s lecture)
+Properties of Wavelets
+
+
+
+
+                                      frequency 𝜉
+
+
+
+
+                                                                   frequency 𝜉
+frequency 𝜉
+
+
+
+
+                    space 𝑢                          space 𝑢                            space 𝑢
+
+                   Fourier                      Windowed Fourier                       Wavelet
+                       𝜙S 𝜉                                                              𝑥 ⋆ 𝜓F F
+              translation invariant                                              translation equivariant
+Properties of Wavelets
+
+
+
+
+                                      frequency 𝜉
+
+
+
+
+                                                                        frequency 𝜉
+frequency 𝜉
+
+
+
+
+                    space 𝑢                          space 𝑢                                 space 𝑢
+
+                   Fourier                      Wavelet+averaging                           Wavelet
+                       𝜙S 𝜉                       𝑥 ⋆ 𝜓F ⋆ 𝜙 F                                𝑥 ⋆ 𝜓F F
+              translation invariant     locally translation-invariant                 translation equivariant
+                                             deformation stable
+Effect of Averaging
+
+
+
+
+                                 frequency 𝜉
+
+
+
+
+                                                               frequency 𝜉
+frequency 𝜉
+
+
+
+
+                   space 𝑢                      space 𝑢                      space 𝑢
+
+              Windowed Fourier             Wavelet+averaging                 Wavelet
+                                               𝑥 ⋆ 𝜓F ⋆ 𝜙 F                  𝑥 ⋆ 𝜓F    F
+
+Image: Mallat (IPAM lectures)
+Effect of Averaging
+
+
+
+
+                          Wavelet       Wavelet+averaging
+                           𝑥 ⋆ 𝜓F   F       𝑥 ⋆ 𝜓F ⋆ 𝜙 F
+Image: Mallat (IPAM lectures)
+Wavelet Scattering
+                                                            Scattering transform: iteration of
+                                                                   𝑈𝑥 = 𝑥 ⋆ 𝜙, 𝑥 ⋆ 𝜓F      F
+
+
+                                                   𝑥
+
+
+
+
+                                                       Combine the three main building blocks of
+                              𝑥⋆𝜙                      Geometric Deep Learning Blueprint:
+                                         𝑥 ⋆ 𝜓F
+                                                        • Linear invariant: lowpass filter 𝑥 ⋆ 𝜙
+                                                        • Linear equivariant: wavelet filter bank 𝑥 ⋆ 𝜓F F
+                    𝑥 ⋆ 𝜓F ⋆ 𝜙      𝑥 ⋆ 𝜓F ⋆ 𝜓F<        • Element-wise nonlinearity: 𝜌 =
+Mallat 2010; Bruna, Mallat 2012
+Wavelet Scattering Transform
+
+                         𝑈𝑥 = … 𝑥 ⋆ 𝜓F= ⋆ 𝜓F$ … ⋆ 𝜓F$ ⋆ 𝜙
+
+
+• “Geometric deep learning without learning”
+• Progressively pushes high-frequency information to low-frequency
+
+   Theorem: With appropriate selection of wavelets, the Scattering Transform 𝑈 is:
+   • Contracting 𝑈𝑥 − 𝑈𝑦 ≤ 𝑥 − 𝑦
+   • Energy-preserving 𝑈𝑥 = 𝑥
+   • Stable to deformations 𝑈𝑥 − 𝑈 𝜏𝑥     ≤ 𝑐 ∇𝜏   𝑥
+
+Bruna, Mallat 2012
+Wavelet Scattering Transform
+                                                ImageNet
+                                CIFAR-10
+                     MNIST
+
+
+
+
+  Deep net            0.5%         8%             11%
+
+Scattering            0.5%        23%             52%
+
+
+                             What is missing?
+
+Bruna, Mallat 2012
+Hybrid Scattering & Convolutional Neural Networks
+
+
+
+
+                                                       …                    …
+
+
+
+
+                                         𝑥 $4# = 𝜌 O 𝜽F 𝑥 $ ⋆ 𝜓@   ,   𝜃 ∈ ℝG> ×G>?=
+                                                   F
+
+
+
+
+Oyallon et al. 2019; Zarka et al. 2020
+Hybrid Scattering
+                                                    ImageNet
+                                         CIFAR-10
+                         MNIST
+
+
+
+
+  Deep net                   0.5%           8%        11%
+
+Scattering                   0.5%          23%        52%
+
+  Hybrid                     0.5%           8%        11%
+scattering
+
+
+Oyallon et al. 2019; Zarka et al. 2020
+Takeaways
+
+• Linear translation-equivariants are convolutions
+• Convolutions are diagonalised in the Fourier basis (=eigenvectors of the shift)
+• Fourier invariants are unstable
+• Wavelet scattering is a simple instance of Geometric Deep Learning without training,
+  highlighting the importance of the Scale Separation prior
+• Convolutional Neural Networks: culmination of many years of fine-tuning, strikes
+  the right balance between geometric priors and expressive power
+• Next lectures: extensions of convolutions & related concepts to other objects
+  (homogeneous space, manifolds, meshes, and graphs)
+Key Concepts
+
+• Convolution
+• Fourier transform
+• Uncertainty principles
+• Wavelets & Wavelet scattering
+• Convolutional Neural Networks
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 4.1 “Graphs and
+ sets” and Section 5.3 “Graph neural networks”
+• B. Bamieh, Discovering Transforms: A Tutorial on circulant matrices, circular
+  convolution, and the Discrete Fourier Transform, arXiv:1805.05533, 2018. Derivation of
+ convolutions and Fourier transforms. For a shorter version, see the blog post M. Bronstein, Deriving
+ convolution from first principles, Towards Data Science 2020.
+• J. Bruna, S. Mallat, Invariant scattering convolutional networks, PAMI 35(8):1872–1885,
+  2013. Scattering transforms and geometric stability
+

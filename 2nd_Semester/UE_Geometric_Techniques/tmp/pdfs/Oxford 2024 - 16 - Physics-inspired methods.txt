@@ -1,0 +1,1608 @@
+Physics-Inspired Methods
+   Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• Differential equations on manifolds and graphs
+• Diffusion equations
+• Label & Feature propagation
+• GNNs as physical systems
+• Gradient flows & GCNs
+• More exotic stuff (diffusion on cellular sheaves, graph-coupled oscillators)
+Graphs vs Meshes vs Grids
+
+
+
+
+       Grid                 Mesh   Graph
+Graphs vs Meshes vs Grids
+
+
+        1                                6                           1
+                                  5                          6
+    6
+                                                 1                           2
+
+5                   2     4                          5
+
+
+                3                            2                           3
+        4                     3                          4
+
+
+        Grid                       Mesh                      Graph
+        Fixed                     Rotation               Permutation
+
+                    Graphs have the least structure
+Graphs vs Meshes vs Grids
+
+
+
+
+       Grid                 Mesh   Graph
+Graphs vs Meshes vs Grids
+
+
+
+
+                                        ?
+       Grid                 Mesh            Graph
+
+
+              Continuous models for GNNs?
+Physical systems as learning metaphor
+
+
+
+
+Wright et al. 2022
+DIFFUSION EQUATION
+Heat Diffusion
+
+
+
+     Newton Law of Cooling: “the
+     [temperature] a hot body loses in
+     a given time is proportional to
+     the temperature difference
+     between the object and the
+     environment”                                  I. Newton
+
+Note: E. F. Adiutori fiercely argues that Newton
+should not be credited with the discovery of the
+law bearing his name, and the honour should be
+given to J. Black and Fourier.
+Anonymous 1701
+Heat Diffusion
+
+
+
+       Fourier Heat Conduction Law:
+       “heat flux resulting from thermal
+       conduction is proportional to the
+       magnitude of the temperature
+       gradient and opposite to it in
+       sign”                               J. Fourier
+                  ℎ ∝ −∇𝑥
+
+
+Fourier 1822
+Heat Diffusion
+
+
+
+       Fick Law of Diffusion:
+       “temperature change in time
+       equals the heat flux through
+       volume”
+
+              𝑥̇ = −div ℎ
+                                      A. E. Fick
+
+
+
+
+Fick 1855
+Diffusion Equation
+
+                          heat flux ℎ ∝ −∇𝑥
+
+
+
+
+                 conservation condition: 𝑥̇ = −div ℎ
+                   (“no heat created or disappears”)
+
+                 𝑥̇ 𝐮, 𝑡 = div 𝑎∇𝑥 𝐮, 𝑡
+Diffusion Equation
+
+
+
+
+ 𝑥̇ = −𝑐∆𝑥               𝑥̇ = div 𝑎∇𝑥           𝑥̇ = div 𝐀∇𝑥
+ Homogeneous             Non-homogeneous        Non-homogeneous
+   Isotropic                 Isotropic            Anisotropic
+constant diffusivity 𝑐    Position-dependent      Position & direction-
+                           diffusivity 𝑎 𝑢     dependent diffusivity 𝐀 𝑢
+Homogeneous Diffusion Equation
+
+
+
+
+                    • Gradient flow of the Dirichlet energy
+ 𝑥̇ = −𝑐∆𝑥                                  .
+                       ℇ 𝑥 = !" - ∇𝑥 𝐮                " d𝐮
+ Homogeneous
+                                          #
+   Isotropic
+
+                    • Closed form solution: Gaussian filter
+                                                        !       % 𝐮 ) /"$
+                       𝑥 𝐮, 𝑡 = 𝑥 𝐮, 0 ⋆                      𝑒
+                                                      "#$ '/)
+                       Note: we will prove it later
+Homogeneous Diffusion Equation
+
+
+
+
+                                 …
+Non-homogeneous Diffusion Equation
+
+
+
+
+                                 ∇𝑥
+                    𝑥̇ = div
+                             1 + 𝑐 ∇𝑥 "
+                                                 “edge indicator”
+
+
+
+
+                  “Do not diffuse across colour discontinuities”
+
+Perona, Malik 1990 (erroneously called “anisotropic”)
+Non-homogeneous Diffusion Equation
+
+
+
+
+                                                                  Homogeneous                                      Non-homogeneous
+                                                                    diffusion                                          diffusion
+
+Perona, Malik 1990; Kimmel et al. 1997; Sochen et al. 1998; Tomasi, Manduchi 1998; Weickert 1998; Buades et al. 2005
+Diffusion in Image Processing
+
+
+
+
+Perona, Malik 1990; Kimmel et al. 1997; Sochen et al. 1998; Tomasi, Manduchi 1998; Weickert 1998; Buades et al. 2005
+Milanfar 2013 (connection between images and graphs)
+DIFFUSION ON MANIFOLDS
+Heat Diffusion on Manifolds
+
+
+                         𝑥̇ 𝑢, 𝑡 = −∆𝑥 𝑢, 𝑡
+• 𝑥 𝑢, 𝑡 temperature at point 𝑢 ∈ Ω at time 𝑡 ≥ 0 (scalar field on manifold Ω)
+• Initial condition: 𝑥 𝑢, 0 = 𝑥! 𝑢
+• No boundary condition (manifold without boundary)
+• ∆≽ 0 is the positive-semidefinite Laplace-Beltrami operator (hence our use of the minus
+  sign in the equation)
+               J. Fourier
+
+
+               1822
+
+Fourier 1822
+Solution of the Heat Diffusion on Manifolds
+
+
+                                                 𝑥̇ 𝑡 = −∆𝑥 𝑡
+
+
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                               𝑥 𝑢, 𝑡 = 6 𝑥7" 𝑡 𝜑" 𝑢
+                                                           "#!
+
+
+
+
+Note: There is nothing specific to manifolds in this expression! The same analysis will also work on meshes, graphs,
+or any other domains on which we can construct a Fourier basis. That’s the power of Fourier analysis!
+Solution of the Heat Diffusion on Manifolds
+
+
+                           + 𝑥,̇ ! 𝑡 𝜑! 𝑢 = − + 𝑥,! 𝑡 ∆𝜑! 𝑢
+                          !"#                    !"#
+
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = 6 𝑥7" 𝑡 𝜑" 𝑢
+                                               "#!
+Solution of the Heat Diffusion on Manifolds
+
+
+                           + 𝑥,̇ ! 𝑡 𝜑! 𝑢 = − + 𝑥,! 𝑡 𝜆! 𝜑! 𝑢 ∀𝑢 ∈ Ω and 𝑡 ≥ 0
+                           !"#                    !"#
+
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = 6 𝑥7" 𝑡 𝜑" 𝑢
+                                               "#!
+
+
+• By coefficient matching,           𝑥7̇ " 𝑡 = −𝜆" 𝑥7" 𝑡   ∀𝑡 ≥ 0
+Solution of the Heat Diffusion on Manifolds
+
+
+                           + 𝑥,̇ ! 𝑡 𝜑! 𝑢 = − + 𝑥,! 𝑡 𝜆! 𝜑! 𝑢 ∀𝑢 ∈ Ω and 𝑡 ≥ 0
+                           !"#                     !"#
+
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = 6 𝑥7" 𝑡 𝜑" 𝑢
+                                                "#!
+
+
+• By coefficient matching,         !
+                                   !"
+                                        𝑥7" 𝑡 = −𝜆" 𝑥7" 𝑡 ⟹ 𝑥7" 𝑡 = 𝑎" e$%# &
+Solution of the Heat Diffusion on Manifolds
+
+
+                   − + 𝑎! 𝜆! e$%! & 𝜑! 𝑢 = − + 𝑎! e$%! & 𝜆! 𝜑! 𝑢
+                     !"#                           !"#
+
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = 6 𝑎" e$%# & 𝜑" 𝑢
+                                                "#!
+
+
+• By coefficient matching,         !
+                                   !"
+                                        𝑥7" 𝑡 = −𝜆" 𝑥7" 𝑡 ⟹ 𝑥7" 𝑡 = 𝑎" e$%# &
+Solution of the Heat Diffusion on Manifolds
+
+
+                   − + 𝑎! 𝜆! e$%! & 𝜑! 𝑢 = − + 𝑎! e$%! & 𝜆! 𝜑! 𝑢
+                     !"#                          !"#
+
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                       𝑥 𝑢, 𝑡 = 6 𝑎" e$%# & 𝜑" 𝑢
+                                                "#!
+
+
+• Using the initial condition:
+                     𝑥 𝑢, 0 = 6 𝑎" 𝜑" 𝑢 = 6 𝑥! , 𝜑" 𝜑" 𝑢 = 𝑥! 𝑢
+                                 "#!           "#!
+Solution of the Heat Diffusion on Manifolds
+
+
+                + 𝑥# , 𝜑! 𝜆! e$%! & 𝜑! 𝑢 = + 𝑥# , 𝜑! e$%! & 𝜆! 𝜑! 𝑢
+                !"#                            !"#
+
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = 6 𝑥! , 𝜑" e$%# & 𝜑" 𝑢
+                                               "#!
+Heat Kernel
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = 6 = 𝑥! 𝑣 𝜑" 𝑣 d𝑣 e$%# & 𝜑" 𝑢
+                                               "#! '
+Heat Kernel
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = = 𝑥! 𝑣 6 e$%# & 𝜑" 𝑣 𝜑" 𝑢 d𝑣
+                                               '     "#!
+                                                       heat kernel ℎ$ 𝑢, 𝑣
+
+
+
+
+                    Amount of heat transferred from
+                      point 𝑢 to point 𝑣 in time 𝑡
+Heat Kernel
+
+• Given an orthogonal Laplacian eigenbasis 𝜑" "#! satisfying ∆𝜑" =𝜆" 𝜑" with 𝜆" ≥ 0 "#!
+• Represent the solution as a Fourier series
+
+                                     𝑥 𝑢, 𝑡 = = 𝑥! 𝑣 6 e$%# & 𝜑" 𝑣 𝜑" 𝑢 d𝑣
+                                                      '         "#!
+                                                                  heat kernel ℎ$ 𝑢, 𝑣
+               ℎ$ 𝑢,.
+
+                                               ℎ- 𝜆
+
+
+                                                          𝑡=3
+                                                                      𝑡=2               𝑡=1
+
+                                                      0    𝜆%    𝜆&               𝜆'     𝜆(   𝜆)
+Heat Kernel: Euclidean Case
+
+                                                                                   +*
+• Given the Fourier basis e()"* "#! diagonalising the Laplacian ∆= −                      on Ω = −𝜋, +𝜋
+                                                                                   +* *
+
+• Represent the solution as a Fourier series
+                                                      (,
+                                                                           *
+                 𝑥+                  𝑥 𝑢, 𝑡 = =            𝑥! 𝑣 6 e$" & e$)"- e()"* d𝑣
+                                                      $,         "#!
+         ℎ 𝑢                                                      heat kernel ℎ$ 𝑢, 𝑣
+
+                                               ℎ- 𝑘
+
+
+                                                           𝑡=3
+                                                                   𝑡=2
+                                                                                              𝑡=1
+                                                      0 𝑘=1            2       3          4         5
+Heat Kernel: Euclidean Case
+
+                                                                        +*
+• Given the Fourier basis e()"* "#! diagonalising the Laplacian ∆= −           on Ω = −𝜋, +𝜋
+                                                                        +* *
+
+• Represent the solution as a convolution with the heat kernel (“impulse response”)
+                 𝑥+                 𝑥 𝑢, 𝑡 = 𝑥! ⋆ ℎ & 𝑢
+
+         ℎ 𝑢
+
+                                           ℎ- 𝑘
+
+
+                                                    𝑡=3
+                                                           𝑡=2
+                                                                                   𝑡=1
+                                                  0 𝑘=1      2      3          4         5
+DIFFUSION, CURVATURE &
+  SHAPE DESCRIPTORS
+Tangent & Normal
+
+
+      Ω
+                                  𝛾 .. “acceleration”
+             “velocity” 𝛾 .
+
+                 𝛾
+                              𝑢
+
+
+
+
+𝛾 𝑠 curve in arclength parametrisation
+          s.t. 𝛾 . 𝑠 = 1
+Tangent & Normal
+
+
+    Ω                            𝐭.
+                              𝐧= .    normal
+                                 𝐭
+        tangent 𝐭 = 𝛾 .
+
+              𝛾
+                          𝑢
+
+
+
+
+   Orthogonal unit frame 𝐭, 𝐧
+Curvature
+
+
+                         osc u
+                                 la t in
+      Ω                                    g pl
+                                                  ane
+                                  𝐧
+                     𝐭
+                 𝛾
+                            𝑢
+
+
+
+                          𝑟 = 1/𝜅
+
+ 𝜅 𝑠 = 𝛾 . ′ 𝑠 is the curvature of 𝛾 at
+              point 𝛾 𝑠
+Curvature
+
+
+     Ω
+                         𝛾 ..
+                    𝛾.
+
+                    𝜅>0
+
+
+
+
+ 𝜅 > 0 normal turning in the same
+     direction along the curve
+Curvature
+
+
+     Ω               𝛾 ..
+            𝛾.
+
+             𝜅<0
+
+
+
+
+ 𝜅 > 0 normal turning in the same
+     direction along the curve
+ 𝜅 < 0 normal turning in the opposite
+       direction along the curve
+Principal Curvatures
+
+
+      Ω        𝜅&
+
+
+
+                     𝑢
+                𝜅%
+
+
+
+
+Largest 𝜅/ and smallest 𝜅0 curvatures
+ among all curves passing through 𝑢
+     are the principal curvatures
+Principal Curvatures
+
+
+     Ω     𝜅&
+
+
+
+                 𝑢
+            𝜅%
+
+
+
+
+                       Principal curvatures are extrinsic
+Gaussian Curvature
+
+
+             Ω    𝜅&
+
+
+                           𝐾 = 𝜅/ 𝜅0
+                       𝑢
+                  𝜅%
+
+
+
+                                          C. F. Gauss
+
+
+    𝐾 = 𝜅/ 𝜅0 is the Gaussian curvature
+
+
+Gauss 1827
+Theorema Egregium
+
+
+
+
+                    C. F. Gauss
+
+
+
+
+Gauss 1827
+Theorema Egregium
+
+      In modern terminology:
+      “Gaussian curvature is a point-
+      wise intrinsic invariant of a
+      surface, and thus remains
+      preserved under isometry”
+                                        C. F. Gauss
+
+
+
+
+Gauss 1827
+Gaussian Curvature as Perimeter Defect
+
+
+                                             𝐶 𝑟
+                                            𝑢      𝑟
+
+
+
+
+        Spherical (𝐾 > 0)              Euclidean (𝐾 = 0)   Hyperbolic (𝐾 < 0)
+
+                                              2𝜋𝑟 − 𝐶 𝑢
+                                 𝐾 𝑢 = lim! 3
+                                       !→#       𝜋𝑟 $
+Bertrand, Diguet, Puiseux 1848
+Gaussian Curvature as Area Defect
+
+
+                                             𝐴 𝑟
+                                            𝑢      𝑟
+
+
+
+
+        Spherical (𝐾 > 0)              Euclidean (𝐾 = 0)    Hyperbolic (𝐾 < 0)
+
+                                               𝜋𝑟 % − 𝐴 𝑢
+                                 𝐾 𝑢 = lim! 12
+                                       !→#         𝜋𝑟 &
+Bertrand, Diguet, Puiseux 1848
+Heat Kernel Signature
+
+
+
+
+                               Heat Kernel Signature is the diagonal of the heat kernel
+                                                  =       =
+                                     ℎ& 𝑢, 𝑢 ≈         1+ 𝐾 𝑢       for 𝑡 ≪ 1
+                                                 >?&      @
+
+Sun, Ovsjanikov, Guibas 2009
+Heat Kernel Signature
+
+
+
+
+             Amount of heat remaining at point 𝑢 after time 𝑡
+Sun, Ovsjanikov, Guibas 2009
+Learnable Spectral Descriptors
+
+
+
+
+  Heat Kernel Signature          Wave Kernel Signature                          Learnable
+          low-pass filter                 band-pass filter                     optimal filter
+
+
+
+
+  Sun, Ovsjanikov, Guibas 2009   Aubry, Schlickewei, Cremers 2011   Litman, A. Bronstein 2014
+GRAPH DIFFUSION EQUATIONS
+Differential Operators on Graphs
+
+         𝑥 𝑢
+
+                                                     𝑥,
+
+
+
+
+• Scalar field 𝑢 ↦ 𝑥 𝑢 ∈ ℝ         • Node field 𝑥1
+Differential Operators on Graphs
+
+                      𝑥⃗ 𝑢
+
+
+                                                                                          𝑥⃗,-    𝑖
+                                                                                   𝑗
+
+
+
+
+• Scalar field 𝑢 ↦ 𝑥 𝑢 ∈ ℝ                                         • Node field 𝑖 ↦ 𝑥1
+• Vector field 𝑢 ↦ 𝑥⃗ 𝑢 ∈ 𝑇* Ω                                     • Edge field 𝑖, 𝑗 ↦ 𝑥⃗12 , tacitly assumed
+                                                                     to be alternating (𝑥⃗12 = −𝑥⃗21 )
+
+Note: in topological terminology, node- and edge fields are 0- and 1-cochains. They are discrete analogues of
+differential forms on manifold.
+Differential Operators on Graphs
+                   𝑥⃗ 𝑢
+         𝑥 𝑢
+
+                                                                    𝑥⃗,-       𝑥,
+                                                            𝑥-
+
+
+
+
+• Inner products                                • Inner products
+ • 𝑥, 𝑦 = ∫' 𝑥 𝑢 𝑦 𝑢 d𝑢           𝑥, 𝑦 ∈ 𝒳 Ω     • 𝑥, 𝑦 = ∑1 𝑥1 𝑥2                  𝑥, 𝑦 ∈ 𝒳 𝑉
+
+                                                   ⃗ 𝑦⃗ = ∑132 𝑎12 𝑥⃗12 𝑦⃗12
+                                                 • 𝑥,                               ⃗ 𝑦⃗ ∈ 𝒳 𝐸
+                                                                                    𝑥,
+   ⃗ 𝑦⃗ = ∫' 𝑥⃗ 𝑢 , 𝑦⃗ 𝑢
+ • 𝑥,                      * d𝑢   ⃗ 𝑦⃗ ∈ 𝒳 𝑇Ω
+                                  𝑥,
+Differential Operators on Graphs
+
+          𝑥 𝑢     ∇𝑥 𝑢
+
+                                                           ∇𝑥 ,-   𝑥,
+                                                     𝑥-
+
+
+
+
+• Gradient ∇𝑥 𝑢 ∈ 𝑇* Ω s.t.               • Gradient ∇𝑥 12 = 𝑥2 − 𝑥1
+          d𝑥* 𝑦⃗ = ∇𝑥 𝑢 , 𝑦⃗ 𝑢       *
+
+ makes scalar fields into vector fields    makes node fields into edge fields
+             ∇: 𝒳 Ω → 𝒳 𝑇Ω                           ∇: 𝒳 𝑉 → 𝒳 𝐸
+Differential Operators on Graphs
+
+        𝑥⃗ 𝑢
+                   div 𝑥⃗ 𝑢
+
+                                                                   𝑥⃗,-     𝑖
+                                                            𝑗
+                                                                          div 𝑥⃗ ,
+
+
+
+
+• Gradient ∇𝑥 𝑢 “steepest increase direction”   • Gradient ∇𝑥 12 = 𝑥2 − 𝑥1
+• Divergence div 𝑥⃗ 𝑢 “flow through inf ball”   • Divergence div 𝑥⃗ 1 = ∑12 𝑎12 𝑥⃗12
+ makes vector fields into scalar fields          makes edge fields into node fields
+             div: 𝒳 𝑇Ω → 𝒳 Ω                              div: 𝒳 𝐸 → 𝒳 𝑉
+Differential Operators on Graphs
+
+                     𝑥⃗ 𝑢
+            𝑥 𝑢
+
+                                                                                 𝑋,-   𝑥,
+
+
+
+
+• Gradient ∇𝑥 𝑢 “steepest increase direction”                 • Gradient ∇𝑥 12 = 𝑥2 − 𝑥1
+• Divergence div 𝑥⃗ 𝑢 “flow through inf ball”                 • Divergence div 𝑥⃗ 1 = ∑12 𝑎12 𝑥⃗12
+
+                  ∇𝑥, 𝑥⃗ = − x, div 𝑥⃗                                    ∇𝑥, 𝑥⃗ = − x, div 𝑥⃗
+Note: the adjoint appears with minus due to our definitions
+Differential Operators on Graphs
+
+                       𝑥⃗ 𝑢
+             𝑥 𝑢
+
+                                                                                              𝑥⃗,-    𝑥,
+
+
+
+
+• Gradient ∇𝑥 𝑢 “steepest increase direction”                         • Gradient ∇𝑥 12 = 𝑥2 − 𝑥1
+• Divergence div 𝑥⃗ 𝑢 “flow through inf ball”                         • Divergence div 𝑥⃗ 1 = ∑12 𝑎12 𝑥⃗12
+• Laplace-Beltrami operator ∆𝑥 𝑢 = −div ∇𝑥 𝑢                          • Laplacian ∆𝑥 1 = − div ∇𝑥                1
+
+
+Note: in the literature there various and slightly different versions of graph operators, typically differing in normalisation.
+Differential Operators on Graphs
+
+        𝑥 𝑢
+
+                                                                         𝑥,
+
+
+
+
+• Gradient ∇𝑥 𝑢 “steepest increase direction”   • Gradient ∇𝑥 12 = 𝑥2 − 𝑥1
+• Divergence div 𝑥⃗ 𝑢 “flow through inf ball”   • Divergence div 𝑥⃗ 1 = ∑12 𝑎12 𝑥⃗12
+• Laplace-Beltrami operator ∆𝑥 𝑢 = −div ∇𝑥 𝑢    • Laplacian ∆𝑥 1 = ∑12 𝑎12 𝑥1 − 𝑥2
+Heat Diffusion Equation on Graphs
+
+
+
+
+                                 𝐱,
+                       𝐱-
+
+
+
+
+                            𝐗̇ 𝑡 = −∆𝐗 𝑡
+Heat Diffusion Equation on Graphs
+
+
+
+
+                                 𝐱,
+                       𝐱-
+
+
+
+
+                            𝐗̇ 𝑡 = div ∇𝐗 𝑡
+Heat Diffusion Equation on Graphs
+
+
+
+                            ∇𝐗 12
+                                    𝐱,
+                       𝐱-
+
+
+
+
+                   𝐱̇ 8 𝑡 = - 𝑎89 𝐱9 𝑡 −𝐱 8 𝑡
+                             9∈𝒩!
+
+                              divergence   gradient
+                                  div        ∇𝐗 ,-
+Heat Diffusion Equation on Graphs
+
+
+
+
+                                𝐱,
+                       𝐱-
+
+
+
+
+                   𝐱̇ 8 𝑡 = 𝑑8 𝐱 8 𝑡 − - 𝑎89 𝐱9 𝑡
+                                     9∈𝒩!
+Heat Diffusion Equation on Graphs
+
+
+
+
+                                          𝐱,
+                                  𝐱-
+
+
+
+
+                                               1
+                        𝐱̇ 8 𝑡 = 𝑑8     𝐱8 𝑡 −    - 𝑎89 𝐱9 𝑡
+                                               𝑑8
+                                                     9∈𝒩!
+            rate of temperature            self         average temperature
+                   change              temperature       of the environment
+Heat Equation as a prototypical Gradient Flow
+
+          𝐗̇ 𝑡 = −∇ℇ 𝐗 𝑡
+
+               1                              ;    1
+          ℇ 𝐗 = -                  ∇𝐗 89          = trace 𝐗 < ∆𝐗
+               2                                   2
+                         9∈𝒩!
+
+                                                                        G. Dirichlet
+      The diffusion equation is the gradient flow of the
+      graph Dirichlet energy.
+
+
+ Proof: Using the trace derivative from the Matrix Cookbook:
+  .
+    trace 𝐗 0 ∆𝐗 = ∆𝐗 + ∆0 𝐗 = 2∆𝐗, it follows −∇ℇ 𝐗 = −∆𝐗, i.e., the
+ .𝐗
+ gradient flow equation is the heat equation 𝐗̇ 𝑡 = −∆𝐗 𝑡 .
+Heat Equation as a prototypical Gradient Flow
+
+         𝐗̇ 𝑡 = −∇ℇ 𝐗 𝑡
+
+              1                       ;    1
+         ℇ 𝐗 = -             ∇𝐗 89        = trace 𝐗 < ∆𝐗
+              2                            2
+                     9∈𝒩!
+
+                                                           G. Dirichlet
+     The diffusion equation is the gradient flow of the
+     graph Dirichlet energy.
+
+
+• “Smoothness” of the node features
+• Dirichlet energy decreases along the flow
+• In the limit 𝑡 → ∞ results in “oversmoothing”
+Label Propagation on Graphs
+
+
+
+                                              ?   unknown labels 𝑦1
+
+                                      ?
+                       ?                           known labels 𝑦2
+
+                                          ?
+                                  ?
+
+
+                           Transductive node
+                              classification
+
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+                                 1             0
+                                 0             1
+
+                                                                         0.5
+                                                                     ?   0.5
+                                     0
+                                                           0.5
+                       0.5           1             ?                           0
+                             ?
+                                                           0.5                     label probabilities 𝐘
+                       0.5                                                     1
+                                                             0.5
+                                                       ?     0.5
+
+                             1           ?
+                                         0.5
+                             0
+                                         0.5                     1
+                                                                 0
+
+
+
+
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+                                   1             0
+                                   0             1
+
+                                                                           0.5
+                                                                       ?   0.5
+                                       0
+                                                             0.5
+                       0.5             1             ?       0.5                 0
+                       0.5   ?                                                       boundary conditions 𝐘1
+                                                                                 1
+                                                               0.5
+                                                         ?     0.5
+
+                             1             ?
+                                           0.5
+                             0
+                                           0.5                     1
+                                                                   0
+
+
+                                 initial conditions 𝐘 0
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+                                  1               0
+                                  0               1
+
+                                                                      0.5
+                                                                  ?   0.5
+                                        0
+                                                         0.33
+                       0.38             1             ? 0.67                0
+                       0.62   ?                                                 boundary conditions 𝐘1
+                                                                            1
+                                                           0.42
+                                                       ? 0.58
+                              1             ?
+                                            0.6
+                              0
+                                            0.4             1
+                                                            0
+
+
+                                      Iteration #1: 𝐘 1
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+                                 1                0
+                                 0                1
+
+                                                                      0.44
+                                                                  ?   0.56
+                                       0
+                                                         0.32
+                       0.4             1              ? 0.68                 0
+                       0.6   ?                                                   boundary conditions 𝐘1
+                                                                             1
+                                                           0.41
+                                                       ? 0.59
+                             1              ?
+                                           0.55
+                             0
+                                           0.45             1
+                                                            0
+
+
+                                     Iteration #2: 𝐘 2
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+                                  1                0
+                                  0                1
+
+                                                                       0.43
+                                                                   ?   0.57
+                                        0
+                                                          0.31
+                       0.39             1              ? 0.69                 0
+                       0.61   ?                                                   boundary conditions 𝐘1
+                                                                              1
+                                                            0.39
+                                                        ? 0.61
+                              1              ?
+                                            0.56
+                              0
+                                            0.44             1
+                                                             0
+
+
+                                      Iteration #3: 𝐘 3
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+                                  1              0
+                                  0              1
+
+                                                              0.43
+                                                              0.57
+                                      0
+                                                     0.31
+                       0.39           1
+                                                     0.69            0
+                       0.61                                          1
+                                                       0.39
+                                                       0.61
+
+                              1
+                                          0.5
+                                          0.56
+                              0
+                                          0.5
+                                          0.44          1
+                                                        0
+
+
+
+
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+
+
+                    ;𝐘 𝑘
+             𝐘 𝑘+1 =𝐀
+
+
+• Diffusion of the label distributions 𝐘
+                              9 (probabilities)
+• Normalised diffusion matrix 𝐀
+
+
+
+
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+
+         𝐘= 𝑘 + 1        ; ==
+                         𝐀       ; => 𝐘= 𝑘
+                                 𝐀
+                       =
+         𝐘> 𝑘 + 1        ; >=
+                         𝐀       ; >> 𝐘> 𝑘
+                                 𝐀
+
+
+• Diffusion of the label distributions 𝐘
+                              9 (probabilities)
+• Normalised diffusion matrix 𝐀
+
+
+
+
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+
+         𝐘= 𝑘 + 1            𝐈     ; => 𝐘= 𝑘
+                                   𝐀
+                        =
+         𝐘> 𝑘 + 1           ; >=
+                            𝐀      ; >> 𝐘> 𝑘
+                                   𝐀              𝐘2
+
+
+
+                                                       𝐘1
+• Diffusion of the label distributions 𝐘
+                              9 (probabilities)
+• Normalised diffusion matrix 𝐀
+• Boundary conditions = nodes with known labels
+                       𝐘& 𝑘 + 1 = 𝐘& 𝑘
+
+
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+
+
+                                  ; >= 𝐘= 𝑘
+                      ; >> 𝐘> 𝑘 + 𝐀
+           𝐘> 𝑘 + 1 = 𝐀                           𝐘2
+
+
+
+                                                       𝐘1
+• Diffusion of the label distributions 𝐘
+                              9 (probabilities)
+• Normalised diffusion matrix 𝐀
+• Boundary conditions = nodes with known labels
+
+
+
+
+Zhu, Ghahramani 2002
+Label Propagation on Graphs
+
+
+                       ?→A
+           𝐘> 𝑘                        ; >= 𝐘=
+                               ; >> BC 𝐀
+                             𝐈−𝐀                      𝐘2
+
+
+
+                                                           𝐘1
+• Diffusion of the label distributions 𝐘
+                              9 (probabilities)
+• Normalised diffusion matrix 𝐀
+• Boundary conditions = nodes with known labels
+• Works well only under the assumption of homophily
+  (“neighbours have similar labels”)
+Zhu, Ghahramani 2002
+Feature Propagation on Graphs
+
+
+
+
+                                               GNN
+          Input graph with      Interpolated
+          missing features        features
+Rossi et B 2021
+GNNs AS PHYSICAL SYSTEMS
+Physical metaphor of Graph ML
+
+                                                                                             GNN = dynamic system
+feature space
+
+
+
+
+                                                         time
+
+
+                 𝐗̇ 𝑡 = 𝐅𝛉 E 𝐗 𝑡 , 𝐺
+Haber, Ruthotto 2017; Chen et al. 2019 (Neural ODEs); Xhonneau et al. 2020 (CGNN); Chamberlain, Rowbottom, et B. 2021 (GRAND, BLEND)
+Eliasof, Haber 2021 (PDE-GCN); Di Giovanni, Rowbottom et B 2022 (GRAFF), Rusch et B 2022 (GraphCON)
+Physical metaphor of Graph ML
+
+                                                                                             GNN = dynamic system
+
+                                                                                             layers = discretisation of time
+feature space
+
+
+
+
+                                                                                             graph = coupling function
+                                                                                                     (discretisation of space)
+
+
+
+                         𝑡                  𝑡+𝜏          time
+
+
+                𝐗 𝑡 + 𝜏 = 𝐗 𝑡 + 𝜏𝐅𝛉 E 𝐗 𝑡 , 𝐺
+Haber, Ruthotto 2017; Chen et al. 2019 (Neural ODEs); Xhonneau et al. 2020 (CGNN); Chamberlain, Rowbottom, et B. 2021 (GRAND, BLEND)
+Eliasof, Haber 2021 (PDE-GCN); Di Giovanni, Rowbottom et B 2022 (GRAFF), Rusch et B 2022 (GraphCON)
+Gradient Flow Framework (GRAFF)
+
+
+
+
+                                   feature space
+                                                   time
+           Traditional GNNs                                      GRAFF
+
+       𝐗̇ 𝑡 = 𝐅𝛉 E 𝐗 𝑡 , 𝐺                            𝐗̇ 𝑡 = −∇ℇ𝛉 E 𝐗 𝑡 , 𝐺
+• Parametrize evolution equations                  • Parametrize energy
+                                                   • Derive evolution equation as
+                                                     gradient flow
+Di Giovanni, Rowbottom et B 2022                   • Better interpretability
+Generalised parametric Dirichlet energy
+
+                                    G
+                                1              1
+                          ℇ𝛉 𝐗 = - 𝐱 8 , 𝛀𝐱 8 − - 𝑎C89 𝐱 8 , 𝐖𝐱9
+                                2              2
+                                    8FC                 9∈𝒩!
+                                    external energy           internal energy
+                                                          (pair-wise interactions)
+
+• Energy of a system of particles (nodes) parameterised by 𝑑×𝑑 matrices 𝛀 and 𝐖
+• External energy term acting on all particles
+• Internal energy term: interactions between nodes along edges of the graph
+   • Attractive interactions along positive eigenvectors of 𝐖
+   • Repulsive interactions along negative eigenvectors of 𝐖
+
+Di Giovanni, Rowbottom et B 2022
+Gradient Flow of ℇ𝛉
+
+                                           𝛀 + 𝛀<         𝐖 + 𝐖<
+                  𝐗̇ 𝑡 = −∇ℇ𝛉 𝐗 𝑡   = −𝐗 𝑡         ; 𝐗(𝑡)
+                                                  +𝐀
+                                             2               2
+                                         matrices appear only in symmetrized form
+
+
+
+
+Di Giovanni, Rowbottom et B 2022
+Gradient Flow of ℇ𝛉
+
+
+                                  ; 𝐗(𝑡)𝐖
+                  𝐗̇ 𝑡 = −𝐗 𝑡 𝛀 + 𝐀
+
+• Symmetric matrices 𝛀 and 𝐖
+
+• Time-independent parameters: 𝛀 𝑡 = 𝛀, 𝐖 𝑡 = 𝐖
+
+
+
+
+Di Giovanni, Rowbottom et B 2022
+Di Giovanni, Rowbottom et B 2022
+Discretised Gradient Flow of ℇ𝛉
+
+
+                                     ; 𝐗(𝑡)𝐖
+          𝐗 𝑡 + 𝜏 = 𝐗 𝑡 + 𝜏 −𝐗 𝑡 𝛀 + 𝐀
+
+• Residual convolutional-type GNN
+• Symmetric weights
+• Symmetry constraint does not diminish expressive power
+• Shared weights across layers
+
+
+
+
+Di Giovanni, Rowbottom et B 2022; Xu, Zagoruyko, Komodakis 2019 (universal approximation in NNs with symmetric weights)
+Gradient Flow Framework (GRAFF)
+
+• Nonlinear encoder: 𝐗 0 = ENC 𝐗 )4
+• Linear Gradient flow
+
+
+                                                        ;𝐗 𝑡 𝐖
+                             𝐗 𝑡 + 𝜏 = 𝐗 𝑡 + 𝜏 −𝐗 𝑡 𝛀 + 𝐀
+                                      Residual
+                                     connection      Symmetric
+                                                   shared matrices
+
+• Nonlinear decoder: 𝐗 567 = DEC 𝐗 𝑇
+
+
+
+Di Giovanni, Rowbottom et B 2022
+                    GRAFF                                        GCN
+                     ;𝐗 𝑡 𝐖
+    𝐗 𝑡 + 𝜏 = 𝐗 𝑡 + 𝜏𝐀                                       ;𝐗 𝑡 𝐖 𝑡
+                                                𝐗 𝑡 + 𝜏 = 𝜏𝜎 𝐀
+• Residual                                  • Non-residual
+• Symmetric weights                         • Non-symmetric weights
+• Shared weights                            • Different weights per layer
+• No nonlinear activation                   • Nonlinear activation
+
+• Gradient flow (interpretability)          • Not a gradient flow
+• 𝑑0/2 weights                              • 𝐿𝑑0 weights
+• Can induce both low- and high-frequency   • Only low-frequency dominated dynamics
+  dominated dynamics                          (oversmoothing)
+• Works with heterophilic graphs            • Only homophilic graphs
+
+Di Giovanni, Rowbottom et B 2022            Kipf, Welling 2017
+Homophily vs Heterophily
+
+
+
+                                   Test accuracy
+                                                                              Node-wise MLP
+
+
+                                                        GRAFF
+
+
+
+                                                          GCN
+
+
+
+                                                   heterophilic                   homophilic
+
+                                                   Synthetic Cora node classification task
+Di Giovanni, Rowbottom et B 2022
+Scalability
+                                     Graph convolution
+
+                                                𝐗𝐖
+                                             𝐿𝐀𝐗 𝐖
+   𝐗 )*            ENC           𝐗    𝐿 − 1 𝐀% 𝐗 𝐖 %     +   DEC   𝐗 +,-
+                                       ⋮
+                                             𝐀( 𝐗 𝐖(
+                                     Pre-compute
+
+
+Rossi, Frasca et B 2020 (SIGN)
+Scalability
+                                 Graph convolution
+
+                                            𝐗𝐖
+                                         𝐿𝐀𝐗 𝐖
+   𝐗 )*                           𝐿 − 1 𝐀% 𝐗 𝐖 %     +   DEC   𝐗 +,-
+                                   ⋮
+                                         𝐀( 𝐗 𝐖(
+                                 Pre-compute
+
+
+Rossi, Frasca et B 2020 (SIGN)
+Spectral analysis of GRAFF
+
+• 𝚫 = 𝚽𝚲𝚽 8 orthogonal eigendecomposition of the graph Laplacian
+• 𝐖 = 𝚿𝚳𝚿 8 orthogonal eigendecomposition of channel mixing weights
+• Output of 𝐿 layers GRAFF
+                                    - 01,
+                                                   2
+                    𝐗 𝐿𝜏 = + + 1 + 𝜏𝜇* 1 − 𝜆.          𝐗 0 , 𝛙. ⊗ 𝛟. 𝛙. ⊗ 𝛟.
+                                   *+, .+/
+
+   • Low frequencies (𝜆9 < 1) magnified by positive eigenvalues of 𝐖 (𝜇" > 0)
+   • High frequencies (𝜆9 > 1) magnified by negative eigenvalues of 𝐖 (𝜇" < 0)
+
+
+Di Giovanni, Rowbottom et B 2022
+Spectral analysis of GRAFF
+
+• 𝚫 = 𝚽𝚲𝚽 8 orthogonal eigendecomposition of the graph Laplacian
+• 𝐖 = 𝚿𝚳𝚿 8 orthogonal eigendecomposition of channel mixing weights
+• Output of 𝐿 layers GRAFF
+                                    - 01,
+                                                        2
+                    𝐗 𝐿𝜏 = + + 1 + 𝜏𝜇* 1 − 𝜆.               𝐗 0 , 𝛙. ⊗ 𝛟. 𝛙. ⊗ 𝛟.
+                                   *+, .+/
+
+If eigenvalues of 𝐖 are sufficiently negative, then GRAFF dynamics is
+        high-frequency dominant: ℰ 𝐗 𝑡 / 𝐗 𝑡          → 𝜆QRS /2
+                                             No oversmoothing!
+Di Giovanni, Rowbottom et B 2022
+Spectral analysis of GRAFF
+
+                              k 𝑡 =𝐗 𝑡 𝚿
+• Define Fourier coefficients 𝐗
+• GRAFF in the Fourier domain of 𝐖
+
+                                                         𝜇,
+                                          H 𝑡 + 𝜏𝐀
+                                   H 𝑡+𝜏 =𝐗
+                                   𝐗             9𝐗H 𝑡        ⋱
+                                                                  𝜇-
+
+           Along the eigenvectors of 𝐖 with 𝜇? < 0 the dynamics is
+                 equivalent to sign flipping along the edges
+
+Di Giovanni, Rowbottom et B 2022
+NON-HOMOGENEOUS DIFFUSION
+Non-homogeneous Diffusion Equation
+
+
+
+
+                                ∇𝑥
+                   𝑥̇ = div
+                            1 + 𝑐 ∇𝑥 !
+                                              “edge indicator”
+
+
+
+
+                  “Do not diffuse across colour discontinuities”
+
+Perona, Malik 1990 (erroneously called “anisotropic”)
+Non-homogeneous Diffusion in Image Processing
+
+
+
+
+                                                                  Homogeneous                                      Non-homogeneous
+                                                                    diffusion                                          diffusion
+
+Perona, Malik 1990; Kimmel et al. 1997; Sochen et al. 1998; Tomasi, Manduchi 1998; Weickert 1998; Buades et al. 2005
+Non-homogeneous Diffusion Equation on Graphs
+
+                                 𝐱̇ 3 𝑡 = + 𝑎 𝐱 3 𝑡 , 𝐱4 𝑡   𝐱4 𝑡 − 𝐱 3 𝑡
+                                        4∈𝒩"
+
+Explicit (Forward Euler) discretization with timestep 𝜏:
+
+
+                          𝐱 3 𝑡 + 𝜏 = 𝐱 3 𝑡 + 𝜏 + 𝑎 𝐱 3 𝑡 , 𝐱4 𝑡      𝐱4 𝑡 − 𝐱 3 𝑡
+                                                  4∈𝒩"
+
+
+
+
+Chamberlain, Rowbottom, et B. 2021
+Non-homogeneous Diffusion Equation on Graphs
+
+                                 𝐱̇ 3 𝑡 = + 𝑎 𝐱 3 𝑡 , 𝐱4 𝑡      𝐱4 𝑡 − 𝐱 3 𝑡
+                                        4∈𝒩"
+
+Explicit (Forward Euler) discretization with timestep 𝜏:
+
+
+                          𝐱 3 𝑡 + 𝜏 = + 𝑎 𝐱 3 𝑡 , 𝐱4 𝑡         𝐱4 𝑡
+                                        4∈𝒩"   normalised ∑- 𝑎,- = 1
+                                               unit step 𝜏 = 1
+
+
+
+             GAT is a particular discretisation of graph diffusion
+Chamberlain, Rowbottom, et B. 2021
+ Explicit             Explicit          Implicit
+Fixed step   Multi-step (Runge-Kutta)
+Spatial Derivative: Graph Rewiring?
+
+
+
+
+                 Different discretisations of 2D Laplacian
+BELTRAMI FLOW
+Images as embedded manifolds
+
+
+
+
+        𝐗̇ = −div 𝑎 𝐗 ∇𝐗                      𝐙̇ = ∆𝐆 𝐙
+               Non-linear diffusion      Non-Euclidean diffusion
+
+
+Kimmel et al. 1997; Sochen et al. 1998
+Beltrami flow
+
+                                                    feature coordinates
+• Consider image as embedded 2-manifold
+                        𝐙 𝐮 = 𝐮, 𝛼𝐗 𝐮
+• Pullback metric: 2×2 matrix
+                            T
+        𝐆 = 𝐈 + 𝛼 0 ∇𝐮 𝐗 𝐮    ∇𝐮 𝐗 𝐮
+                                            positional
+• Beltrami flow = gradient flow of the      coordinates
+
+                                                                  𝐙̇ = ∆𝐆 𝐙
+  Polyakov energy (harmonic energy of the
+  embedding used in string theory)
+
+
+
+
+                                                                              E. Beltrami
+Kimmel et al. 1997; Sochen et al. 1998
+Graph Beltrami flow
+                                                                                         𝐱
+• Graph with positional and feature node
+  coordinates 𝐳1 = 𝐮1 , 𝐱 1
+
+
+
+
+                                                                   feature coordinates
+• Graph Beltrami flow
+
+    𝐳̇ 3 𝑡 = + 𝑎 𝐳3 𝑡 , 𝐳4 𝑡                         𝐳4 𝑡 − 𝐳3 𝑡
+                  4∈𝒩"’
+                                     rewired graph
+   • Evolution of 𝐱 = feature diffusion
+   • Evolution of 𝐮 = graph rewiring
+                                                                                             u
+
+
+
+Chamberlain, Rowbottom, et B. 2021
+Graph Beltrami flow
+
+
+
+
+             Evolution of positional/feature components + rewiring of the Cora graph
+
+Chamberlain, Rowbottom, et B. 2021
+Ricci flow
+
+• Ricci flow: “diffusion of the Riemannian metric”
+                             𝜕𝑔12
+                                  = 𝑅12
+                              𝜕𝑡
+
+
+
+
+                                                         G. Ricci-Curbastro   R. Hamilton
+
+              Evolution of a manifold under Ricci flow
+
+
+
+Ricci 1903; Hamilton 1988;
+                                           G. Perelman   G. Ricci-Curbastro   R. Hamilton
+
+
+
+
+Ricci 1903; Hamilton 1988; Perelman 2003
+NEURAL SHEAF DIFFUSION
+Sheaves
+
+
+
+
+                                                                  J. Leray
+
+
+
+
+Leray 1945; Shepard 1985; Curry 2014; Hansen, Ghrist 2019, 2021
+Cellular Sheaves
+                                                             ℱ 𝑤
+
+                                                              𝑤
+
+         ℱ 𝑣          8           ℱ 𝑒    8     ℱ 𝑢
+                     ℱ-⊴<               ℱ*⊴<
+
+
+                     ℱ-⊴<               ℱ*⊴<
+             𝑣                                  𝑢     𝑣                 𝑢
+                                   𝑒
+                                                     ℱ 𝑣               ℱ 𝑢
+
+
+                     Cellular sheaf ℱ                Manifold + Connection
+
+
+
+Bodnar, di Giovanni, et B. 2022
+Cellular Sheaves
+                                                                         ℱ 𝑤
+
+                                                                          𝑤
+                                                      8
+         ℱ 𝑣                      ℱ 𝑒          ℱ 𝑢   ℱ>⊴< ℱ
+                                                         4 -⊴<4
+                                                                                          8
+                                                                                         ℱ*⊴< ℱ
+                      8                  8                                                   3 >⊴<3
+                     ℱ-⊴<               ℱ*⊴<                      𝑒=                𝑒/
+
+
+                     ℱ-⊴<               ℱ*⊴<                               𝑒0
+             𝑣                                  𝑢           𝑣                            𝑢
+                                   𝑒
+                                                                        8 ℱ
+                                                                       ℱ-⊴<* *⊴<*
+                                                          ℱ 𝑣                            ℱ 𝑢
+
+
+                     Cellular sheaf ℱ                   Analogy to parallel transport
+                                                              on manifolds
+
+
+Bodnar, di Giovanni, et B. 2022
+Cellular Sheaves
+                                                                         ℱ 𝑤
+
+                                                                          𝑤
+                                                      8
+         ℱ 𝑣                      ℱ 𝑒          ℱ 𝑢   ℱ>⊴< ℱ
+                                                         4 -⊴<4
+                                                                                          8
+                                                                                         ℱ*⊴< ℱ
+                      8                  8                                                   3 >⊴<3
+                     ℱ-⊴<               ℱ*⊴<                      𝑒=                𝑒/
+
+
+                     ℱ-⊴<               ℱ*⊴<                               𝑒0
+             𝑣                                  𝑢           𝑣                            𝑢
+                                   𝑒
+                                                                        8 ℱ
+                                                                       ℱ-⊴<* *⊴<*
+                                                          ℱ 𝑣                            ℱ 𝑢
+
+
+  Endow graph with ”geometry” leading to richer diffusion
+   with better separation, ability to cope with heterophily,
+                   and no oversmoothing
+Bodnar, di Giovanni, et B. 2022
+Diffusion on Cellular Sheaves
+
+
+
+
+                                  𝐗̇ 𝑡 = ∆ℱ 𝐗 𝑡 with i.c. 𝐗 0 = 𝐗
+         Node classification = limit of sheaf diffusion equation
+                       with an appropriate sheaf
+Bodnar, di Giovanni, et B. 2022
+Alternative to Weisfeiler-Lehman for expressive power?
+
+  Graph type                      #Node classes        Sheaf class ℱ , dim=d
+
+  Homophilic                           2               Symmetric d=1                         ✓
+  Heterophilic                         2               Symmetric d=1                         ✗
+                                       2               Non-symmetric d=1                     ✓
+                                       ≥3              Non-symmetric d=1                     ✗
+                                       ≤2d             Orthogonal, d={2,4}                   ✓
+
+       The capability of sheaf diffusion to solve node classification problem in the limit
+
+Bodnar, di Giovanni, et B. 2022
+Graph-Coupled Oscillators
+
+
+
+
+                   Dynamics of a system of coupled oscillators on a molecular graph
+
+Rusch et B. 2022
+Takeaways
+
+• Considering GNNs as discretised physical systems provides a different & sometimes
+  more convenient perspective
+• Many standard GNNs can be formalised as a discretised Graph Diffusion equation
+• The physical perspective allows to make principled architectural choices (e.g., residual
+  connection, shared symmetric weights) and provides theoretical guarantees (e.g.,
+  asymptotic behaviour, expressive power, etc.)
+• Though we have dealt only with diffusion-type equations, other physical models have
+ also been successfully used in the Graph ML literature
+Key Concepts
+
+• Diffusion equation (Euclidean, manifold, graph)
+• Gradient flow
+• Cellular sheaves
+• Label & Feature Propagation
+Main References
+
+• F. Di Giovanni et al., Graph neural networks as gradient flows: understanding graph
+  convolutions via energy, arXiv:2206.10991, 2022. GNNs as gradient flows of particle systems. See
+  also a blog post M. Bronstein et al., Graph neural networks as gradient flows, Towards Data Science, 2022.
+• C. Bodnar, F. Di Giovanni, et al., Neural sheaf diffusion, NeurIPS 2022. Learning on graphs by
+  diffusion on lifted cellular sheaves. See also a blog post M. Bronstein et al., Neural Sheaf Diffusion for deep
+  learning on graphs, Towards Data Science, 2022.
+• M. Bronstein, Graph Neural Networks beyond Weisfeiler-Lehman and vanilla Message
+  Passing, Towards Data Science, 2022. Blog post proposing continuous physics-inspired GNN models.
+• J. Weickert, Anisotropic diffusion in image processing, Treubner Stuttgart 1998. Book on PDE-
+  based and variation image processing.
+• L.-H. Lim, Hodge Laplacians on graphs, arXiv:1507.05379, 2015. Operators on graphs.
+

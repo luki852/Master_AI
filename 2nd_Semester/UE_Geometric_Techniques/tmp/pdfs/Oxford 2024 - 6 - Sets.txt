@@ -1,0 +1,259 @@
+                      Sets
+Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• We are now finally going to see the Blueprint in action!
+• Sets provide a convenient discrete domain with minimal geometric assumptions
+• DeepSets are a universal architecture for learning permutation-invariant functions on
+  sets
+Sets: The most basic objects
+
+
+
+
+                                                  { }
+• Simplest object in our zoo, easy to analyse
+• Important in many applications, e.g. 3D point
+  clouds in computer graphics and vision
+• The elements are unordered
+• Most conclusions will naturally carry over to
+  graphs
+3D scan of Oxford
+ (a point cloud)
+What do we want?
+
+
+
+
+            𝑓      1   2   3   4
+                                   =𝑓   𝜋1   𝜋2   𝜋3   𝜋4
+Permutation-invariant functions on Sets
+
+• Domain: Ω = 1, … , 𝑛 unordered set of size 𝑛
+• Signals: 𝑋: Ω → 𝒳 = 𝑆 ⊆ ℝ! : 𝑆 = 𝑛 a set of 𝑛 𝑑-dimensional vectors
+• Label function: 𝑓: 𝒳 → 𝒴
+
+
+
+                              𝑓                   =𝑦
+Permutation-invariant functions on Sets
+
+• Domain: Ω = 1, … , 𝑛 unordered set of size 𝑛
+• Signals: 𝑋 = 𝐱" , … , 𝐱 # ∈ 𝒳 a set of 𝑛 𝑑-dimensional vectors
+• Label function: 𝑓: 𝒳 → 𝒴
+
+
+
+                                𝑓                     =𝑦
+
+
+                 𝑓 is permutation-invariant if for any permutation 𝜋 ∈ 𝑆#
+
+                             𝑓 𝐱$ " , … , 𝐱$ #   = 𝑓 𝐱" , … , 𝐱 #
+Permutation-invariant functions on Sets
+
+• Domain: Ω = 1, … , 𝑛 unordered set of size 𝑛
+• Signals: vectors arranged into an 𝑛×𝑑 matrix 𝐗
+• Label function: 𝑓: ℝ#×! → 𝒴
+
+
+
+                                𝑓      .           =𝑦
+
+
+               𝑓 is permutation-invariant if for any permutation matrix 𝐏
+                                     𝑓 𝐏𝐗 = 𝑓 𝐗
+Permutation-equivariant functions on Sets
+
+• Domain: Ω = 1, … , 𝑛 unordered set of size 𝑛
+• Signals: vectors arranged into an 𝑛×𝑑 matrix 𝐗
+                                '
+• Label function: 𝐅: ℝ#×! → ℝ#×! mapping the set to another set of 𝑑′-dimensional
+ vectors
+
+
+                              𝑓        .           =
+
+
+              𝐅 is permutation-equivariant if for any permutation matrix 𝐏
+                                     𝐅 𝐏𝐗 = 𝐏𝐅 𝐗
+Permutation matrices
+
+
+
+                       1               1       1
+
+                                   1
+                           =
+                       2                       2
+                       3                   1   3
+                       4                       4
+                               1
+                               Permutation
+                                  3,2,4,1
+Permutation matrices
+
+
+
+                               1             1                    1
+
+                                                 1
+                                   =
+                               2                                  2
+                               3                      1           3
+                               4                                  4
+                                        1
+                                         Permutation
+                                            2,3,4,1
+
+• Representation of the permutation group 𝑆#
+• Exactly one 1 in every row/column
+• Bi-stochastic (∑& 𝑝&' = ∑' 𝑝&' = 1), orthogonal (𝐏 ( 𝐏 = 𝐏𝐏 ( = 𝐈), non-negative (𝑝&' ≥ 0)
+• 𝑛! permutations overall
+The linear setting
+
+         Theorem: a linear set function 𝐅 𝐗 = 𝚯𝐗𝐖 is permutation equivariant iff 𝚯 can
+                                                                                   "
+         be written as a linear combination of 𝚯" = 𝐈 and 𝚯) 𝐗 = 𝟏𝟏( .
+                                                                                   #
+
+
+
+      Proof: First, we see that right-multiplication   (ii) Assume 𝐏𝚯 = 𝚯𝐏 or
+      by 𝐖 acts on each set element in the same        equivalently 𝐏𝚯𝐏 * = 𝚯 for all 𝐏.
+      way (“channel mixing”), thus unaffected by       Consider a diagonal element 𝜃++ .   𝑖, 𝑖
+      permutation and can be ignored.                  𝐏 permutes rows/columns 𝑖 → 𝑖′ .
+                                                       Equivariance implies diagonal
+      (i) We easily check that for every               elements must be all equal.                𝑖′, 𝑖′
+      permutation, 𝐏𝚯( = 𝚯( 𝐏 = 𝐏 and, since the
+      matrix 𝚯) has all identical elements, 𝐏𝚯) =
+      𝚯) 𝐏 = 𝚯) . The linear combination is thus
+      equivariant.
+
+Zaheer et al. 2017
+The linear setting
+
+         Theorem: a linear set function 𝐅 𝐗 = 𝚯𝐗𝐖 is permutation equivariant iff 𝚯 can
+                                                                                    "
+         be written as a linear combination of 𝚯" = 𝐈 and 𝚯) 𝐗 = 𝟏𝟏( .
+                                                                                    #
+
+
+
+      Proof: First, we see that right-multiplication   (ii) Assume 𝐏𝚯 = 𝚯𝐏 or
+      by 𝐖 acts on each set element in the same        equivalently 𝐏𝚯𝐏 * = 𝚯 for all 𝐏.
+      way (“channel mixing”), thus unaffected by       Consider a diagonal element 𝜃++ .
+      permutation and can be ignored.                  𝐏 permutes rows/columns 𝑖 → 𝑖′ .      𝑖, 𝑗
+                                                       Equivariance implies diagonal                𝑖′, 𝑗′
+      (i) We easily check that for every               elements must be all equal.
+      permutation, 𝐏𝚯( = 𝚯( 𝐏 = 𝐏 and, since the
+      matrix 𝚯) has all identical elements, 𝐏𝚯) =      Consider an off-diagonal element
+      𝚯) 𝐏 = 𝚯) . The linear combination is thus       𝜃+,/0+ . 𝐏 permutes rows 𝑖 → 𝑖′ and
+      equivariant.                                     columns 𝑗 → 𝑗′ .
+Zaheer et al. 2017
+The linear setting
+
+         Theorem: a linear set function 𝐅 𝐗 = 𝚯𝐗𝐖 is permutation equivariant iff 𝚯 can
+                                                                                    "
+         be written as a linear combination of 𝚯" = 𝐈 and 𝚯) 𝐗 = 𝟏𝟏( .
+                                                                                    #
+
+
+
+      Proof: First, we see that right-multiplication   (ii) Assume 𝐏𝚯 = 𝚯𝐏 or
+      by 𝐖 acts on each set element in the same        equivalently 𝐏𝚯𝐏 * = 𝚯 for all 𝐏.
+      way (“channel mixing”), thus unaffected by       Consider a diagonal element 𝜃++ .
+      permutation and can be ignored.                  𝐏 permutes rows/columns 𝑖 → 𝑖′ .
+                                                       Equivariance implies diagonal
+      (i) We easily check that for every               elements must be all equal.
+      permutation, 𝐏𝚯( = 𝚯( 𝐏 = 𝐏 and, since the
+      matrix 𝚯) has all identical elements, 𝐏𝚯) =      Consider an off-diagonal element
+      𝚯) 𝐏 = 𝚯) . The linear combination is thus       𝜃+,/0+ . 𝐏 permutes rows 𝑖 → 𝑖′ and
+      equivariant.                                     columns 𝑗 → 𝑗′ . Equivariance
+                                                       implies off-diagonal elements must
+Zaheer et al. 2017
+                                                       be all equal.
+DEEP SETS
+Universal approximation under permutation-invariance
+
+                                                                                   #
+          Universal Approximation Theorem: Let 𝑋 ⊆ 𝐾 ⊆ ℝ!                              be a finite set of size 𝑛
+          of elements from a compact set 𝐾. Then for every continuous permutation-
+          invariant function 𝑓: ℝ#×! → ℝ and 𝜀 > 0, there exist suitable functions 𝜙, 𝜓 s.t.
+                                                                     #
+
+                                                             𝑓 𝑋 − 𝜙 H 𝜓 𝐱&   <𝜀
+                                                                     &*"
+
+
+   • Continuity is understood in the sense of the Hausdorff distance (distance between sets)
+   • Similar result for max aggregator
+   • Compare to Kolmogorov-Arnold approximation 𝑓 𝑥" , … , 𝑥# ≈ 𝜙 ∑#&*" 𝛼& 𝜓 𝑥& . In our
+     case, due to permutation-invariance, there are no coordinate-dependent coefficients 𝛼& .
+Zaheer et al. 2017; Qi et al. 2017 (different version with max)
+D. Hilbert   A. Kolmogorov   V. Arnold
+DeepSets
+                              Permutation equivariant       Permutation invariant
+                     𝐱,                 𝜓
+                     𝐱-                 𝜓
+                     𝐱/                 𝜓                               𝜙
+                          ⋮                             ⋮
+                     𝐱.                 𝜓
+
+
+                                                    $
+
+                                𝑓 𝐗 =𝜙            ' 𝜓 𝐱!
+                                                  !"#
+
+
+Zaheer et al. 2017
+DeepSets
+                              Permutation equivariant       Permutation invariant
+                     𝐱,                 𝜓
+                     𝐱/                 𝜓
+                     𝐱.                 𝜓                               𝜙
+                          ⋮                             ⋮
+                     𝐱-                 𝜓
+
+
+                                                    $
+
+                                𝑓 𝐗 =𝜙            ' 𝜓 𝐱!
+                                                  !"#
+
+
+Zaheer et al. 2017
+DeepSets as an Instance of Geometric Deep Learning Blueprint
+
+       Set 𝑋          Element features 𝒳 𝑋    Functions ℱ 𝒳 𝑋
+
+
+
+
+                                                     𝑓
+
+ Permutation group     Permutation matrix    Permutation-invariant
+      𝜋 ∈ 𝑆.             𝐏𝐗 = 𝑥$ 23 & ,'         𝑓 𝐏𝐗 = 𝑓 𝐗
+                 mug?
+                 table?
+
+Qi et al. 2017
+                 car?
+Takeaways: DeepSets
+
+• Sets are the basic object with permutation symmetry
+• Permutation invariant and equivariant functions on sets have a simple form
+• DeepSet is a universal blueprint for learning on sets
+Key Concepts
+
+• Permutation invariance and equivariance
+• DeepSets / PointNet architectures
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 4.1 “Graphs and
+ sets”
+• M. Zaheer et al., Deep Sets, NIPS 2017.
+• C. Qi et al., PointNet: Deep learning on point sets for 3D classification and
+  segmentation, CVPR 2017.
+

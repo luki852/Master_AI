@@ -1,0 +1,866 @@
+            Manifolds
+Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• Manifolds: no global structure, need to work locally
+• Basic notions in differential geometry allowing to formally define ”stuff” locally on
+  manifolds (tangent spaces, Riemannian metric, exponential map) and ”move it
+  around” (geodesics, parallel transport)
+• Domain deformations and isometries (Riemannian and metric)
+• Convolution-like operators on manifolds and the problem of gauge choice
+• How to deal with ambiguity of local reference choice? (“gauge-equivariance”)
+Different Domains
+
+
+
+
+  Sets & Graph      Grids   Homogeneous   Manifolds, Meshes &
+                               spaces      Geometric graphs
+Popular architectures as instances of the Blueprint
+
+
+ Architecture           Domain Ω            Symmetry Group 𝐺
+ CNN                    Grid                Translation
+ Spherical CNN          Sphere / SO(3)      Rotation SO(3)
+ Intrinsic / Mesh CNN   Manifold / Mesh     Isometry Iso(Ω) /
+                                            Gauge Symmetry SO(2)
+ GNN                    Graph               Permutation S!
+ Deep Sets              Set                 Permutation S!
+ Transformer            Complete Graph      Permutation S!
+ LSTM                   1D Grid             Time warping
+MANIFOLDS
+Why Manifolds?
+
+
+
+
+ More efficient representation: no “waste”   Natural model for
+ for internal structures                     deformable shapes
+Why Manifolds?
+
+
+
+  In protein modeling,
+  abstract out internal
+  structure that is irrelevant
+  for interactions + allow
+  some conformation
+  changes
+Two Types of Invariance
+
+
+
+
+    Local gauge
+    transformation
+
+
+
+
+                            Global
+                          deformation
+Euclidean Convolution
+
+
+
+
+                      Homogeneous space: Transport the filter around the domain
+
+Figure: M. Weiler et al. 2021
+Non-Euclidean Convolution
+
+
+
+
+                                Manifold: Result of transport is path dependent
+
+Figure: M. Weiler et al. 2021
+Non-Euclidean Convolution
+
+
+
+
+                                Manifold: Result of transport is path dependent
+
+Figure: M. Weiler et al. 2021
+How to define convolution?
+
+
+
+
+          Symmetry                Transport        Local frame
+     “act with the group”       “move around”   “kernel alignment”
+
+
+
+Figure: M. Weiler et al. 2021
+How to define convolution?
+
+
+
+
+          Symmetry                Transport         Local frame
+     “act with the group”       “move around”    “kernel alignment”
+  requires homogeneous          path-dependent
+           space
+Figure: M. Weiler et al. 2021
+                                    Non-Euclidean Convolution Recipes
+
+
+Fixed path              Fixed gauge       “Group pooling”      Isotropic filter        Gauge-equivariant
+                                                                  (spectral)                 filter
+Poulenard et al. 2018   Monti et B 2017   Masci et B 2015      Defferard et al. 2016   Cohen et al. 2019
+                        Melzi et B 2019   Boscaini et B 2016   …                       De Haan et al. 2020
+                                                                                       Weiler et al. 2021
+Key ingredients
+
+• How to define “local stuff” on manifolds? (Riemannian metric & exponential map)
+• How to move “local stuff” around? (parallel transport)
+• Global symmetry and deformation invariance (isometry)
+• Local symmetry and gauge equivariance (we will mention only briefly)
+Manifolds
+
+• Topological space (“neighbourhood”            Ω    𝑣
+  but not “distance”)
+• Smooth manifold = smooth transitions
+                                                    𝑇% Ω
+  between local “charts”
+• Locally homeomorphic to an 𝑠-dimensional                        𝑢
+  Euclidean space (𝑠-dimensional manifold)
+
+Tangent space 𝑇! Ω ≅ ℝ " attached at each point 𝑢
+                                                           𝑇! Ω
+Tangent bundle = collection of all tangent
+spaces 𝑇Ω = ∐!∈$ 𝑇! Ω
+Tangent Vectors
+
+Tangent vector 𝑥⃗ ∈ 𝑇! Ω                      Ω
+
+• Model of local displacement (“directional
+  derivative”)
+                                                         𝑥⃗
+• 𝑥⃗ is coordinate free (abstract vector)
+                                                         𝑢
+
+
+
+                                                  𝑇! Ω
+Tangent Vectors
+
+Tangent vector 𝑥⃗ ∈ 𝑇! Ω                             Ω
+
+• Model of local displacement (“directional
+  derivative”)
+                                                                      𝑥⃗
+• 𝑥⃗ is coordinate free (abstract vector)
+• Requires (arbitrary) local basis 𝑥⃗& , … , 𝑥⃗" ⊆ 𝑇! Ω to
+                                                             𝑥⃗&      𝑢 𝑥⃗)
+  be expressed as an array of coordinates
+
+Gauge ω! : ℝ' → T! Ω collection of invertible linear           𝑇! Ω
+maps smooth w.r.t. 𝑢
+• Provides coordinatisation 𝐱 = 𝜔!(& 𝑥⃗ of 𝑥⃗
+               B. Riemann
+
+
+                1856
+
+Riemann 1856
+Riemannian Metric                                length:     𝑥⃗ ! = 𝑥,
+                                                                        "/$
+                                                                    ⃗ 𝑥⃗ !
+
+
+
+Riemannian metric is a local inner product   Ω
+
+        𝑔! 8,8 = 8,8 ! : 𝑇! Ω×𝑇! Ω → ℝ
+depending smoothly on 𝑢
+• Way to measure local length                                 𝑥⃗
+
+                                                              𝑢
+
+
+
+                                                      𝑇! Ω
+Riemannian Metric                                length:            ⃗ 𝑥⃗ !
+                                                             𝑥⃗ ! = 𝑥,
+                                                                           "/$
+
+                                                 angle:    cos %" 𝑥,
+                                                                  ⃗ 𝑦⃗ !
+
+
+Riemannian metric is a local inner product   Ω
+
+        𝑔! 8,8 = 8,8 ! : 𝑇! Ω×𝑇! Ω → ℝ
+depending smoothly on 𝑢
+• Way to measure local length, angle                          𝑥⃗
+
+                                                              𝑢
+                                                     𝑦⃗
+
+
+                                                      𝑇! Ω
+Riemannian Metric                                length:        𝑥⃗ ! = 𝑥,
+                                                                            "/$
+                                                                       ⃗ 𝑥⃗ !
+                                                 angle:     cos %" 𝑥,
+                                                                   ⃗ 𝑦⃗ !
+                                                 area:      det 𝑔
+Riemannian metric is a local inner product   Ω
+
+        𝑔! 8,8 = 8,8 ! : 𝑇! Ω×𝑇! Ω → ℝ
+depending smoothly on 𝑢
+• Way to measure local length, angle, area                       𝑥⃗
+
+                                                                 𝑢
+                                                     𝑦⃗
+
+
+                                                         𝑇! Ω
+Riemannian Metric
+
+Riemannian metric is a local inner product          Ω
+
+         𝑔! 8,8 = 8,8 ! : 𝑇! Ω×𝑇! Ω → ℝ
+depending smoothly on 𝑢
+• Way to measure local length, angle, area                            𝑥⃗   𝑥⃗)
+                                                        𝑥⃗&
+• Expressed as a positive-definite matrix                             𝑢
+              𝐆 𝑢 =       𝑥⃗* , 𝑥⃗+       ≻0                  𝑦⃗
+                                      !
+  w.r.t. a local basis 𝑥⃗& , … , 𝑥⃗" ⊆ 𝑇! Ω
+                                                               𝑇! Ω
+Intrinsic quantities are those expressible solely
+in terms of Riemannian metric
+Geodesics
+
+• A curve 𝛾: 0, 𝑇 → Ω between points   Ω
+
+ 𝑢 = 𝛾 0 and 𝑣 = 𝛾 𝑇
+
+                                           𝑣=𝛾 𝑇
+
+
+
+                                               𝛾 𝑡
+
+
+                                              𝑢=𝛾 0
+Geodesics
+
+• A curve 𝛾: 0, 𝑇 → Ω between points                 Ω
+
+ 𝑢 = 𝛾 0 and 𝑣 = 𝛾 𝑇
+                                                           ⃗ 𝑇
+                                                           𝛾′
+                  ⃗ 𝑡 ∈ 𝑇, . Ω
+• Velocity vector 𝛾′                                                 𝑣=𝛾 𝑇
+• Length of the curve                                            𝑇, / Ω
+             /                    /
+                                                  &/)
+    ℓ 𝛾 =B       𝛾′
+                 ⃗ 𝑡    , . d𝑡 = B    𝛾′
+                                      ⃗ 𝑡 , 𝛾′
+                                            ⃗ 𝑡   , .
+                                                      d𝑡
+            -                     -
+                                                                              ⃗ 0
+                                                                              𝛾′
+                                                                               𝑢=𝛾 0
+                                                                          𝑇, - Ω
+Geodesics
+
+• A curve 𝛾: 0, 𝑇 → Ω between points                 Ω
+
+ 𝑢 = 𝛾 0 and 𝑣 = 𝛾 𝑇
+                  ⃗ 𝑡 ∈ 𝑇, . Ω
+• Velocity vector 𝛾′                                       𝑣=𝛾 𝑇
+• Length of the curve
+              /                   /
+                                                  &/)
+    ℓ 𝛾 =B        𝛾′
+                  ⃗ 𝑡   , . d𝑡 = B    𝛾′
+                                      ⃗ 𝑡 , 𝛾′
+                                            ⃗ 𝑡   , .
+                                                      d𝑡
+             -                    -
+
+
+                                                              𝑢=𝛾 0
+Geodesic = length-minimising curve
+Geodesics are intrinsic
+Geodesic Distances
+
+Geodesic distance (metric)                    Ω
+
+       𝑑1 𝑢, 𝑣 = min ℓ 𝛾
+                  ,
+
+       s.t. 𝑢 = 𝛾 0 and 𝑣 = 𝛾 𝑇                          𝑣=𝛾 𝑇
+
+• Minimum exists on connected Riemannian manifold
+• Defines a (complete) metric space Ω, 𝑑1
+• Intrinsic
+
+                                                            𝑢=𝛾 0
+   Hopf-Rinow Theorem: metric completeness (“every
+   Cauchy sequence converges”) = geodesic completeness
+   (“can follow a geodesic indefinitely”)
+Parallel Transport
+
+How to move a vector 𝑥⃗ from 𝑢 to 𝑣?   Ω
+
+
+
+                                           𝑣
+
+
+                                                    ?
+
+                                               𝑥⃗
+                                                        𝑢
+Parallel Transport
+
+How to move a vector 𝑥⃗ from 𝑢 to 𝑣?   Ω
+
+• Geodesic 𝛾 with endpoints
+ 𝛾 0 = 𝑢 and 𝛾 𝑇 = 𝑣                       𝑣=𝛾 𝑇
+
+
+
+
+                                                ⃗ 0
+                                                𝛾′
+                                           𝑥⃗
+                                                𝑢=𝛾 0
+                                           𝑇, - Ω
+Parallel Transport
+
+How to move a vector 𝑥⃗ from 𝑢 to 𝑣?           Ω
+
+• Geodesic 𝛾 with endpoints                                𝑇, / Ω
+                                                     ⃗ 𝑇
+                                                     𝛾′
+ 𝛾 0 = 𝑢 and 𝛾 𝑇 = 𝑣                                             𝑣=𝛾 𝑇
+                                                   𝑥⃗ 𝑇
+• Family of vectors 𝑥⃗ 𝑡 ∈ 𝑇, . Ω such that
+     𝑥⃗ 𝑡   , .   = 𝑥⃗ ! = const
+
+            ⃗ 𝑡
+     𝑥⃗ 𝑡 , 𝛾′    , .     ⃗ 𝛾′
+                        = 𝑥, ⃗ 0   ! = const
+                                                                        ⃗ 0
+                                                                        𝛾′
+                                                           𝑥⃗ 0 = 𝑥⃗
+                                                                         𝑢=𝛾 0
+                                                                    𝑇, - Ω
+Parallel Transport
+
+How to move a vector 𝑥⃗ from 𝑢 to 𝑣?            Ω
+
+• Geodesic 𝛾 with endpoints
+                                                      ⃗ 𝑇
+                                                      𝛾′
+  𝛾 0 = 𝑢 and 𝛾 𝑇 = 𝑣                                             𝑣
+                                                    𝑥⃗ 𝑇
+• Family of vectors 𝑥⃗ 𝑡 ∈ 𝑇, . Ω such that
+      𝑥⃗ 𝑡   , .   = 𝑥⃗ ! = const
+                                                                𝑥⃗ 𝑡
+             ⃗ 𝑡
+      𝑥⃗ 𝑡 , 𝛾′    , .     ⃗ 𝛾′
+                         = 𝑥, ⃗ 0   ! = const
+                                                                        ⃗ 0
+                                                                        𝛾′
+                                                            𝑥⃗ 0 = 𝑥⃗
+“𝑥⃗ is parallel transported along 𝛾”                                    𝑢
+Parallel Transport
+
+Parallel transport (connection) is the map       Ω
+                    Γ!→% : 𝑇! Ω → 𝑇% Ω
+defined by Γ!→% 𝑥⃗ = 𝑥⃗ 𝑇 is a mechanism to                  𝑣
+                                                      𝑥⃗ 𝑇
+transform vectors between tangent spaces
+• Intrinsic (depends on Riemannian metric only)
+• Amounts to rotation (hence element of SO 𝑠 )
+• Can be defined abstractly without Riemannian                   𝑥⃗
+                                                                      𝑢
+  metric through covariant derivative
+• Levi-Civita connection = “canonical” torsion-free
+  and metric-compatible connection
+Exponential Map
+
+Locally around 𝑢 is is always possible to      Ω
+
+define a geodesic 𝛾4⃗ starting at 𝛾4⃗ 0 = 𝑢
+in direction 𝛾⃗45⃗ 0 = 𝑥⃗
+• When 𝛾⃗45⃗ 𝑡 is defined for all 𝑡 ≥ 0,               𝑥⃗ = 𝛾⃗45⃗ 0
+  the manifold Ω is said to be geodesically complete     𝑢 =𝛾 0
+Exponential Map
+
+Locally around 𝑢 is is always possible to      Ω
+
+define a geodesic 𝛾4⃗ starting at 𝛾4⃗ 0 = 𝑢
+                                                       exp! 𝑥⃗ = 𝛾⃗45⃗ 1
+in direction 𝛾⃗45⃗   0 = 𝑥⃗
+• When 𝛾⃗45⃗ 𝑡 is defined for all 𝑡 ≥ 0,                         𝑥⃗ = 𝛾⃗45⃗ 0
+  the manifold Ω is said to be geodesically complete               𝑢 =𝛾 0
+
+
+Exponential map exp! : 𝐵6 0 ⊂ 𝑇! Ω → Ω is defined by
+                                               ⃗
+taking a unit step along geodesic in direction 𝑥,
+                    exp! 𝑥⃗ = 𝛾4⃗ 𝑥⃗
+Exponential Map
+
+• exp is a natural mapping from the             Ω
+
+  tangent space to the manifold
+
+• Intrinsic
+
+• Geodesic completeness does not guarantee           𝑢
+  exp! is a global diffeomorphism (“differentiable
+  bijective map with differentiable inverse”)
+Exponential Map
+
+• exp is a natural mapping from the             Ω
+
+  tangent space to the manifold
+
+• Intrinsic
+                                                     𝑟
+• Geodesic completeness does not guarantee               𝑢
+  exp! is a global diffeomorphism (“differentiable
+  bijective map with differentiable inverse”)
+• The largest radius 𝑟 allowing 𝐵6 0 to be mapped
+  diffeomorphically is the injectivity radius
+CONVOLUTION ON MANIFOLDS
+Convolution on Manifolds
+
+
+
+
+Masci, Boscaini et B 2015
+Convolution on Manifolds
+                                                    𝑥
+                                                Ω
+• Signal on the manifold 𝑥 ∈ 𝒳 Ω
+• Local filter 𝜓 defined in the tangent space
+
+Spatial convolution
+
+          𝑥 ⋆ 𝜓 𝑢 = B 𝜓 𝑦⃗ 𝑥 exp! 𝑦⃗ d𝑦⃗
+                        /! $
+                                                                𝑢
+                                                            𝜓
+                                                        𝑥 ∘ exp!
+Convolution on Manifolds
+
+                                                     Ω
+• Signal on the manifold 𝑥 ∈ 𝒳 Ω
+• Local filter 𝜓 defined in the tangent space
+
+Spatial convolution w.r.t. a gauge 𝜔
+
+        𝑥 ⋆ 𝜓 𝑢 = B 𝜓 𝐯 𝑥 exp! 𝜔! 𝐯             d𝐯       𝜔!
+                      ℝ"
+                                                              𝑢
+                                                         𝜓
+    Problem: gauge is arbitrary!
+Convolution on Manifolds
+
+                                                 Ω
+• Signal on the manifold 𝑥 ∈ 𝒳 Ω
+• Local filter 𝜓 defined in the tangent space
+
+Spatial convolution w.r.t. a gauge 𝜔
+
+       𝑥 ⋆ 𝜓 . 𝑢 = B 𝜓 𝐯 𝑥 exp! 𝜔! 𝐯            d𝐯   𝜔!
+                       ℝ"
+                                                          𝑢
+                                                     𝜓
+    Problem: gauge is arbitrary!
+Convolution on Manifolds
+
+                                                 Ω
+• Signal on the manifold 𝑥 ∈ 𝒳 Ω
+• Local filter 𝜓 defined in the tangent space
+
+                                   Z
+Spatial convolution w.r.t. a gauge 𝜔
+
+           / 𝑢 = B 𝜓 𝐯 𝑥 exp! 𝜔
+       𝑥⋆𝜓 .                  [! 𝐯              d𝐯
+                       ℝ"
+                                                     𝜔
+                                                     Z!       𝑢
+                    ≠ 𝑥⋆𝜓 8 𝑢
+                                                          𝜓
+    Problem: gauge is arbitrary!
+How arbitrary is the gauge?
+
+A gauge is defined up to a gauge transformation 𝑔: Ω → 𝐺
+
+• “Naked” manifold                 GL s          invertible matrices
+• Manifold+orientation             GL9 s         invertible matrices with det>0
+• Manifold+volume                  SL s          matrices with det=1
+• Manifold+metric                  O s           orthogonal matrices
+• Manifold+metric+orientation      SO s          orthogonal matrices with det=1
+• Manifold+frame field             {id}          identity (no ambiguity)
+
+
+
+Weiler et al. 2021
+How arbitrary is the gauge?
+
+
+
+
+             rotation     reflection   fixed gauge
+               SO 2            R            {id}
+
+
+Weiler et al. 2021
+How arbitrary is the gauge?
+
+A gauge is defined up to a gauge transformation 𝑔: Ω → 𝐺
+
+• “Naked” manifold                 GL s          invertible matrices
+• Manifold+orientation             GL9 s         invertible matrices with det>0
+• Manifold+volume                  SL s          matrices with det=1
+• Manifold+metric                  O s           orthogonal matrices
+• Manifold+metric+orientation      SO s          orthogonal matrices with det=1
+• Manifold+frame field             {id}          identity (no ambiguity)
+
+
+
+Weiler et al. 2021
+                   Non-Euclidean Convolution Recipes
+
+
+Fixed path   Fixed gauge   “Group pooling”   Isotropic filter   Gauge-equivariant
+                                                (spectral)            filter
+Theory vs Practice: Stable Gauges
+
+
+
+
+        Gradient of intrinsic function   Deformation-invariant
+                                             stable gauge
+
+Melzi et al. 2019
+“Hairy Ball” (a.k.a. Poincaré-Hopf) Theorem
+
+
+
+
+Image: Minutephysics
+              Tokamak
+
+
+
+Image: ITER
+“Angular Pooling”
+
+                                                      Ω
+• Signal on the manifold 𝑥 ∈ 𝒳 Ω
+• Local filter 𝜓 𝑟, 𝜃 defined in polar coords
+  in the tangent space
+
+Spatial convolution pooled over rotations
+
+ 𝑥⋆𝜓 . 𝑢 =                                                           𝑢
+                    7   56                                       𝜓
+      max 9 9                𝜓 𝑟, 𝜃 + 𝜃3 𝑥 exp8 𝜔8 𝑟, 𝜃   d𝑟d𝜃
+   0! ∈[3,56) 3         3
+
+
+
+Masci et al. 2015
+Isotropic Filters
+
+                                                         Ω
+• Signal on the manifold 𝑥 ∈ 𝒳 Ω
+• Local isotropic filter 𝜓 𝑟 defined in the
+  tangent space
+
+Spatial convolution with an isotropic filter
+                       :       );
+  𝑥⋆𝜓 . 𝑢 =B B                      𝜓 𝑟 𝑥 exp! 𝜔! 𝑟, 𝜃   d𝑟d𝜃       𝑢
+                   -       -
+                                                                𝜓
+
+
+      local rotation-invariant
+    looses discriminative power
+Construction of local “Patch operators”
+
+
+
+
+                                      Construction of local geodesic polar coordinates
+
+
+
+
+Kokkinos, B et al. 2012; Masci, Boscaini et B 2015
+Construction of local “Patch operators”
+
+
+
+
+   𝑟                       𝜃
+
+
+
+
+                                                            GCNN                         ACNN               MoNet
+
+  Local geodesic polar                                                          Different patch operators
+   coordinates 𝑟, 𝜃
+
+Masci, Boscaini et B 2015 (GCNN); Boscaini et B 2016 (ACNN); Monti et B 2017 (MoNet)
+Example of applications: Protein design
+
+
+
+
+Gainza et B, Correia 2020
+Example of applications: Protein design
+
+
+
+
+               Binding site identification + designed binders
+                     for the oncological target PD-L1
+
+
+Gainza, Sverrisson et B 2020; Sverrisson, Feydy et B 2021
+DEFORMATION INVARIANCE
+Deformation Invariance
+
+
+
+Intrinsic filters are
+invariant under
+isometric deformations
+of the manifold and
+approximately invariant
+under approximate
+isometries
+Domain Deformation
+
+                        Ω
+
+
+      e
+      Ω
+
+
+
+
+                            e
+                     𝜂: Ω → Ω
+Reminder
+
+                    ℝ<
+
+
+
+
+                        e   𝑢
+           𝜂 𝑢   𝜂: Ω → Ω
+Reminder
+
+                            ℝ<
+
+
+
+
+                                    𝑢+𝑥
+                 𝜂 𝑢+𝑥
+                                      𝑥
+                 ?                    𝑢
+                                e
+                         𝜂: Ω → Ω
+           𝜂 𝑢
+Reminder
+
+                                 ℝ<
+
+
+
+
+                                              𝑢+𝑥
+                 𝜂 𝑢+𝑥
+                                                𝑥
+                 ?                              𝑢
+                                     e
+                              𝜂: Ω → Ω
+           𝜂 𝑢
+
+                     𝜂 𝑢 + 𝑥 ≈ 𝜂 𝑢 + ∇𝜂 𝑢 𝑥
+Reminder
+
+                             ℝ<
+
+
+
+
+                                          𝑢+𝑥
+                 𝜂 𝑢+𝑥
+                                            𝑥
+                 𝑦
+                                 e          𝑢
+           𝜂 𝑢            𝜂: Ω → Ω
+
+
+                 𝜂 𝑢 + 𝑥 − 𝜂 𝑢 ≈ ∇𝜂 𝑢 𝑥
+                                     𝑦
+Reminder
+
+                            ℝ<
+
+
+
+
+                                        𝑢+𝑥
+                 𝜂 𝑢+𝑥
+                           d𝜂 !           𝑥
+                 𝑦
+                                e         𝑢
+           𝜂 𝑢           𝜂: Ω → Ω
+
+
+       d𝜂! 𝑥 = 𝜂 𝑢 + 𝑥 − 𝜂 𝑢 ≈ ∇𝜂 𝑢 𝑥
+                                    𝑦
+Pushforward & Pullback
+
+                                    Ω
+
+
+      e
+      Ω
+
+
+                                           e
+                         d𝜂! : 𝑇! Ω → 𝑇= ! Ω
+                                               𝑥⃗
+              d𝜂! 𝑥⃗
+                                      e          𝑢
+              𝜂 𝑢              𝜂: Ω → Ω
+Pushforward & Pullback
+
+                                              Ω
+
+
+      e
+      Ω
+
+
+                                                     e
+                                   d𝜂! : 𝑇! Ω → 𝑇= ! Ω
+                                                                          𝑥⃗
+              d𝜂! 𝑥⃗                                              𝑦⃗
+                                                 e                          𝑢
+              𝜂 𝑢                         𝜂: Ω → Ω
+              d𝜂! 𝑦⃗                                                   𝜂∗ ℎ !
+                       ℎ!
+
+                            𝜂 ∗ ℎ ! 𝑥,
+                                    ⃗ 𝑦⃗ = ℎ= ! d𝜂! 𝑥⃗ , d𝜂! 𝑦⃗
+Metric Isometries
+
+                          Ω
+
+
+       e
+       Ω                          𝑣
+           𝜂 𝑣
+                                      𝑑1
+                 𝑑?
+
+                              e        𝑢
+                 𝜂 𝑢   𝜂: Ω → Ω
+Isometries
+
+                                                e , ℎ between Riemannian
+• Riemannian isometry: diffeomorphism 𝜂: Ω, 𝑔 → Ω
+ manifolds s.t. the pullback metric 𝜂 ∗ ℎ = 𝑔, i.e. Riemannian metric is preserved
+
+                                  e , 𝑑? between metric spaces s.t. 𝑑1 = 𝑑? ∘ 𝜂×𝜂 i.e.
+• Metric isometry: map 𝜂: Ω, 𝑑1 → Ω
+ geodesic distances are preserved
+
+Since geodesics are intrinsic, Riemannian isometry ⟹ metric isometries
+
+
+
+   Myers-Steenrod Theorem: on a connected manifold, metric isometry ⟹
+   Riemannian isometry.
+Signal Deformation
+
+                   𝑓 𝑥∈𝒳 Ω        = 𝑓 𝐴𝑥 ∈ 𝒳 Ω
+     group-invariant function        group representation
+
+
+
+Domain Deformation
+
+
+                   𝑓 𝑥∈𝒳 Ω               #
+                                  =𝑓 𝑥∈𝒳 Ω
+    isometry-invariant function                     isometric deformation
+Signal Deformation
+
+    𝑓 𝑥∈𝒳 Ω          − 𝑓 𝐴𝑥 ∈ 𝒳 Ω        ≤𝐶𝜎 𝐴 𝑥
+                                                how far is 𝐴 from a group?
+
+
+
+Domain Deformation
+
+    𝑓 𝑥∈𝒳 Ω                  '
+                     −𝑓 𝑥 ∈𝒳 Ω   ≤ C dis 𝜂 𝑥
+                                         metric distortion
+                                 (“how far is 𝜂 from an isometry?”)
+CNN   Intrinsic CNN
+Two Types of Invariance
+
+
+
+
+    Local gauge
+    transformation
+
+
+
+
+                            Global
+                          deformation
+Takeaways
+
+• No global structure on manifolds: “convolution = transform + match” is not well-
+  defined
+• Convolution-like operators must be defined locally (in the tangent space) and
+  expressed w.r.t. some basis, which is defined up to a local transformation (“gauge
+  choice”)
+ • Invariant (symmetric) filters
+ • “Group pooling”
+ • Gauge-equivariant filters (next lecture)
+• Metric-preserving (isometric) domain deformations are “global symmetries”
+Key Concepts
+
+• Manifolds
+• Metric
+• Geodesic
+• Parallel transport
+• Exponential map
+• Isometries
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 4.4 “Geodesics
+ and Manifolds”, Section 4.6 “Geometric graphs and meshes,” and Section 5.6 “Intrinsic mesh CNNs”
+

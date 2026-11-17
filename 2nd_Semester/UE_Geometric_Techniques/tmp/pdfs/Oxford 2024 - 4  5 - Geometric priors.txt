@@ -1,0 +1,1590 @@
+  Geometric Priors
+Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• Geometric priors in ML problems: transformations (symmetries) of the input space
+  that leave the output invariant
+• Mathematically, symmetries are structure-preserving transformations forming a
+  group (a central object of study in Group Theory)
+• Groups act on data via group representations (a central object of study in
+  Representation Theory)
+• To exploit symmetries in neural networks, we use invariant and equivariant layers
+The Curse of Dimensionality
+
+
+      !"
+
+
+
+
+                !!
+                              "   !      !
+
+
+
+
+ Approximating a !-dimensional Lipschitz function
+     with accuracy " requires # " !" samples
+Geometric priors
+
+
+                   signals " Ω
+
+
+
+                       # !
+                                 "   !   !
+      symmetry
+      group !        ! "
+
+                    domain Ω
+Geometric priors
+
+
+                      signals " Ω
+     representation
+         # $
+                        # "!" !
+                                    "   !   !
+      symmetry
+      group !           ! "
+
+                       domain Ω
+Key ingredients of Geometric Deep Learning
+     domain Ω             signals " Ω        functions ℱ " Ω
+
+
+
+
+                                                    !
+
+ domain symmetry      domain group rep # $    $-invariance /
+    group !                                   $-equivariance
+Key ingredients of Geometric Deep Learning
+     domain Ω             signals " Ω            functions ℱ " Ω
+
+
+
+
+                                  R G B
+                                          #̅ $
+                                                        !
+
+ domain symmetry      domain group rep # $       $+&-invariance /
+    group !            data group rep #̅ &       $+&-equivariance
+                                      ⨯
+                    H. Poincaré                        C. N. Yang
+                                             ⨯
+       ⋊
+
+
+
+
+External symmetry                  Internal symmetry
+                    H. Minkowski                       R. L. Mills
+How to choose the symmetry group?
+
+
+
+
+ Self-driving car     Self-flying plane            Pathology
+    Translation       Translation + Rotation   Translation + Rotation
+                                                    + Reflection
+domain           signal             function
+  Ω              % Ω                ℱ % Ω
+  ∈
+
+
+
+
+                  ∈
+
+
+
+
+                                       ∈
+   '               )                    *
+   %              $ %
+symmetry   group representation    #-invariance
+ group #           $ #            #-equivariance
+GEOMETRIC DOMAINS
+Geometric domains
+
+• Domain Ω = set + some structure
+
+
+
+
+        Point cloud                   Graph               Mesh
+         (bare set)           (local neighbourhood)   (local metric)
+Signals on Geometric domains
+
+• Signal ( ∈ " Ω, + = (: Ω → + “+-valued functions on Ω”
+ • Domain Ω
+ • Vector space " (dimensions referred to as “channels”)
+
+
+                                                                           C
+                      R                             R
+                                                                           N
+                      G                             G
+                                                                           ⋮
+                      B                             B
+                                                                           O
+
+  Ω = ℤ! × ℤ!      " = ℝ"           Ω=ℳ          " = ℝ"    Ω = (, *      " = ℝ#
+
+           Image                      Textured surface       Molecular graph
+Signals on Geometric domains
+
+• Signal ( ∈ " Ω, + = (: Ω → + “+-valued functions on Ω”
+ • Domain Ω (often no vector space structure, i.e., we cannot add points on Ω)
+ • Vector space " (dimensions referred to as “channels”)
+• The space of signals " Ω, + is a vector space (possibly infinite-dimensional)
+ • We can add signals and multiply them by a scalar
+
+
+
+
+         0.5                      + 0.5                        =
+Signals on Geometric domains
+
+• Signal ( ∈ " Ω, + = (: Ω → + “+-valued functions on Ω”
+  • Domain Ω
+  • Vector space " (dimensions referred to as “channels”)
+• The space of signals " Ω, + is a vector space (possibly infinite-dimensional)
+• Given an inner product 0,0 $ on + and a measure 1 on Ω, we can define an inner
+  product on " Ω, + as
+
+                                      (, 2 = 3       ( 4 ,2 4      $ d1 4
+                                                 %
+
+
+
+Exercise: prove that #, % defined this way satisfies the axioms of an inner product
+       -
+
+
+                                 . -
+
+                             "
+
+
+Ω
+
+
+    6-valued function on 7
+      Ω∋4 ↦( 4 ∈ +
+       Functions                              Fields
+
+
+                                         "&    -   . -
+       -
+
+                                                       "'
+                                 . -                        /
+
+                             "
+
+
+Ω
+
+
+    6-valued function on 7             6-valued field on 7
+      Ω∋4 ↦( 4 ∈ +                     Ω ∋ 4 ↦ ( 4 ∈ +&
+Tangent vector fields on a manifold
+Domain as a Signal
+
+• In some cases, there is no given signal defined on the domain Ω
+• The structure of the domain can be considered as a signal, e.g.
+ • Adjacency matrix of a graph 0 = (, * is a signal on ( × (
+ • Metric tensor of a Riemannian manifold ℳ is a signal on ℳ
+Functions on Signals defined on Geometric domains
+
+• Label function D ∈ ℱ " Ω, +   = D: " Ω, + → =
+
+
+
+
+                 –0.07                            cat
+
+
+
+    Regression                  Classification          Structured prediction
+      Ω = ;, :                     Ω = ℤ! × ℤ!                Ω = ℤ! × ℤ!
+       + = ℝ#                        + = ℝ"                     + = ℝ"
+        ==ℝ                        = = 1, … , B           = = " ℤ! × ℤ! , 0,1
+domain           signal             function
+  Ω              " Ω                ℱ " Ω
+  ∈
+
+
+
+
+                  ∈
+
+
+
+
+                                       ∈
+   $               &                    '
+   %              $ %
+symmetry   group representation    #-invariance
+ group #           $ #            #-equivariance
+SYMMETRY GROUPS
+Symmetry
+
+
+
+
+                                     J. Kepler
+
+
+
+
+  “a transformation of an object leaving it unchanged”
+Symmetry
+
+
+
+
+                                  J. Kepler
+
+
+
+
+           “element of a symmetry group”
+Symmetry
+
+
+
+
+                                    J. Kepler
+
+
+
+
+  “invertible structure-preserving map (isomorphism)
+                 from the object to itself”
+Symmetry
+
+
+
+
+                            J. Kepler
+
+
+
+
+           “automorphism”
+Examples of structure-preserving maps
+
+
+
+
+         Set                      Vector space                    Manifold              Differential manifold
+     bijections               invertible matrices            homeomorphisms                  diffeomorphism
+
+ Reminder:
+ Homeomorphism is a bijective continuous function (bicontinuous). It preserves topological structure.
+ Diffeomorphism is a bijective differentiable function with differentiable inverse. It preserves differential
+ structure on manifolds.
+Symmetry of a triangle
+
+
+                                 1
+
+
+
+
+                                E
+
+                          2            3
+
+
+                         rotation by 120°
+Symmetry of a triangle
+
+
+                                  2
+
+
+
+
+                                  F
+
+                         3                1
+
+
+                             reflection
+Symmetry of a triangle                                 1
+
+                                                   2       3
+                                                           F
+
+                                                       1                       E
+                   E
+                                                   3       2
+                                       E                           E
+
+
+                                           3                       2
+
+                               F   2           1               1       3   F
+                       3                                                       2
+                                                       E
+               1           2                                               3       1
+
+
+
+                                                       E
+Symmetry of a triangle
+
+                             1
+
+                         2       3
+
+                                 '
+                                                              ∘      *      (       (#      '     '(     '( #
+                             1
+ (                                                   (        *      *      (       (#      '     '(     '( #
+                         3       2
+                                                              (      (     (#        *     '( #    '     '(
+             (                           (
+                                                             (#     (#      *        (     '(     '( #    '
+                 3                       2                    '      '     '(       '( #    *      (     (#
+         '   2       1               1       3   '           '(     '(     '( #      '     (#      *      (
+     3                                               2
+
+         2
+                             (                               '( #   '( #    '       '(      (     (#      *
+1                                                3       1
+
+
+
+                             (
+
+             Cayley graph                                                         Cayley table
+Groups
+
+    A group $,∗ is a set $ together with binary operation ∗ ∶ $×$ → $ (denoted
+    by juxtaposition G ∗ ℎ = Gℎ for brevity) satisfying the following axioms:
+    • Associativity:         Gℎ L = G ℎL for all G, ℎ, L ∈ $
+    • Identity:             ∃! O ∈ $ satisfying OG = GO = G for all G ∈ $
+    • Inverse:              ∃! G () ∈ $ for each G ∈ $ satisfying G () G = GG () = O
+
+
+• Closure (Gℎ ∈ $) follows from definition
+• Not necessarily commutative (i.e., Gℎ ≠ ℎG). Commutative groups are called Abelian
+• Groups can be finite, infinite, discrete, or continuous.
+• Lie groups such as 3D rotations are smooth manifolds (we can do calculus on them)
+Equivalent groups
+
+          2
+
+                           {1, 2, 3}   {3, 1, 2}   {2, 3, 1}
+
+    3          1           {3, 2, 1}   {2, 1, 3}   {1, 3, 2}
+  dihedral group      ≅         permutation group
+        &!                             '!
+
+   The group abstracts out the objects themselves and
+           captures only how they compose
+Equivalent groups
+
+            2
+
+                                      {1, 2, 3}    {3, 1, 2}      {2, 3, 1}
+
+     3             1                  {3, 2, 1}    {2, 1, 3}      {1, 3, 2}
+  dihedral group               ≅            permutation group
+        &!                                         '!
+ Two groups $,∗ and &,∘ are isomorphic (denoted by $,∗ ≅ &,∘ ) if there exists
+ a bijection R: $ → & (called group isomorphism) satisfying for all G, ℎ ∈ $
+                                 R G∗ℎ =R G ∘R ℎ
+Equivalent groups
+
+                  2
+
+                                                      {1, 2, 3}         {3, 1, 2}      {2, 3, 1}
+
+        3                  1                          {3, 2, 1}         {2, 1, 3}      {1, 3, 2}
+    dihedral group                          ≅                 permutation group
+          &!                                                         '!
+
+Group homomorphism (don’t confuse with homeomorphism, which is a map between topological spaces) is a map
++: -,∗ → 0,∘ satisfying + " ∗ ℎ = + " ∘ + ℎ . It preserves group operations but not necessarily group
+structure.
+Group isomorphism is a bijective group homomorphism. It preserves group structure.
+Exercise: prove that group homomorphism maps the identity of - to the identity of 0
+                                            Groups
+
+
+                  Discrete                                 Continuous & Lie
+
+
+
+
+      Finite                 Countably           Compact           Locally-      Non locally-
+                              infinite                             compact        compact
+
+
+Cyclic S!   Permutation U!      Wallpaper   Orthogonal Special        Special    Diffeomorphisms
+                                V4, V4X       Y Z     Orthogonal     Euclidean
+    Dihedral T!                                         UY Z          U: Z
+                                            Groups
+
+
+                  Discrete                                 Continuous & Lie
+
+
+
+
+      Finite                 Countably           Compact           Locally-      Non locally-
+                              infinite                             compact        compact
+
+
+Cyclic S!   Permutation U!      Wallpaper   Orthogonal Special        Special    Diffeomorphisms
+                                V4, V4X       O Z     Orthogonal     Euclidean
+    Dihedral T!                                         SO Z          SE Z
+Examples of Important groups
+
+• Permutation (symmetric) group U! : reorder a set of ^ elements                        U! = ^!
+• Cyclic group S! : shift the order of ^ elements by one position modulo ^              S! = ^
+• Groups of matrices of size Z×Z with matrix multiplication operation
+  • General linear group GL 3 : invertible matrices
+  • Special linear group SL 3 : volume- and orientation-preserving matrices (det = 1)
+  • Orthogonal group O 3 : angle-preserving (orthogonal) matrices
+  • Special orthogonal group SO 3 : volume-, orientation- and angle-preserving matrices
+
+
+
+
+Exercise: show the above groups indeed satisfy the group axioms
+domain           signal             function
+  Ω              " Ω                ℱ " Ω
+  ∈
+
+
+
+
+                  ∈
+
+
+
+
+                                       ∈
+   $               &                    '
+   %              $ %
+symmetry   group representation    #-invariance
+ group #           $ #            #-equivariance
+GROUP ACTIONS &
+REPRESENTATIONS
+Group actions on objects
+
+
+
+
+   Point in a plane            Image (function)                 Vector field
+
+
+      The type of an object can be defined by the way it transforms by a group
+Group action
+
+   Let $ be a group and _ a set. A (left) group action of $ on _ (often denoted
+   G( = ` G, ( ) is a mapping of the form ` ∶ $×_ → _ satisfying
+   • Identity:           ` O, ( = ( for all ( ∈ _
+
+   • Composition:        ` Gℎ, ( = ` G, ` ℎ, (      for all G, ℎ ∈ $ and ( ∈ _
+Group representation
+
+    A representation of $ on _ is a mapping of the form #: $ → D: _ → _ that
+    assigns to each G ∈ $ a map # G : _ → _ satisfying
+    • Identity:              # O = id
+    • Composition:           # Gℎ = # G ∘ # ℎ for all G, ℎ ∈ $
+
+
+• Given a group action `, a representation can be defined as # G ( = ` G, (
+• Preserves positive relations (e.g., G () G = GG () = O) that hold in the group $
+• Negative relations (of the form Gℎ ≠ L) may not be preserved
+• Trivial representation # ≡ id
+• Faithful representation is injective (G ≠ ℎ ⇒ # G ≠ # ℎ ) and preserves negative relations
+• Additional structure of # (e.g. smoothness if $ is a Lie group)
+Linear Group representation
+
+    A linear representation of $ on a vector space _ is group homomorphism
+    #: $ → GL _ that assigns to each G ∈ $ an invertible linear map # G : _ → _
+    satisfying
+                            # Gℎ = # G # ℎ for all G, ℎ ∈ $
+
+
+• dim _ is called the dimension of the representation
+• In finite-dimensional cases, # can be represented by matrices
+• This turns group theory into linear algebra
+• Efficient implementation on standard hardware
+Linear Group representation
+
+      A Z–dimensional (linear) representation of $ is a map #: $ → ℝ*×* assigning
+      to each G ∈ $ an invertible matrix # G ∈ ℝ!×! satisfying # Gℎ = # G # ℎ for
+      all G, ℎ ∈ $.
+
+
+
+
+Exercise 1: show that 3 4 = 5.
+
+Note: such a representation is not unique! Given an invertible matrix 6 (“change of basis”), we can define a new
+representation 3̅ " = 63 " 6!" .
+Exercise II: verify that 3̅ is indeed a representation
+Group actions on Signals defined on geometric Domains
+
+Given a group $ acting on a domain Ω, we automatically obtain an action of $ on the space
+of signals " Ω through the regular representation # & ' ( = ' &89 (
+Exercise: prove that this representation is linear
+
+
+
+
+                0.5                         + 0.5        =
+
+                         !                           !           !
+
+
+                0.5                         + 0.5        =
+Intuition
+
+
+
+                                                 1
+                                                      1
+
+                               =                            1
+                                                                 1
+                                                                      1
+                                            1
+
+Note: a 2D shift can be represented as tensor (Kronecker) product : ⊗ : vec ? = vec :?: $
+Intuition
+
+
+
+                         1
+                             1
+   0.5   + 0.5   =               1
+                                     1
+                                         1
+                                             0.5   . + 0.5
+
+
+                     1
+Example: Symmetries of Graphs
+
+
+
+
+• A graph is an abstract object
+Example: Symmetries of Graphs
+
+               Adjacency            Feature
+               matrix ^×^          matrix ^×Z
+                                                                 2           1
+                                                                                              3
+
+
+
+                                                                                 6
+                                                        4                                         7
+                                                                     5
+                                                                                     8
+
+                                                                         9
+                                                            10                           11
+
+
+                  *+* @                 *,
+
+• A graph is an abstract object
+• Its description (adjacency/feature matrix) has “extrinsic” properties (order of nodes)
+Example: Symmetries of Graphs
+
+               Adjacency            Feature
+               matrix ^×^          matrix ^×Z
+                                                                 5           10
+                                                                                              7
+
+
+
+                                                                                  6
+                                                        11                                        3
+                                                                     4
+                                                                                      9
+
+                                                                         8
+                                                             1                            2
+
+
+                  *+* @                 *,
+
+• A graph is an abstract object
+• Its description (adjacency/feature matrix) has “extrinsic” properties (order of nodes)
+Different representations of the permutation group on Graphs
+
+• Domain: set of ^ graph vertices Ω = 1, … , ^
+• Group: permutations $ = U!
+
+
+
+
+      Scalar                                  Vector                      Matrix
+   #, G ( = 1 0 (                          #) G h = ih                #- G j = iji .
+
+
+Exercise: verify that each of these are valid group representations
+domain           signal             function
+  Ω              " Ω                ℱ " Ω
+  ∈
+
+
+
+
+                  ∈
+
+
+
+
+                                       ∈
+   $               &                    '
+   %              $ %
+symmetry   group representation    #-invariance
+ group #           $ #            #-equivariance
+SYMMETRY IN LEARNING
+Symmetries of the Label Function
+
+• Label function D: " → = e.g., classification (= = 1, … , B )
+• Symmetry of a label function is an invertible label-preserving map G: " → " , i.e.
+                             D ∘ G ( = D ( for all ( ∈ "
+
+
+                                           *
+                                  (                  (
+
+                              )            %             )
+Symmetries of the Label Function
+
+
+
+
+                 A
+                      A
+         A
+                      A
+                     A
+             A
+
+                 A
+
+
+                                   (
+             B
+
+                 B
+
+
+
+                      B
+       B
+                      B
+                                       *
+                     B
+                 B
+
+
+
+
+     )
+Symmetries of the Label Function
+
+
+
+             A
+            A
+
+            A
+                      A
+      A
+                      A
+       A
+      A              A
+            A
+
+            A
+             A
+
+
+
+                                      (
+                 B
+            B
+
+                B
+
+
+
+       B
+                      B
+        B
+                      B
+                                              *
+                     B
+        B
+            B
+
+            B
+             B
+
+
+
+
+     )                orbit $B = GB ∶ G ∈ $
+Symmetries of the Label Function
+
+
+           A A
+                     A
+            A    A
+
+
+                                    (
+        B
+            B                                                      *
+                B
+
+
+
+                     B
+       B
+                            Exercise: prove that if we knew all the symmetries of the
+                            label function A, we would need only one sample per class
+Symmetries of the Weights
+
+• Let D/ : "×Θ → = be a parametric model (neural network)
+• A transformation ℎ: Θ → Θ is a symmetry of the weights if, for all ( ∈ " and l ∈ Θ
+                                    D0/ ( = D/ (
+
+
+
+             .)                           ;)       .)                         ;)
+                                     ℎ                                    A
+                  =
+                        <
+                                      A                 < =                ℎ
+                            ℎ)                                   ℎ)
+             .-   >                   E   ;-       .-   3                  B ;-
+                    3                B                   >                E
+
+              ⋮    ?        ℎ-       C    ⋮        ⋮     @       ℎ-       D   ⋮
+                        @        D                           ?        C
+             .*                           ;*/      .*                         ;*/
+Equivariance
+
+   Let D: " → = and $ a group acting on " and = through representation #) and
+   #- , respectively. Then, D is $-equivariant if for all G ∈ $
+                             - #9 & ' = #B & - '
+
+
+
+                           *                       *
+                                    $# %
+                         (                       (
+
+                           )                      )
+                                    $" %
+Invariance: special case of Equivariance with trivial representation
+
+   Let D: " → = and $ a group acting on " and = through representation #) and
+   #- = id, respectively. Then, D is $-invariant if for all G ∈ $
+                               - #9 & ' = - '
+
+
+
+                                       *
+                               (                (
+
+                           )                        )
+                                    $" %
+Geometric Deep Learning Blueprint (so far)
+
+
+
+
+                 ((             (()"         ('          ($%&
+                                       …
+
+
+
+
+      (( ∘ $(*" % = $( % ∘ ((                 (' ∘ $' % = ('
+Example: Convolutional Neural Networks
+
+
+                           shift '
+
+
+
+                  ⋆                      ⋆
+
+                           shift '
+                    input   feature map   stabilised view
+
+
+
+
+ CNN
+
+
+
+
+ Rotation-
+ equivariant
+ CNN
+
+Weiler, Cesa 2019
+Examples of equivariance in Geometric Deep Learning
+
+
+Domain Ω:                  Grid             Sphere     Manifold / Mesh
+Group:                  Translation          SO 3    Gauge transformations
+                   (Rotation, Reflection)                 e.g. SO 2
+
+
+
+
+Image: M. Weiler
+Equivariance = Symmetry-consistent generalisation
+
+
+
+         A        A    (
+                                   A       ( $" % A = $# % ( A
+
+                       ?                   ( $" % A = $# % ( A
+         A
+#) G A            A    ?
+         #) G A
+                           feature space
+
+
+         input space
+Equivariance = Symmetry-consistent generalisation
+
+
+
+         A        A    (
+                                    A      ( $" % A = $# % ( A
+
+
+
+
+                                                           =
+                                           ( $" % A = $# % ( A
+         A                          A
+#) G A            A        #- G A
+         #) G A
+                           feature space
+
+
+         input space
+Canonisation
+
+
+
+
+Mikolajczyk, Schmid 2004
+Canonisation
+
+
+
+
+               canonisation
+Canonisation vs Equivariance
+
+
+
+
+                               “Jennifer”
+Canonisation vs Equivariance
+
+
+
+
+                               “Jennifer”
+Canonisation vs Equivariance
+
+
+
+
+                               “Jennifer” ?
+Takeaways
+
+• Symmetries are transformations leaving the object invariant
+• In general ML, we care about symmetries of the label function and its parameters
+  (neural network weights)
+• In Geometric Deep Learning, we care about symmetries of a geometric domain,
+  signals on which are inputs into a neural network
+• Symmetry is exploited in deep learning in the form of equivariant neural networks
+• In an equivariant neural network, each feature space is associated with a group
+  representation and each layer is equivariant w.r.t. this representation
+• Invariance is a special case of equivariance where the trivial representation is used
+• Next lecture: learning under Invariance and Scale Separation geometric priors
+Key Concepts
+
+• Symmetry Groups
+• Group Actions and Representations
+• Invariance and Equivariance
+Outline
+
+• Group theory provides the math language to describe symmetries in ML problems
+• Equivariant neural networks are constructed such that each layer is equivariant w.r.t.
+  the action of a symmetry group
+• Symmetry prior leads to a new model class that however on its own may not tame
+  the curse of dimensionality
+• Symmetry prior is often combined with Scale Separation, typically implemented in
+  the form of pooling
+• These two geometric priors are the core of Geometric Deep Learning, a principled
+  blueprint of highly expressive architectures that defy the curse of dimensionality
+“Lifting”
+
+                linear
+            $ % :) Ω → ) Ω
+
+
+
+
+               nonlinear
+               %: Ω → Ω
+“Lifting”
+                1
+                     1
+                         1
+
+            =                1
+                                 1
+
+                                     1
+                                         1
+                                             1
+                                                 1
+
+                    “pixel permutation”
+Invariant learning tasks
+
+
+
+
+                                                      ∗
+                                                  !                      cat
+
+
+
+               The function is a priori assumed to be shift-invariant,
+                      only one sample necessary per image
+Data augmentation
+
+
+
+
+                                                                     ∗
+                               …
+                                                                 !        cat
+
+
+
+                            The function is generic,
+          training set contains multiple shifted versions of each image
+Group-invariant function classes
+
+
+
+                A
+               A                                   (
+
+               A
+                             A
+          A
+                             A
+           A
+          A                 A
+               A
+
+               A
+
+                                                                        *
+                A
+
+
+
+     )
+• $-invariant model class
+                    ℱ1 = D: " → = s. t. D G( = D ( ∀( ∈ ", G ∈ $
+ • How to leverage invariant function classes in learning?
+ • Is this generally sufficient to break the curse of dimensionality?
+Group averaging
+
+• Assume $ is discrete of finite size
+• Group averaging (or smoothing) operator U1 (defined with abuse of notation as either
+  U1 : " → " or U1 : ℱ " → ℱ " ) averaging along group orbits
+                                1                                         1
+                       U1 ( =     r G(                       U1 D ( =       r D G(
+                                $                                         $
+                                   2∈1                                       2∈1
+
+
+                                                "
+Note: More generally, we can define C0 A # =         ∫0 A "# dF " , where F is the Haar measure on the group
+                                               1 0
+Group averaging
+
+• Assume $ is discrete of finite size                                         U! = ^!
+• Group averaging (or smoothing) operator U1 (defined with abuse of notation S    =^
+                                                                             as! either
+  U1 : " → " or U1 : ℱ " → ℱ " ) averaging along group orbits
+                            1                           1
+                   U1 ( =     r G(           U1 D ( =     r D G(
+                            $                           $
+                             2∈1                          2∈1
+
+
+
+                                    A A B
+                                    A A B
+                                   A A B
+                                   A A  B orbit $B = GB ∶ G ∈ $
+Group averaging
+
+• Assume $ is discrete of finite size                                         U! = ^!
+• Group averaging (or smoothing) operator U1 (defined with abuse of notation S    =^
+                                                                             as! either
+  U1 : " → " or U1 : ℱ " → ℱ " ) averaging along group orbits
+                            1                           1
+                   U1 ( =     r G(           U1 D ( =     r D G(
+                            $                           $
+                             2∈1                          2∈1
+
+
+                     Assume D is $-invariant. Then, D $( = const.
+Group averaging
+
+• Assume $ is discrete of finite size                                                                 U! = ^!
+• Group averaging (or smoothing) operator U1 (defined with abuse of notation S    =^
+                                                                             as! either
+  U1 : " → " or U1 : ℱ " → ℱ " ) averaging along group orbits
+                                 1                                       1
+                       U1 ( =      r G(                    U1 D ( =        r D G(
+                                 $                                       $
+                                    2∈1                                     2∈1
+
+
+                              Assume D is $-invariant. Then, U1 D = D.
+
+• Given a hypothesis class ℱ, we can make it $-invariant by applying the group
+  averaging operator, U1 ℱ = U1 D, D ∈ ℱ .
+Exercise: Let Ω = 1, … , J a grid, - = K2 cyclic group, and ℱ =polynomials of degree M. Write C0 ℱ.
+Learning under invariance
+
+   Approximation error is unaffected by group smoothing, i.e.,                        U! = ^!
+                                inf D − D ∗ - = inf              D − D∗ -             S! = ^
+                            4∈ℱ                        4∈7 3 ℱ
+
+
+
+• Since U1 is an orthogonal projection in v- : Exercise: prove
+
+
+   D − D ∗ - = U1 D − D ∗       -
+                                    +    z − U1 D − D ∗           -            D
+                                                                                      z − U1 D
+                          ∗ -                      -
+             = U1 D − D         +       z − U1 D
+                                                                        U1 ℱ   U1 D
+Learning under invariance
+
+   Approximation error is unaffected by group smoothing, i.e.,                U! = ^!
+                            inf D − D ∗ - = inf             D − D∗ -          S! = ^
+                            4∈ℱ                   4∈7 3 ℱ
+
+
+
+• Since U1 is an orthogonal projection in v- :
+
+
+   D − D ∗ - = U1 D − D ∗    -
+                                 +    z − U1 D − D ∗         -
+
+
+             = U1 D − D ∗ - +        z − U1 D -
+                                                                       z − U1 D = 0
+
+                                                                            U1 ℱ
+• Statistical error is reduced… but by how much?
+                                                                        ℱ
+Learning invariant Lipschitz functions
+
+• Consider the class of Lipschitz functions
+           ℱ = D: " ⊆ ℝ* → ℝ s. t.     D ( − D (8    ≤ } ( − (8    ∀(, ( 8 ∈ "
+
+• Group-averaged Lipschitz class
+
+       U1 ℱ = D: " ⊆ ℝ* → ℝ s. t.    D ( − D (8     ≤ } inf ( − G( 8   ∀(, ( 8 ∈ "
+                                                        2∈1
+
+
+
+
+                                                                         AA
+                                                                         A A
+                                       “points in nearby orbits are not A   A
+                                       mapped too far away”
+                                                                        A    A
+Learning invariant Lipschitz functions
+
+         Theorem: Using $-invariant kernel ridge regression, the generalisation error
+         of learning a $-invariant Z-dimensional Lipschitz function from ~ samples is
+         bounded by
+                                E DÄ − E D ∗    ≲   $ ~ ()/*
+
+
+
+• Sharp gains w.r.t. non-invariant kernels
+
+• Group size $ can be exponential in dimension
+
+• Rate can still be dimensionality-cursed, suggesting invariance alone is insufficient
+
+
+Bietti, Venturi, Bruna 2021
+Conclusions so far
+
+• Using known global symmetries in hypothesis class is a no-brainer: guaranteed
+  improvement in sample complexity
+
+• Might not break the curse of dimensionality. What else is missing?
+
+• How to build such invariant classes efficiently? I.e., we need an algorithmic recipe
+SCALE SEPARATION
+Compositionality in Deep Learning
+
+
+
+
+     Increasingly complex features in deeper layers of a convolutional neural network
+Compositionality in Physics
+Multiresolution Analysis
+                   Fine scale " Ω
+                                                               É⊂Ω
+                                    • Hierarchy of domains … ⊂ Ω
+
+                                                                      É ,…
+                                    • Hierarchy signal spaces " Ω , " Ω
+
+                                    • Coarse graining operator
+    coarse     Ω
+           Ç                                               É
+  graining                                      Ç: " Ω → " Ω
+                              É
+               Coarse scale " Ω
+
+
+
+
+               É
+               Ω
+Multiresolution Analysis
+
+
+
+
+                                Fine detail
+
+
+
+
+                           Coarse approximation
+Wavelets
+
+
+
+
+           I. Daubechies   S. Mallat
+Wavelets vs Fourier
+
+
+
+
+                 J. Fourier   I. Daubechies   S. Mallat
+              Wavelets vs Fourier
+frequency Ö
+
+
+
+
+                                             frequency Ö
+                                J. Fourier                           I. Daubechies   S. Mallat
+                      space 4                              space 4
+Multiresolution Analysis in ML
+                   Fine scale " Ω
+
+                                    "    !    !
+
+    coarse     Ω
+           Ç
+  graining
+                              É
+               Coarse scale " Ω
+
+                                    "#   !"   !#
+
+               É
+               Ω
+                 -∗   {beach, mountain}
+
+Fine scale " Ω
+                           -∗
+
+
+         Fine scale " Ω
+
+Coarse graining                          {beach, mountain}
+Ç: " Ω → " Ω É
+
+
+
+
+                           -. ∗
+                                  Coarse scale dominates
+                       É
+        Coarse scale " Ω              ( ∗ 4 ≈ (6 ∗ (84)
+                                -∗
+
+
+         Fine scale " Ω
+
+Coarse graining                            {beach, mountain}
+Ç: " Ω → " Ω É
+
+
+
+
+                                -. ∗
+                           Since : ∝ Ω and Ω < ≪ Ω the curse
+                       É
+        Coarse scale " Ω
+                           of dimensionality may be tamed
+                           -∗
+
+
+         Fine scale " Ω
+
+Coarse graining                        {0,1,2,3,4,5,6,7,8,9}
+Ç: " Ω → " Ω É
+
+
+
+
+                           -. ∗
+                           Coarse scale is insufficient:
+                       É
+        Coarse scale " Ω
+                           fine scale is necessary!
+                                {brick, grass}
+         (& =image patch centered at !
+
+
+Fine scale dominates
+
+  ( ∗ 4 ≈ > % 4,
+            ,
+                                      {brick, grass}
+               (& =image patch centered at !
+
+
+Since : ∝ patch size, the curse of
+ dimensionality can be avoided
+Local phenomena in Physics
+
+
+
+
+            0
+     #           @ ( − @-
+    d @(
+       #
+         = > #B-          !
+    dA           @ ( − @-
+           -."
+           -/(
+
+
+
+
+                              N-body system
+Local vs Global
+
+
+
+
+                  ?
+Local vs Global
+
+
+
+
+            Local patches do not convey information about global structure
+
+
+
+
+Turk 2001
+Multiscale compositional priors
+Multiscale compositional priors
+
+
+
+
+                    8               (6
+                                              …   *
+                Nonlinear         Nonlinear
+                coarsening        function
+                 (pooling)
+Benefits of composition
+
+• Provable approximation, estimation, and computational benefits in specific contexts
+• General structure of multiscale hypothesis spaces is still not completely understood
+  theoretically
+• Combining Symmetry and Scale Separation priors gives powerful model from first
+  principles
+
+
+
+
+Telgarsky 2015; Cohen & Shashua 2016
+THE BLUEPRINT
+Combining Invariance with Scale Separation
+
+• Our hypothesis class wish list:
+
+ • Group invariance
+
+ • Multiscale structure
+
+ • Expressivity
+
+• What neural network architecture can satisfy these desiderata?
+Linear group invariants
+
+     Let D: " → ℝ be linear $-invariant. Then D ( = D U1 ( for all ( ∈ ", i.e.,
+     group average is the only linear group invariant.
+
+Exercise: prove
+
+• Linear invariants are not expressive: D depends on ( through the group average U1 (
+• In case of images with translation, it would amount to using only the average colour!
+
+
+
+
+  !                     =                        !                     =
+Linear group equivariants
+
+• Assume D: " → "′ is linear $-equivariant, i.e., is linear and satisfies D G( = GD ( for
+  all ( ∈ " and G ∈ $
+• Many examples in deep learning:
+ • Convolutions in CNNs (equivariant w.r.t. translation)
+ • Message passing in GNNs (equivariant w.r.t. permutation)
+• Can we combine linear equivariants with a linear invariant?
+…
+Element-wise nonlinearity
+
+
+
+
+                                          /
+
+
+
+
+• Element-wise nonlinear function á: " → " defined as á( 4 = á ( 4
+• Allows to make nonlinear equivariants out of linear ones by composition: if D: " → "
+  is linear $-equivariant, then the composition á ∘ D is nonlinear $- equivariant
+
+Exercise: prove
+Geometric Deep Learning Building Blocks
+
+• Linear equivariant: à: " Ω → "′ Ω satisfying à G( = Gà (
+
+• Nonlinearity: á: " → " applied element-wise, á( 4 = á ( 4
+
+                                         É
+• Local pooling (coarsening): Ç: " Ω → " Ω
+
+• Invariant layer (global pooling): â: " → = satisfying â G( = â (
+Geometric Deep Learning Blueprint
+
+
+
+
+             D                      D   …
+Popular architectures as instances of the Blueprint
+
+
+ Architecture           Domain Ω            Symmetry Group 1
+ CNN                    Grid                Translation
+ Spherical CNN          Sphere / SO(3)      Rotation SO(3)
+ Intrinsic / Mesh CNN   Manifold / Mesh     Isometry Iso(Ω) /
+                                            Gauge Symmetry SO(2)
+ GNN                    Graph               Permutation SN
+ Deep Sets              Set                 Permutation SN
+ Transformer            Complete Graph      Permutation SN
+ LSTM                   1D Grid             Time warping
+APPROXIMATE INVARIANCE
+ & GEOMETRIC STABILITY
+Approximate group invariance
+
+                               (
+              A
+             A
+
+             A
+                     A
+        A
+                     A
+         A
+        A           A
+                               X
+             A
+
+             A
+              A
+
+
+
+
+    )        orbit $A              *
+Approximate group invariance
+
+                                (
+              A
+             A
+
+             A
+                     A
+        A
+                     A
+         A
+        A           A
+             A
+
+             A
+              A
+
+
+
+
+    )        orbit $A                            *
+
+        “Approximate invariance to transformations
+             approximately in the group #”
+Approximate group invariance
+
+                                (
+              A
+             A
+
+             A
+                     A
+        A
+                     A
+         A
+        A           A
+             A
+
+             A
+              A
+
+
+
+
+    )        orbit $A                            *
+
+        “Approximate invariance to transformations
+             approximately in the group #”
+Approximate group invariance
+
+                                                    (
+                 A
+                A
+
+                A
+                           A
+           A
+                           A
+            A
+           A              A
+                A
+
+                A
+                 A
+
+
+
+
+       )          orbit $A                                                     *
+
+• A function D is said to be geometrically stable if for a general deformation ä: Ω → Ω
+  and some distance Z on the space of transformations
+                               D ( ∘ ä () − D (   ≤ Z ä, $   (
+Example: 2D warping
+
+
+
+
+                             Translation                      Warping
+
+                        ∇ä - = 3    ∇ä 4   -
+                                               d4 =0          ∇ä - > 0
+                               ℝ4
+
+
+A geometrically stable function obeys a bound of the form
+                            D ( ∘ ä () − D (       ≤ ∇ä   (
+Bruna, Mallat 2012
+Stability under domain deformation
+Stability under domain deformation
+Stability under domain deformation
+Takeaways
+
+• Invariance reduces the sampling complexity but on its own might not be sufficient to
+  tame the curse of dimensionality
+• Symmetry prior must be combined with Scale Separation
+• Linear invariants are not sufficiently expressive
+• Instead, one may use nonlinear equivariants obtained by combining linear equivariants
+  with element-wise nonlinearities
+• Combination of these principles leads to a novel hypothesis class that is expressive and
+  able to tame the curse of dimensionality.
+• Its implementation in the form of neural networks is what we call the Geometric Deep
+  Learning blueprint
+• Next lectures: examples of instances of the Geometric Deep Learning blueprint on
+  different domains / symmetry groups
+Key Concepts
+
+• Scale separation and multiresolution analysis
+• Linear equivariants and invariants
+• Geometric Deep Learning blueprint
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 3 “Geometric
+  priors”
+
+• N. Carter, Visual group theory, 2009. Textbook introducing main concepts of group theory
+• C. Esteves, Theoretical aspects of group equivariant neural networks, arXiv:2004.05154,
+  2020. Group representations, harmonic analysis, equivariant networks
+

@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 torch.set_num_threads(2)
-n = json.loads(Path('3rd_Semester/UE_Advanced_Machine_Learning/A3/A3_exercise.ipynb').read_text(encoding='utf-8'))
+n = json.loads(Path('3rd_Semester/UE_Advanced_Machine_Learning/A3/A3/A3_exercise.ipynb').read_text(encoding='utf-8'))
 scope = {'np': np, 'torch': torch}
 exec(''.join(n['cells'][54]['source']), scope)
 scope.update(d=5, m=2)

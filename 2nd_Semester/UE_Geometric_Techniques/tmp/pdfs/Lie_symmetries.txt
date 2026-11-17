@@ -1,0 +1,229 @@
+QUICK DETOUR:
+SYMMETRIES IN PHYSICAL
+SYSTEMS
+
+
+Markus Holzleitner
+Institute for Machine Learning
+
+
+
+
+                                 0/11
+Emmy Noether   Sophus Lie (1842–1899)
+ (1882–1935)
+
+
+
+                                   1/11
+ Theorem (Noether)
+ Every continuous symmetry of a physical system corresponds
+ to a conservation law.
+
+Examples:
+
+ ■ Time symmetry → energy conservation
+ ■ Spatial symmetry → momentum conservation
+ ■ Rotational symmetry → angular momentum
+
+
+
+
+                                                        2/11
+Physics & Machine Learning
+Many physical systems are described by
+
+            Partial Differential Equations (PDEs)
+
+Examples:
+ ■ Fluid dynamics
+ ■ Climate models
+ ■ Plasma physics
+ ■ Wave propagation
+Recently: NN surrogates to approximate PDE solutions and
+provide faster simulations:
+ ■ Neural Operators
+ ■ Physics-informed neural networks
+                                                     3/11
+The Data Problem
+
+
+
+Training neural PDE solvers requires
+
+ ■ Large datasets of PDE solutions
+ ■ Expensive numerical simulations
+
+    How can we generate more training data cheaply?
+
+
+
+
+                                                      4/11
+Partial Differential Equations
+A PDE relates a function and its derivatives.
+
+
+                     ∆(x, u, ux , uxx , . . . ) = 0
+
+where
+ ■ x : spatial+temporal coordinates
+ ■ u(x) : unknown solution
+ ■ ux , uxx , · · · : collection of derivatives of respective orders
+Example: Heat Equation
+
+
+                           αuxx − ut = 0
+
+This equation describes how heat diffuses over time.
+                                                                  5/11
+Symmetries of PDEs
+
+
+
+Also here (see lecture): symmetry transformation mapping
+one solution to another:
+
+
+                   (x, u(x)) → (gx, gu(x))
+
+Important: gu(x) again satisfies PDE.
+
+
+
+
+                                                       6/11
+Lie Point Symmetries
+
+
+ ■ Specific class of symmetries acting on PDE solutions
+ ■ Form Lie Groups
+ ■ Each symmetry can be written as g(ε) for ε > 0
+ ■ Multiple transformations can be combined:
+
+                    g = g1 (ε1 )g2 (ε2 ) . . . gr (εr )
+
+ ■ Allows generating a large family of new solutions
+ ■ Precise mathematical theory/algorithmic recipe
+ ■ Known already for a large class of PDEs
+
+
+
+                                                          7/11
+Example: Korteweg–de Vries Equation
+
+                                                           ut + uux + uxxx = 0
+
+It describes solitons in shallow water waves.
+Important symmetries:
+ ■ Time translation: g1 (ε)u = u(x, t + ε)
+ ■ Space translation: g2 (ε)u = u(x + ε, t)
+ ■ Galilean boost: g3 (ε)u = u(x − εt, t) + ε
+ ■ Scaling transformation: g4 (ε)u = e−2ε u(eε x, e3ε t)
+                       Original: u             Time translation: g1u Space translation: g2u            Galilean boost: g3u
+              T                           3T
+                                          2
+              3T                          5T                                                                                          Scaling: g4u                   4
+              4                           4
+              1T                           T                                                                                                                         2
+      t [s]
+
+
+
+
+              2
+              1T                          3T                                                                                                                         0
+              4                           4
+              0                           1T                                                                                                                             2
+                   0   1L
+                       4
+                             1L
+                             2
+                                    3L
+                                    4
+                                         L2    0   1L
+                                                   4
+                                                         2L
+                                                         4
+                                                                3L
+                                                                4
+                                                                     L   0   1L
+                                                                             4
+                                                                                   1L
+                                                                                   2
+                                                                                          3L
+                                                                                          4
+                                                                                               L   0      1L
+                                                                                                          4
+                                                                                                                1L
+                                                                                                                2
+                                                                                                                       3L
+                                                                                                                       4
+                                                                                                                             L   0   e 3 L 2e 3 L 3e 3 L e
+                                                                                                                                      4      4      4
+                                                                                                                                                             3   L
+                            x [m]                       x [m]                     x [m]                        x [m]                       x [m]
+
+
+
+
+                                                                                                                                                                             8/11
+Symmetry-Based Data Augmentation
+
+ 1. Find all one-parameter symmetries g1 , · · · , gr
+ 2. Sample transformation parameters εi ∼ pi
+ 3. Compute g = g1 (ε1 )g2 (ε2 ) . . . gr (εr )
+ 4. Transform samples (x, u(x)) → (gx, gu(x))
+ 5. Reinterpolate to grid (in case domain changes)
+ 6. Add to dataset
+
+Cheap way of data augmentation
+             Initial solution u        Discretized solution (x, u)       Transformed graph (gx, gu)       Interpolation u0(x) = u(x   )        Resampling (x, u0)
+      2
+      1
+      0
+  u
+
+
+
+
+      1
+           u(x)                           (x,u)                             (x + , u)                         u0(x)                           (x, u0)
+      2
+       0    /2              3 /2   0       /2             3 /2       0       /2             3 /2      0        /2              3 /2       0    /2             3 /2
+                     x                             x                                    x                               x                               x
+
+
+
+
+                                                                                                                                                                     9/11
+Benefits for Machine Learning
+Symmetry-based augmentation provides:
+
+ ■ Physically valid new samples
+ ■ Improved generalization for neural operators
+ ■ Better sample efficiency
+
+kdV-example: illustrations in exercises
+However:
+
+ ■ Symmetries not yet incorporated in solvers/neural
+   operators (cf. GDL-blueprint)
+ ■ More general symmetries, conservation laws?
+ ■ Considered examples: periodic domains, full domain.
+
+                                                         10/11
+Literature
+
+
+
+
+ ■ Brandstetter et al.: Lie point symmetries for data
+   augmentation
+ ■ Olver: Applications of Lie groups to differential equations
+
+
+
+
+                                                            11/11
+

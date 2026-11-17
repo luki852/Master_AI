@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-p = Path('3rd_Semester/UE_Advanced_Machine_Learning/A3/A3_exercise.ipynb')
+p = Path('3rd_Semester/UE_Advanced_Machine_Learning/A3/A3/A3_exercise.ipynb')
 n = json.loads(p.read_text(encoding='utf-8'))
 solutions = {
 6: r'''Let $\mathbf t\in\mathbb R^d$. Since $\mathbf W$ and $\boldsymbol\mu$ are deterministic, the definition gives

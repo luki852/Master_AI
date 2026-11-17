@@ -1,0 +1,931 @@
+Geometric Deep Learning
+       Michael Bronstein
+            Oxford 2024
+           Autonomous driving
+
+
+                                                     Generative art
+
+
+                   Language processing
+
+
+
+
+Robotics            Speech recognition   Protein folding         Drug discovery
+“[ML] is the new electricity”
+                          —Andrew Ng (2017)
+  “There’s a self-congratulatory feeling in the air. We
+say things like ‘machine learning is the new electricity.’
+   I’d like to offer an alternative metaphor: machine
+              learning has become alchemy.”
+                                    —Ali Rahimi at NIPS 2017
+Image: Byron Eggenschwiler
+Fundamental principles underlying
+   deep learning architectures
+   “The knowledge of certain principles easily
+compensates the lack of knowledge of certain facts”
+                                —Claude Adrien Helvétius
+Symmetry
+      “Symmetry, as wide or as narrow as you may
+      define its meaning, is one idea by which man
+      through the ages has tried to comprehend and
+      create order, beauty, and perfection”
+
+
+                                                     H. Weyl
+
+
+
+
+Weyl 1952
+ON THE SHOULDERS OF GIANTS
+συμμετρία
+
+
+
+
+   Platonic solids     Plato                          J. Kepler
+
+
+                     ~370 BC   “On the six-cornered   1611
+                               snowflake”
+Marina Viazovska
+2022 Fields Medal
+8-dimensional sphere packing
+Euclidean geometry
+
+
+  Fifth Postulate: “In a plane,
+  given a line and a point not on it,
+  at most one line parallel to the
+  given line can be drawn through
+  the point”
+
+                                          Euclid
+
+
+                                        ~300 BC
+Early attempts
+
+
+
+
+                  Khayyam-Saccheri quadrilateral
+                                                             Omar Khayyam
+
+“Three cases of angles in a quadrilateral: Fifth Postulate
+follows from the right-angle assumption”                       1077
+Early attempts
+
+
+
+
+    ”repugnant to the nature of straight lines”
+                              — Giovanni Saccheri
+
+                                                    1736
+Projective Geometry
+
+
+
+
+        G. Desargues                                    J. V. Poncelet
+
+
+           1643                 “Projective geometry”
+                                                         1822
+
+Desargues 1643; Poncelet 1822
+“Non-Euclidean Geometry”
+
+
+    “I have discovered such
+    wonderful things that I was
+    amazed... out of nothing I
+    have created a strange new
+    world.”
+                 — Jánus Bolyai to his father
+                                                                                     J. Bolyai
+
+
+                                                                                     1823
+                                                Bolyai’s 1823 letter to his father
+Bolyai (1823) 1832
+“Non-Euclidean Geometry”
+
+
+    “To praise it would amount to praising myself. For
+    the entire content of the work...coincides almost
+    exactly with my own meditations [in the] past thirty
+    or thirty-five years.”
+                                      — Gauss to Farkas Bolyai
+
+                                                                 C. F. Gauss
+
+
+                                                                 ~1800
+
+Gauss ~1800
+“Non-Euclidean Geometry”
+
+      “In geometry I find certain
+      imperfections which I hold to be
+      the reason why this science […]
+      can as yet make no advance from
+      that state in which it came to us
+      from Euclid. I consider […] the
+      momentous gap in the theory of
+      parallels, to fill which all efforts   N. Lobachevsky
+      of mathematicians have so far
+      been in vain.”
+                                               1829
+
+Lobachevsky (1826) 1829
+“Non-Euclidean Geometry”
+
+
+
+
+                                                                      B. Riemann
+
+
+       Constant-curvature spherical   Variable-curvature Riemannian    1856
+                geometry                 geometry on manifolds
+                                           (“Mannigfaltigkeit”)
+Riemann 1856
+19th Century Zoo of Geometries
+The Erlangen Programme
+
+
+      “Given a [homogeneous]
+      manifold and a
+      transformation group acting
+      [transitively] on it, to
+      investigate those properties of
+      figures on that manifold
+      which are invariant under
+                                        F. Klein
+      transformations of that
+      group”
+                                        1872
+
+Klein 1872
+The Erlangen Programme
+
+                   Euclidean   Affine   Projective
+
+
+
+
+           angle      +         —           —
+        distance      +         —           —
+            area      +         —           —
+     parallelism      +         +           —
+    intersection      +         +           +
+Group Theory
+
+
+
+
+                                        E. Galois   S. Lie   F. Klein
+
+
+                                        1832
+ Mon cher ami — Galois’ last letter
+ written on the night before his duel
+Hyperbolic geometry
+
+
+
+
+                                                    E. Beltrami        F. Klein
+
+
+    Beltrami-Klein projective model of hyperbolic   1868               1871
+    geometry                                                        sogenannte nicht-
+                                                                  Euklidische Geometrie
+Beltrami 1868; Klein 1871
+Beyond Erlangen Programme
+
+
+
+
+                 =                       +
+     E. Cartan              B. Riemann       F. Klein
+Category Theory
+
+
+“…a continuation of the Klein
+Erlangen Programme, in the
+sense that a geometrical space
+with its group of
+transformations is generalized
+to a category with its algebra
+                                 S. Eilenberg   S. Mac Lane
+of mappings”
+
+                                          1945
+Noether’s Theorem
+
+
+      “Every [differentiable]
+      symmetry of the action of a
+      physical system [with
+      conservative forces] has a
+      corresponding conservation
+      law”                          E. Noether
+
+
+                                    1918
+
+Noether 1918
+Gauge invariance
+
+
+Lieber Kollege! —
+Postcard dated 15 April
+1918 from Einstein to
+Weyl arguing with his
+initially proposed
+gauge theory
+
+
+
+                                       H. Weyl
+
+
+                                       1929
+
+Weyl 1919; 1929 (see Straumann 1987)
+Unification of forces
+
+
+
+
+Unification of electromagnetic and weak forces (modelled       C. N. Yang     R. L. Mills
+with the groups U(1) × SU(2)) and the strong force (based on
+the group SU(3))
+                                                                       1954
+
+Yang, Mills 1954
+                                      ⨯
+                    H. Poincaré                        C. N. Yang
+                                             ⨯
+       ⋊
+
+
+
+
+External symmetry                  Internal symmetry
+                    H. Minkowski                       R. L. Mills
+      “It is only slightly overstating the case to say that
+      Physics is the study of symmetry”
+                                — “More is different”, Science 1972
+
+                                                                      P. Anderson
+
+
+
+
+Anderson 1972
+?
+EARLY NEURAL NETWORKS
+    & THE AI WINTER
+Dartmouth AI Conference 1956
+Early neural networks
+
+
+
+
+                                                                              F. Rosenblatt
+
+
+
+                  Perceptron, one of the first neural network architectures
+                                                                               1957
+
+Rosenblatt 1957
+Early neural networks
+
+
+
+
+                  Early skip connections   F. Rosenblatt
+
+
+
+
+Rosenblatt 1962
+Early hype
+
+
+       “First serious rival to the
+       human brain even devised.”
+
+       “Remarkable machine
+       capable of what amounts to
+       thought”
+                             — The New Yorker
+
+                                                1958
+
+Manson, Stewart, Gill 1958
+Early hype
+
+
+
+
+Papert 1966
+The “XOR Affair”
+
+
+
+
+  “[simple] perceptron    M. Minsky   S. Papert
+  cannot represent even
+  the XOR function”               1969
+
+Minsky, Papert 1969
+“AI WINTER”
+“Simple perceptron”
+
+
+
+                𝑤#
+           𝑥#
+                𝑤$
+           𝑥$
+                           +   𝑦 = sign 𝐰 ! 𝐱
+                𝑤!
+           𝑥!
+                𝑏 = 𝑤!"#
+           1
+First “geometric” machine learning
+
+
+
+      Group Invariance Theorem: ”if a
+      neural network is invariant to a group,
+      then its output can be expressed as
+      functions of the orbits of the group”
+
+                                                M. Minsky   S. Papert
+
+
+                                                        1969
+
+Minsky, Papert 1969
+Universal approximation
+
+
+
+
+          D. Hilbert                  A. Kolmogorov                   V. Arnold   G. Cybenko        K. Hornik
+
+
+        13th Problem                                                               “Modern” results specific to
+                                                                                   multilayer neural networks
+
+
+Hilbert 1900; Arnold 1956; Kolmogorov 1957; Cybenko 1989; Hornik et al. 1989
+Universal approximation
+
+                                          +                                                   𝑦
+                                                ⋮
+
+                                          +
+                          𝑥                                          +         𝑦                          𝑥
+
+
+                                           +
+                                                ⋮
+                                                                                 “A 2-layer perceptron can approximate
+                                                                                 a continuous function to any desired
+                                           +                                     accuracy”
+
+
+
+Cybenko 1989; Hornik 1991; Barron 1993; Leshno et al 1993; Maiorov 1999; Pinkus 1999
+Deep learning = glorified curve fitting
+
+
+
+
+                                          {cat,dog}
+Universal approximation
+
+                                          +                                                  𝑦
+                                                ⋮
+
+                                          +
+                          𝑥                                          +         𝑦                        𝑥
+
+
+                                           +
+                                                ⋮
+                                                                                 How many samples are needed to
+                                                                                 approximate to accuracy 𝜀 ?
+                                           +
+
+
+Cybenko 1989; Hornik 1991; Barron 1993; Leshno et al 1993; Maiorov 1999; Pinkus 1999
+The Curse of Dimensionality
+
+
+               2-dimensional
+
+
+
+                      𝑥        𝑓   𝑦
+The Curse of Dimensionality
+
+
+               3-dimensional
+
+
+
+                               𝑥   𝑓   𝑦
+The Curse of Dimensionality
+
+
+               𝑑-dimensional
+
+
+
+                               𝑥         𝑓   𝑦
+
+
+
+                        O 𝜀 !" samples
+The Lighthill Report
+
+
+       “Most workers in AI research and in
+       related fields confess to a pronounced
+       feeling of disappointment in what has
+       been achieved in the past twenty-five
+       years. […] In no part of the field have
+       the discoveries made so far produced
+                                                 J. Lighthill
+       the major impact that was then
+       promised.”
+                                                  1972
+
+Lighthill 1972
+   THE EMERGENCE OF
+GEOMETRIC ARCHITECTURES
+Secrets of the visual cortex
+
+
+
+
+                                                            D. Hubel     T. Wiesel
+
+     Experiments of Hubel and Wiesel that established the
+                structure of the visual cortex                    1959
+
+Hubel, Wiesel 1959; 1962
+Neocognitron
+
+
+
+
+                                                                   K. Fukushima
+                 Neocognitron, an early geometric neural network
+
+                                                                     1980
+
+Fukushima 1980
+                     ⋮
+
+
+
+
+                             +
+
+                     ⋮
+
+
+input image   input vector
+                                               ⋮
+
+
+
+
+                                                       +
+
+                                               ⋮
+
+
+                    input image         input vector
+
+“The response of [Perceptrons] was severely affected by the shift
+in position […] of the input patterns. Hence, their ability for
+pattern recognition was not so high.”— Fukushima
+Neocognitron
+
+
+
+
+                                                               K. Fukushima
+
+
+                 Experimental evaluation of the Neocognitron
+                                                                 1980
+
+Fukushima 1980
+Neocognitron
+
+    • Deep neural network (7 layers tested)
+    • Local connectivity (“receptive fields”)
+    • Nonlinear filters with shared weights (S-layers)
+    • Average pooling (C-layers)
+    • ReLU activation function
+    • ”Self-organised” (unsupervised) – no backprop yet!   K. Fukushima
+
+
+                                                             1980
+
+Fukushima 1980
+How to train your neural network?
+
+
+
+
+      F. Rosenblatt                  A. Ivakhnenko                    S. Linnainmaa             P. Werbos       D. Rumelhart
+
+        Perceptron                  Group method of                                           Backpropagation
+       learning rule                 data handling
+          (1 layer)
+
+Rosenblatt 1957; Ivakhnenko, Lapa 1966; Linnainmaa 1970; Werbos 1982; Rumelhart et al. 1986
+Convolutional neural networks
+
+
+
+
+                                              AT&T DSP-32C          Y. LeCun
+                                         capable of 125m floating
+                                        point multiply-accumulate
+                                              operations/sec
+               First version of a CNN
+
+
+LeCun et al. 1989
+LeNet-5
+
+
+
+
+                    LeNet-5 classical CNN architecture
+
+
+
+                                                         Y. LeCun
+
+
+
+
+                          MNIST digits dataset
+
+LeCun et al. 1998
+Recurrent Neural Networks
+
+
+
+                                                                               𝐲#              𝐲$              𝐲&             𝐲'              𝐲(
+
+                                                                                     𝐡#              𝐡$              𝐡&              𝐡'                     …
+                                                                   𝐡   %       𝑅               𝑅               𝑅               𝑅               𝑅
+
+                                                                               𝐱#             𝐱$              𝐱&              𝐱'              𝐱(
+                                                                               to             be              or             not              to
+
+
+
+
+ Simple RNN architecture used                                          Unfolded RNN and the Vanishing Gradient problem
+      by Michael Jordan
+
+McCulloch, Pitts 1943 (”circular paths”); Minsky 1967 (“networks with cycles”); Rumelhart et al. 1985 (generalisation of gradient-based learning in “recurrent nets”)
+Jordan 1986; Elman 1990
+Long Short Term Memory (LSTM)
+
+
+
+
+                                                                     S. Hochreiter   J. Schmidhuber
+
+
+
+
+Hochreiter 1995; Hochreiter, Schmidhuber 1997; Pascanu et al. 2003
+Time warping
+
+
+
+
+Image: Portilla, Heintz
+Computer vision in the 2000s
+
+
+
+
+                                                                                               SVM
+          Feature detection          Feature description            Feature aggregation   Classification
+
+
+                              A typical image classification pipeline from the 2000s
+
+
+
+
+Sivic, Zisserman 2003
+ImageNet
+
+
+
+
+                                                                L. Fei-Fei
+
+     AlexNet beating all “handcrafted” approaches on ImageNet
+       benchmark—the moment of truth for computer vision
+AlexNet
+
+
+
+
+                               AlexNet architecture
+
+
+                Nvdia GTX 580 GPU capable of          A. Krizhevsky
+                            ~200G FLOP/sec
+
+
+
+
+Krizhevsky et al. 2012
+TRIUMPH OF DEEP LEARNING
+ GRAPH NEURAL NETWORKS &
+THEIR CHEMICAL PRECURSORS
+Early chemoinformatics
+
+
+
+
+First chemical abstracts journal       Beilstein Handbusch      Chemical Abstracts Service
+Chemisches Zentralblatt 1830–1969   ~500 volumes, 500k pages   as of today ~200m compounds
+Early chemoinformatics
+
+
+
+
+                         Punch card for early computer
+Structural similarity of molecules
+
+
+
+
+                                                                                     G. Vlăduţ
+              Early “chemical ciphers” used for molecule representations
+                                 fail to capture structural similarity
+                                                                                     1959
+
+Vlăduţ et al. 1959; Portrait: Ihor Gorskiy (from a photo courtesy of Serge Vlăduţ)
+Graph theory & Chemistry
+
+
+
+
+                                              J. Sylvester
+
+     The term “graph” appeared first in the
+     chemical context
+                                               1878
+
+Sylvester 1878
+Graph theory & Chemistry
+
+
+
+
+                           A. Kekulé
+Weisfeiler-Lehman test
+
+
+
+
+                                                   A. Lehman      B. Weisfeiler
+
+
+                                                               1968
+
+Weisfeiler, Lehman 1968; Portraits: Ihor Gorskiy
+ First Graph Neural Networks
+
+
+
+
+ A. Sperduti    C. Goller      A. Küchler    M. Gori       F. Scarselli   A. Micheli
+
+Labeling RAAM   Backprop through structure   “Graph Neural Networks”      “NN4G”
+
+  1994                      1996               2005, 2008                 2009
+Back to the chemical roots
+
+
+
+
+           GNN-based                       D. Duvenaud   Chemical property prediction   J. Gilmer
+   molecular fingerprints                                using message passing GNNs
+
+
+
+
+Duvenaud et al. 2015; Gilmer et al. 2017
+Back to the chemical roots
+
+
+
+
+       An “ImageNet” moment of structural biology
+
+
+
+Jumper et al. 2021
+THE BLUEPRINT
+Convolutional Neural Network   Graph Neural Network
+Convolutional Neural Network   Graph Neural Network
+
+
+
+
+    Underlying domain:          Underlying domain:
+           grid                       graph
+Convolutional Neural Network   Graph Neural Network
+
+                                           11
+                                                        12
+
+                                1          3
+                                                    8
+                                     2          4
+                                                             9
+                                     7          5
+                                                    10
+                                           6
+                                14
+
+                                           13
+
+
+        Symmetry:                         Symmetry:
+        Translation                      Permutation
+Convolutional Neural Network   Graph Neural Network
+
+                                              2
+                                                          13
+
+                                4             10
+                                                       14
+                                        5          8
+                                                               7
+                                        9          3
+                                                       11
+                                              12
+                                    1
+
+                                              6
+
+
+        Symmetry:                            Symmetry:
+        Translation                         Permutation
+Convolutional Neural Network   Graph Neural Network
+
+                                         11
+                                                      12
+
+                                1        3
+                                                  8
+                                     2        4
+                                                           9
+                                     7        5
+                                                  10
+                                         6
+                                14
+
+                                         13
+
+
+        Convolution:              Message passing:
+   translation equivariant     permutation equivariant
+Convolutional Neural Network   Graph Neural Network
+
+                                            2
+                                                      13
+
+                                4           10
+                                                     14
+                                        5        8
+                                                           7
+                                        9        3
+                                                     11
+                                            12
+                                    1
+
+                                            6
+
+
+        Convolution:              Message passing:
+   translation equivariant     permutation equivariant
+Geometric Deep Learning
+
+
+
+
+  Bronstein, Bruna, Cohen & Veličković
+ The Erlangen Programme of ML
+Geometric Deep Learning
+Geometric Deep Learning Blueprint
+     domain Ω             signals 𝒳 Ω          functions ℱ 𝒳 Ω
+
+
+
+
+                                                      𝑓
+                                                  equivariance
+                                               𝑓 𝜌 𝑔 𝑥 =𝜌 𝑔 𝑓 𝑥
+
+ symmetry group 𝐺   group representation 𝜌 𝐺      invariance
+                       𝜌 𝑔 𝑥 𝑢 = 𝑥 𝑔 !" 𝑢       𝑓 𝜌 𝑔 𝑥 =𝑓 𝑥
+Example: Convolutional Neural Networks
+       Plane ℝ#          images 𝒳 ℝ#       functions ℱ 𝒳 Ω
+
+
+
+
+                                                   ⋆
+
+Translation group 𝑇 2   Shift operator 𝑆   Convolutional layer
+                        𝑆$ 𝑥 𝑢 = 𝑥 𝑢 − 𝑣    𝑆𝑥 ⋆ 𝑦 = 𝑆 𝑥 ⋆ 𝑦
+Example: Graph Neural Networks
+   Graph 𝐺 = 𝑉, 𝐸       Node features 𝒳 𝐺       functions ℱ 𝒳 Ω
+
+
+
+
+                                                       𝐅
+
+Permutation group 𝑆0   Permutation matrix 𝐏      Message passing
+                          𝐏𝐗 = 𝑥% )* & ,(     𝐅 𝐏𝐗, 𝐏𝐀𝐏 ⊤ = 𝐏𝐅 𝐗, 𝐀
+Example: Equivariant Graph Neural Networks
+   Graph 𝐺 = 𝑉, 𝐸       Node features 𝒳 𝐺         functions ℱ 𝒳 Ω
+
+
+
+
+                                                         𝐅
+
+Permutation group 𝑆0   Permutation matrix 𝐏   Equivariant message passing
+                            Rotation 𝐑         𝐅 𝐏𝐗𝐑, 𝐏𝐀𝐏 ⊤ = 𝐏𝐅 𝐗, 𝐀 𝐑
+Geometric Deep Learning Blueprint
+Scale Separation in Physics
+The “5G” of Geometric Deep Learning
+
+
+
+
+      Grids         Groups            Graphs   Geometric Graphs
+                                                  & Gauges
+The “5G” of Geometric Deep Learning
+
+
+
+
+    Images &      Homogeneous    Graphs & Sets   Manifolds, Meshes &
+    Sequences        spaces                       Geometric graphs
+  Perceptrons                    CNNs                   Group-CNNs                   LSTMs
+Function regularity             Translation           Translation+Rotation,        Time warping
+                                                         Global groups
+
+
+
+
+         DeepSets / Transformers               GNNs                  Intrinsic CNNs
+                  Permutation                 Permutation         Isometry / Gauge choice
+Physics               Materials    Chip design             Biology
+
+
+
+
+          Chemistry               Urban planning   Pure math         Weather
+Wang et al. 2023
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 7 “Historic
+ perspective”
+
+• M. Bronstein, Towards geometric deep learning, The Gradient, 2022. Historical overview of the
+ field following this lecture
+

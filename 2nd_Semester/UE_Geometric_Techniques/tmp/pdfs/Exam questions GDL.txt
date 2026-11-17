@@ -1,0 +1,187 @@
+Here I collected possible exam questions that may be helpful for a meaningful preparation.
+The exam will consist of 10–12 multiple-choice questions and last 70 minutes. You are
+allowed to bring a two-page handwritten cheat sheet, and a calculator. Think of this list as a
+map of the entire course, not a checklist to memorise.
+
+Curse of dimensionality (cod) in high dimensions:
+
+   1. Describe the standard setting of supervised machine learning. What are the true risk
+        and the Bayes-optimal predictor? What is the role of the model class and the
+        empirical risk? Intuitively, what are suitable notions of model complexity for neural
+        networks and smooth function classes (e.g. Sobolev)? (No formulas needed.)
+   2.   Illustrate graphically the classical and the modern bias–variance trade-off. How does
+        model-class complexity interact with approximation error, estimation error, and
+        generalisation? Where does the modern (double-descent) regime differ qualitatively
+        from the classical picture? Can you give a plausible explanation for this (keyword:
+        implicit regularization)? Would the interpolation threshold shift, if more training
+        samples are used?
+   3.   What is the geometric reason behind the cod? Why do local methods fail in high-
+        dimensional learning? Illustrate, in pictures or words, how one can construct a family
+        of Lipschitz functions whose estimation error grows rapidly with dimension.
+   4.   Illustrate with pictures the error decompositions for smooth (i.e. Sobolev) and
+        Lipschitz function classes. In which term does the cod appear in each case?
+   5.   Sketch the loss landscape of a general high-dimensional optimisation problem. How
+        does the picture change for the loss landscapes typically encountered when training
+        deep neural networks?
+   6.   State the manifold hypothesis in your own words. Why is it a potential remedy for the
+        curse of dimensionality, and what does it assume about the geometry of real-world
+        data?
+
+        Geometric priors:
+
+   7. How is a signal on a domain formally defined? What crucial mathematical structure
+       does the space of signals carry?
+   8. Give a formal definition of a group. Which axioms must the group operation satisfy?
+       What concept allows us to speak about structural equivalence between two groups?
+   9. Example: Give an example of a group homomorphism between matrices and
+       scalars. Provide an isomorphism between an additive and a multiplicative group, and
+       discuss that it satisfies the homomorphism property.
+   10. What properties must a group action on a domain satisfy? How is the group action
+       lifted from the domain to the level of signals (i.e., what is a group representation)?
+       What are the crucial properties of this construction, and why is the existence of group
+       inverses indispensable?
+   11. Let X and Y be signal spaces with associated group representations. Define
+       equivariance and invariance of a map f : X → Y precisely in formulas and via a
+       commutative diagram. Illustrate the concept with a picture: how do signals from
+       different orbits appear in feature space for an equivariant map?
+   12. What operator maps a general hypothesis class (which transforms with the group) to
+       a group-invariant one? How is this operator defined precisely for a finite group?
+       When using group-invariant functions: how does the approximation error compare
+       between the original and the invariant hypothesis class? What can happen to the
+       estimation error? Which of the two errors may still suffer from the curse of
+       dimensionality, and why? (Rough qualitative arguments suffice.)
+   13. Explain the principle of scale separation (coarse graining) for signals. What are the
+       two fundamental building blocks of multiscale priors? Why does combining symmetry
+       with scale separation provide a more powerful prior than either principle alone?
+   14. Describe the Geometric Deep Learning blueprint. What desiderata should an ideal
+       hypothesis class of neural networks satisfy? Name the main building blocks of the
+       blueprint, explain the role of each, and state the order in which they commonly
+       appear in the compositional architecture.
+   15. Sketch in a picture what it means for a map to be approximately invariant to
+       transformations that are approximately in the group. How is this notion used to
+       characterise the stability of learned representations?
+
+Sets:
+
+   16. What is the appropriate symmetry group acting on a set of elements? How do signals
+       on sets look, and how can the group representation on the space of set signals be
+       expressed?
+   17. Example: Suppose a set signal is given as a feature matrix (one row per element). If
+       the set elements are permuted by a permutation, how must the representing matrix
+       transform? Write down the corresponding permutation matrix and explain how it acts
+       on the feature matrix.
+   18. How is linear equivariance characterised in terms of permutation matrices? What is
+       the general form of a linear equivariant map on set signals?
+   19. Describe the DeepSets architecture in terms of the GDL blueprint. Which
+       components are equivariant and which are invariant? Which parts are
+       fixed/learnable?
+
+Graphs:
+
+   20. Give a formal definition of an undirected node-attributed graph. How can it be fully
+       represented by matrices? What ingredient does a graph add compared to a plain set
+       of nodes?
+   21. What is the appropriate symmetry group for graphs? How does it act on node and
+       edge features in a transparent way? How can graph-level invariance and node-level
+       equivariance be described in terms of this group representation?
+   22. Explain the main ingredients of message passing in a graph neural network. What is
+       the key difference compared to the set case, and what role do edges play?
+   23. What is a graph convolution? Briefly name other flavours of graph neural networks.
+       What are the main components of a message-passing neural network (MPNN) in
+       general?
+   24. Example: given a small labelled graph, compute the output of one message-passing
+       layer for all nodes (you may choose a simple aggregation such as sum or mean).
+       What happens to the result if the nodes are permuted?
+   25. What is the relationship between MPNNs and the WL test? What property must an
+       MPNN's aggregation function satisfy for the network to match the discriminative
+       power of WL?
+   26. Example: apply the Weisfeiler–Leman (WL) colour-refinement test to two given
+       graphs for a fixed number of iterations. Interpret the outcome: what does the test tell
+       you if the colour histograms differ? What can you conclude if they agree?
+   27. What is the main idea of positional encoding approaches, and how can they
+       overcome limitations of the WL test? Briefly explain the concept of graph
+       substructure networks. (No formulas needed.)
+   28. What is the main idea of subgraph GNNs? How do they connect to the graph
+       reconstruction conjecture, and what does that conjecture say intuitively?
+   29. In what sense can Transformers be viewed as an instance of MPNN? Is the attention
+       mechanism, as applied in practice, truly permutation-equivariant?
+   30. Explain the phenomenon of oversquashing, both intuitively and (briefly) in formulas.
+       Which structural properties of an MPNN contribute to oversquashing, and which has
+       the largest influence (no formulas required)?
+
+Grids:
+
+   31. What graph structure underlies a 1-D grid? What is the appropriate symmetry group,
+       and how can signals on a grid be expressed? How does the associated group
+       representation act on signals?
+   32. Example: let I be a feature matrix representing an image (e.g., of a letter), and let I'
+       be the same image shifted by one pixel. What must matrices A and B look like so that
+       I' = AIB? Describe the structure of A and B.
+   33. How do linear translation-equivariant maps on grids relate to the shift operator? How
+       do they relate to cyclic (i.e. convolution) matrices? Explain the relation to the discrete
+       Fourier transform. How can a discrete convolution be computed efficiently in the
+       Fourier domain?
+   34. For the continuous Fourier transform: how are localisation in space and localisation
+       in frequency related? What does the Heisenberg uncertainty principle state in this
+       context? Sketch the space–frequency diagram (spectrogram) of the standard, and
+       windowed Fourier transform.
+   35. Explain the instability of the Fourier modulus under small dilations. Sketch a typical
+       spectrogram for a slightly dilated signal versus the original. How do low and high
+       frequencies behave differently under dilation?
+   36. Wavelets: explain in pictures how dilation and translation act on a mother wavelet
+       (e.g. Haar), both in space and in frequency. Compare the spectrograms of the plain
+       Fourier transform, the windowed Fourier transform, and the wavelet transform. Why
+       are wavelets particularly well suited for detecting localised, edge-like structures?
+   37. Wavelet scattering: what are the main building blocks? Why is the modulus
+       nonlinearity crucial (what would be lost without it)? How does the spectrogram of the
+       scattering transform differ from that of a plain wavelet transform, and what additional
+       stability properties are gained?
+Group convolutions:
+
+   38. What is the guiding philosophy of convolution as a "transform-and-match" operation?
+       Write the group convolution as an integral over the domain. What changes in higher
+       layers when group convolution is applied twice in a row (i.e., what is the domain of
+       the resulting feature maps)?
+   39. Illustrate group convolution equivariance with a picture showing how a signal and a
+       discretely rotated copy of it lead to correspondingly rotated output feature maps.
+   40. Describe group convolution on the roto-translation group p4 (four discrete rotations).
+       What is different in the first layer compared to higher layers? (No formulas needed.)
+   41. What is a homogeneous space, and what does it mean for a group action to be
+       transitive? What is the stabiliser subgroup of a point? Give two concrete examples of
+       homogeneous spaces and identify their stabiliser subgroups.
+
+Manifolds + spectral convolutions:
+
+   42. From a practical perspective, why are manifolds a useful model? Explain informally
+       what a smooth manifold is as a topological object: what is the role of a chart, and
+       what is the tangent space at a point? What additional ingredient is needed to
+       meaningfully work with tangent vectors?
+   43. What is a Riemannian metric, and why is it useful? What does it mean for a quantity
+       to be intrinsic on a Riemannian manifold? Define geodesics and the geodesic
+       distance on a connected Riemannian manifold. Are these objects intrinsic?
+   44. Define deformations and the notion of a metric isometry for Riemannian manifolds.
+       Qualitatively discuss, how does the notion of stability under deformations compare
+       between manifolds and homogeneous spaces.
+   45. How is the gradient of a scalar field defined, what is its geometric interpretation, and
+       why is the definition intrinsic? What information does the divergence of a vector field
+       carry? How are the divergence and gradient operators related (think about
+       adjointness)? What is the geometric meaning of the Laplace–Beltrami operator, and
+       how can it be defined intrinsically? From an operator-theoretic perspective, why is the
+       Laplacian particularly convenient to work with?
+   46. How is spectral convolution defined, and why is it intrinsic? In what sense is naive
+       spectral convolution unstable under domain deformations, and how can stable
+       spectral filters be designed?
+   47. What is a natural way to discretise a Riemannian manifold? What allows us to talk
+       about intrinsic objects in this discrete setting? What is the general notion of a
+       Laplacian on these discretised objects, and why is the mesh Laplacian a useful
+       analog to the continuous Riemannian case (no formulas)?
+   48. Interpret the graph or mesh Laplacian in terms of the GDL blueprint. In what sense is
+       it an instance of message passing?
+   49. Explain the main steps of the graph (or mesh) Fourier transform. What is a
+       fundamental computational limitation of this approach? How can polynomial spectral
+       filters overcome this limitation while retaining a convolutional flavour? What is the
+       remaining overall limitation of spectral filters, even when they are designed to be
+       stable under domain deformations?
+Have fun and all the best
+The GDL crew (Carlos, Gianluca, Markus, Paul)
+

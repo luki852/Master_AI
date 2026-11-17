@@ -1,0 +1,743 @@
+ Spectral Methods
+Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• Differential operators on manifolds (gradient, divergence, Laplacian)
+• The eigenvalues and eigenvectors of the Laplacian operator
+• Fourier analysis on manifolds
+• Spectral convolution
+• Discrete manifolds (meshes)
+• Back to graphs (graph convolutional networks)
+                   Non-Euclidean Convolution Recipes
+
+
+Fixed path   Fixed gauge   “Group pooling”   Isotropic filter   Gauge-equivariant
+                                                (spectral)            filter
+DIFFERENTIAL OPERATORS
+     ON MANIFOLDS
+Reminder: Euclidean case
+
+           𝑏   𝑐    . .   .   𝑎   .   1       .                   .   1       .               𝑏   𝑐    . .   .   𝑎
+           𝑎   𝑏    𝑐.    .   .   .   .       1                   .   .       1               𝑎   𝑏    𝑐.    .   .
+
+           .   .   . 𝑎            .   .   .
+                                                              = . . . . . 1 . . .
+                          𝑏   𝑐                   .   .   1                                             𝑎    𝑏   𝑐
+           𝑐   .   . .    𝑎   𝑏   1   .   .       .   .   .      1    .   .       .   .   .   𝑐   .   . .    𝑎   𝑏
+
+
+• Convolutions commute
+• Commuting matrices are jointly diagonalisable (“have same eigenvectors”)
+• Pick up the shift operator whose eigenvectors are the DFT ⟹ convolutions are
+  diagonalised by the Fourier transform
+Reminder: Euclidean case
+
+                                     . . .                              . . .
+           𝑏   𝑐    . .   .   𝑎 −2 1. . . . . . . . 1              −2 1. . . . . . . . 1 𝑏 𝑐 . . .         𝑎
+           𝑎   𝑏    𝑐.    .   .      . .1. . .. .. . .. .
+                                  1 −2                                  . .1. . .. .. . .. . 𝑎 𝑏 𝑐 . .
+                                                                     1 −2                                  .
+
+           .   .   . 𝑎
+                                     1 −2. . .1 . . .
+                                 . . . 1 . ..             .
+                                                              =.        1 −2. . .1 . . .
+                                                                    . . . 1 . ..            .. . . . 𝑎 𝑏
+                          𝑏   𝑐                                                                            𝑐
+           𝑐   .   . .    𝑎   𝑏 1 . .          1 −2 .          .   1 . .          1 −2 .𝑐 . . . . 𝑎        𝑏
+
+
+• Convolutions commute
+• Commuting matrices are jointly diagonalisable (“have same eigenvectors”)
+• Pick up the Laplacian operator whose eigenvectors are the DFT ⟹ convolutions are
+  diagonalised by the Fourier transform
+1D Laplacian Operator
+
+• Fourier basis functions = Laplacian eigenfunctions
+
+                                          ∆e!"#$ = 𝜔 % e!"#$
+
+• Fourier basis = orthogonal basis minimising the Dirichlet energy
+                                                         !*
+                                                                                %
+                           φ&!' = argmin -                      ∇φ& 𝑢               d𝑢
+                                              (         )*
+
+                           s. t.     φ = 1 and                 φ, φ+ = 0 for 𝑗 = 1, … 𝑘                                         G. Dirichlet
+
+• “smoothest orthogonal basis”                                           𝑥!"#               𝑥!               𝑥!$#
+• ”local difference from neighbours”
+                                                                                    𝑥!"# + 𝑥!$# − 2𝑥!
+
+Dirichlet 1950 (named “Dirichlet’sches Prinzip” by Riemann 1857, though earlier used by Gauss 1940, Thomson Lord Kelvin 1847)
+Scalar & Vector Fields
+
+• Scalar field = real function on the manifold   Ω
+                      𝒳 Ω, ℝ ∋ 𝑥: Ω → ℝ
+Scalar & Vector Fields
+
+• Scalar field = real function on the manifold        Ω
+                      𝒳 Ω, ℝ ∋ 𝑥: Ω → ℝ
+
+• Vector field = function 𝒳 Ω, 𝑇Ω ∋ 𝑥:⃗ Ω → 𝑇Ω
+  assigning at each point a tangent vector
+                      𝑢 ↦ 𝑥⃗ 𝑢 ∈ 𝑇$ Ω
+ • Model of local displacement or “flow”
+
+• Hilbert spaces with inner products
+
+   𝑥, 𝑦 = - 𝑥 𝑢 𝑦 𝑢 d𝑢         ⃗ 𝑦⃗ = -
+                               𝑥,              𝑥⃗ 𝑢 , 𝑦⃗ 𝑢   $ d𝑢
+           ,                               ,
+Intrinsic Gradient
+
+• “direction of steepest increase” of 𝑥 at 𝑢?
+                                                𝑢
+Intrinsic Gradient
+
+• “direction of steepest increase” of 𝑥 at 𝑢?            𝑦⃗
+• “directional derivative” of 𝑥 in direction 𝑦⃗               𝑢
+                d𝑥$ 𝑦⃗ = ∇𝑥 𝑢 , 𝑦⃗ 𝑢 $                 ∇𝑥 𝑢
+• Differential d𝑥$ : 𝑇$ Ω → ℝ is a linear functional
+  (dual vector)
+• ∇𝑥 is the representation of this vector
+Intrinsic Gradient
+
+• “direction of steepest increase” of 𝑥 at 𝑢?
+• “directional derivative” of 𝑥 in direction 𝑦⃗        𝑢
+                d𝑥$ 𝑦⃗ = ∇𝑥 𝑢 , 𝑦⃗ 𝑢 $
+• Differential d𝑥$ : 𝑇$ Ω → ℝ is a linear functional
+  (dual vector)
+• ∇𝑥 is the representation of this vector
+
+• Intrinsic gradient ∇𝑥 is a vector field of the
+ “steepest increase” of scalar field 𝑥
+• Gradient operator ∇: 𝒳 Ω, ℝ → 𝒳 Ω, 𝑇Ω making
+  scalar fields into vector fields
+Divergence Operator
+
+• Divergence operator
+                  div: 𝒳 Ω, 𝑇Ω → 𝒳 Ω, ℝ
+ turns vector fields into scalar fields
+• Flow of the field through an infinitesimal ball
+
+                                                    𝑢
+
+
+   Divergence and gradient operators are adjoint
+                  ⃗ ∇𝑥 = div 𝑥⃗ , 𝑥
+                  𝑥,
+Laplacian
+
+• Laplace-Beltrami operator ∆𝑥 = ±div ∇𝑥
+                 ∆: 𝒳 Ω, ℝ → 𝒳 Ω, ℝ
+• Local difference between the function at a point
+  and its average neighbour value Exercise: prove
+• Intrinsic
+• Self-adjoint: ∇𝑥, ∇𝑥 = 𝑥, ∆𝑥 = ∆𝑥, 𝑥
+                                                     𝑥 𝑢
+
+   Self-adjoint operators have real eigenvalues
+   and orthogonal eigenfunctions.                      neighbour average
+∆   P. S. Laplace   E. Beltrami
+Heat Equation
+
+
+   “rate of change of temperature of an object is proportional
+   to the difference in the temperatures between the object
+   and its environment” (Newton Law of Cooling)
+
+                               proportion coefficient
+                                     [m2/sec]
+
+                             𝑥! = 𝑐∆𝑥                            I. Newton
+                   rate of change         “difference from the
+                                              environment”
+
+
+
+
+Anonymous 1701
+Wave Equation
+
+
+
+                     𝑥!"#          𝑥!           𝑥!$#
+
+
+
+
+                               propagation speed
+                                    [m/sec]
+
+                         𝑥!! = 𝑐 " ∆𝑥                         J.-B. d’Alembert
+                   acceleration         local elastic force
+                  (Newton’s law)          (Hooke’s law)
+
+
+
+
+D’Alembert 1746
+LAPLACIAN SPECTRUM
+Chladni Plates
+
+
+
+
+                 E. Chladni
+
+
+
+
+Chladni 1794
+Solving the Wave Equation 𝑥!! = ∆𝑥
+
+• Separation of variables: 𝑥 𝑢, 𝑡 = 𝜑 𝑢 𝜏 𝑡
+• Plug into the equation:
+                             𝜑 𝑢 𝜏-- 𝑡 = ∆𝜑 𝑢 𝜏 𝑡
+Solving the Wave Equation 𝑥!! = ∆𝑥
+
+• Separation of variables: 𝑥 𝑢, 𝑡 = 𝜑 𝑢 𝜏 𝑡
+• Plug into the equation:
+                                  𝜏-- 𝑡   ∆𝜑 𝑢
+                                        =      =𝜆
+                                   𝜏 𝑡    𝜑 𝑢
+
+
+• Spatial part of the solutions are Laplacian eigenfunctions (Helmholtz equation):
+                                          ∆𝜑 = 𝜆𝜑
+ • 𝜑 = vibration modes
+ • 𝜆 = vibration frequencies
+What information is contained in the spectrum?
+
+• Laplacian eigenvalues contain information about the underlying manifold Ω
+• Minakshisundaram-Pleijel heat trace expansion
+
+                                 trace 𝐻 - = Q e)-0% = Q 𝑎& 𝑡 &
+                                            &./        &./
+
+   for a 2-manifold without boundary allows to recover
+   • 𝑎/ = vol Ω area
+
+   • 𝑎' = ∫, 𝐾 𝑢 d𝑢 total curvature, and by Gauss-Bonnet Theorem, the genus
+
+   • Can we recover the metric?
+
+Minakshisundaram, Pleijel 1949
+“Shape DNA”
+
+
+
+
+                     Laplacian eigenvalues as shape descriptors
+Reuter et al. 2005
+          ?
+Isometric ⟺ Isospectral
+Can one hear the shape of the drum?
+
+
+
+
+                                      M. Kac
+
+
+
+
+Kac 1966 (Schuster 1882 or earlier)
+One cannot hear the shape of the drum
+
+
+
+
+                                                            C. Gordon
+
+      Example of isospectral but not isometric 2D “drums”
+
+
+
+Gordon, Web, Wolpert 1992
+But…
+Isospectralisation
+
+
+
+                                           Initial
+                                           Optimised
+                                           Target
+
+
+
+       Initial shape      Reconstruction
+
+
+
+
+Cosmo et B, Rodolà 2018
+Applications of Isospectralisation
+
+
+
+
+                   Improving spectral correspondence
+Cosmo et B 2019
+Applications of Isospectralisation
+
+
+
+
+                           +                            =
+                  Pose X                  Style Y                  Pose X + Style Y
+
+                           Style transfer without correspondence
+Cosmo et B 2019
+MANIFOLD FOURIER TRANSFORM
+Laplacian Eigenfunctions
+
+
+
+
+    𝜆& = 0, 𝜑& = const         𝜑#                  𝜑'             𝜑(
+
+
+• Laplace-Beltrami operator has countable eigendecomposition on compact manifolds
+
+• Laplacian eigenfunctions are intrinsic ⟹ isometry invariant
+Laplacian Eigenfunctions
+Manifold Fourier Transform
+
+
+ Forward Fourier transform:        𝑥#4 = 𝑥, 𝜑& = - 𝑥 𝑢 𝜑& 𝑢 d𝑢
+                                                     ,
+
+
+
+ Inverse Fourier transform:      𝑥 𝑢 = Q 𝑥, 𝜑& 𝜑& 𝑢
+                                         &./
+                                               𝑥5)
+
+
+
+• Decompose scalar fields in an orthogonal basis
+• Work with Fourier coefficients – forget about manifolds!
+• One-dimensional frequency 𝜆 – no notion of direction!
+Spectral Convolution
+
+
+                               𝑥 ⋆ 𝜓 𝑢 = Q 𝑥U& V 𝜓W & 𝜑& 𝑢
+                                            &./
+
+
+
+
+                         product of Fourier transforms
+
+• No FFT – O 𝑛 % complexity when discretised
+• Filter is not necessarily localised in space
+• Isotropic filters!
+• Isometry-invariant, but in practice unstable under deformations!
+Stability of Spectral Convolution
+
+
+
+
+                     original domain Ω
+                     original signal 𝑥 ∈ 𝒳 Ω, ℝ
+Stability of Spectral Convolution
+
+
+
+
+                     original domain Ω
+                     signal filtered with spectral filter
+                     ∑&./ 𝛼& 𝑥, 𝜑& 𝜑& 𝑢
+Stability of Spectral Convolution
+
+
+
+
+                     deformed domain Ω     \
+                     signal filtered with same spectral coefficients
+                     ∑&./ 𝛼& 𝑥, 𝜑] & 𝜑] & 𝑢
+Stable Spectral Filters
+
+
+                      𝑝̂ ∆ 𝑥 𝑢 = Q 𝑝̂ 𝜆& 𝑥, 𝜑& 𝜑& 𝑢
+                                 &./
+                                          𝜓6 )    𝑥5)
+
+
+
+                                   𝑝̂ 𝜆
+
+
+
+
+                                            0    𝜆#      𝜆'            𝜆(   𝜆*       𝜆+
+
+                                                        spectral transfer function
+Stable Spectral Filters
+
+
+                         𝑝̂ ∆ 𝑥 𝑢 = Q 𝑝̂ 𝜆& 𝑥, 𝜑& 𝜑& 𝑢
+                                      &./
+
+
+                                     = - 𝑥 𝑣 Q 𝑝̂ 𝜆& 𝜑& 𝑣 𝜑& 𝑢 d𝑣
+                                       ,     &./
+
+
+                𝜓 𝑢,<                              𝜓 𝑢, 𝑣
+                         𝑢
+
+
+
+
+ position-dependent spatial kernel
+Sanity Check
+
+
+                    𝑝̂ ∆ 𝑥 𝑢 = Q 𝑝̂ 𝜆& 𝑥, 𝜑& 𝜑& 𝑢
+                               &./
+                                 !1
+                            =-        𝑥 𝑣 Q 𝑝̂ 𝑘 e!"& $)2 d𝑣
+                               )1         &./
+
+                                                𝜓 𝑢−𝑣
+
+
+
+
+          standard convolution in the Euclidean case
+Localisation and Smoothness
+                                                 +1
+
+
+
+
+                                                 𝑝̂ 𝜆
+                                                 −1
+                                                        0                      𝜆3//
+                    delocalised spatial kernel          non-smooth spectral filter
+
+Bruna et al. 2014; Henaff et al. 2015
+Localisation and Smoothness
+                                                 +1
+
+
+
+
+                                                 𝑝̂ 𝜆
+                                                 −1
+                                                        0                       𝜆3//
+                      localised spatial kernel              smooth spectral filter
+
+Bruna et al. 2014; Henaff et al. 2015
+Reminder
+
+• Fourier transform maps moments into derivatives and vice versa
+• Fourier transform preserves energy (Parseval Theorem)
+• Therefore
+                                                                             %
+                                !*                           !*
+                                                                  𝜕 & 𝑓e 𝜉
+                            -        𝑢 %& 𝑓 𝑢   %
+                                                    d𝑢 = -                       d𝜉
+                             )*                          )*         𝜕𝜉&
+                           4%65 7
+ • Smooth filter implies    47%
+                                     ≈ 0 for 𝑘 ≫ 1
+                           !*
+ • Localisation implies ∫)* 𝑢 %& 𝑓 𝑢        % d𝑢 ≈ 0 for 𝑘 ≫ 1
+DISCRETE MANIFOLDS & MESHES
+Triangular Meshes
+
+Triangular mesh 𝑇 = 𝑉, 𝐸, 𝐹
+• Nodes 𝑉
+• Edges 𝐸
+• Faces 𝐹 = { 𝑢, 𝑣, 𝑞 ∶ 𝑢, 𝑣, 𝑞 ∈ 𝑉 and
+                        𝑢, 𝑣 , 𝑢, 𝑞 , 𝑞, 𝑣 ∈ 𝐸}
+
+
+Manifold mesh
+• Each edge is shared by exactly two faces
+• Boundary of all triangles incident on each node
+  forms a single loop
+
+                                                    manifold   non-manifold
+Triangular Meshes
+
+Triangular mesh 𝑇 = 𝑉, 𝐸, 𝐹
+• Nodes 𝑉
+• Edges 𝐸
+• Faces 𝐹 = { 𝑢, 𝑣, 𝑞 ∶ 𝑢, 𝑣, 𝑞 ∈ 𝑉 and
+                        𝑢, 𝑣 , 𝑢, 𝑞 , 𝑞, 𝑣 ∈ 𝐸}
+
+
+• Embedding coordinates 𝐱$ ∈ ℝ8
+• Discrete metric = edge length ℓ$2 = 𝐱$ − 𝐱2
+• Intrinsic = expressible in terms of ℓ
+• Isometry = deformation preserving ℓ
+ Schwarz’s Lantern
+
+
+
+
+𝐿/𝑚
+
+
+
+
+                2𝜋𝑟/𝑛                                  In German, this mesh is called the
+                                         area 𝑎 𝑚, 𝑛   Schwarzscher Stiefel (Schwarz’s boot),
+                                                       probably an allusion to certain boot
+                                                       styles.
+                        lim lim 𝑎 𝑚, 𝑛 = 2𝜋𝑟L
+                    >→@ A→@
+
+                        lim lim 𝑎 𝑚, 𝑛 = ∞
+                    A→@ >→@
+ Schwarz 1890
+Rigidity of Polyhedral Shapes
+
+
+
+                                           Rigidity Conjecture: “A closed spatial figure
+                                           allows no changes, as long as it is not ripped
+                                           apart”
+                                                        — L. Euler, Opera postuma I Petropoli (1862):494–496
+        L. Euler
+
+
+       1766
+
+Euler 1766 (expanded in a letter to Lagrange in 1970)
+Rigidity of Polyhedral Shapes
+
+
+
+                                                                       Cauchy Rigidity Theorem: “Every
+                                                                       convex polyhedron is rigid”
+
+
+        L. Euler                       A. Cauchy
+
+
+       1766                            1813
+
+Euler 1766; Cauchy 1813 (with a mistake that went unnoticed for over 50 years; corrected result is in the Proofs from the Book)
+Rigidity of Polyhedral Shapes
+
+
+
+                                                                 “Surfaces with positive
+                                                                 Gaussian curvature are
+                                                                 rigid”
+       L. Euler                     A. Cauchy   S. Cohn-Vossen
+
+
+      1766                          1813          1927
+
+Euler 1766; Cauchy 1813; Cohn-Vossen 1927
+Rigidity of Polyhedral Shapes
+
+
+
+                                                                                    “Closed simply-
+                                                                                    connected
+                                                                                    surfaces are
+       L. Euler                     A. Cauchy           S. Cohn-Vossen   H. Gluck
+                                                                                    almost always
+                                                                                    rigid”
+      1766                          1813                  1927           1974
+
+Euler 1766; Cauchy 1813; Cohn-Vossen 1927; Gluck 1974
+Rigidity of Polyhedral Shapes
+
+
+
+
+     “Connelly Sphere,” the first
+  example of a flexible polyhedron   R. Connelly
+
+
+                                      1977
+
+Connelly 1977
+Rigidity of Polyhedral Shapes
+
+
+
+
+       L. Euler                     A. Cauchy                 S. Cohn-Vossen   H. Gluck   R. Connelly
+
+
+      1766                           1813                          1927        1974        1977
+
+Euler 1766; Cauchy 1813; Cohn-Vossen 1927; Gluck 1974; Connelly 1977
+Flexible Polyhedra
+
+
+
+
+               Icosahedron   Steffen’s polyhedron
+
+Steffen 1978
+DIY Flexible Polyhedron
+
+
+
+
+Steffen 1978
+Discrete Laplacian
+                                                             𝐱2
+
+                                                            𝑤$2
+             𝚫𝐱 $ = Q 𝑤$2 𝐱 $ − 𝐱 2
+                     2∈𝒩,
+                                                       𝐱$
+                   = 𝐱 $ Q 𝑤$2 − Q 𝑤$2 𝐱 2
+                         2∈𝒩,        2∈𝒩,
+
+                       value at u    average in the
+                                    neighbourhood
+
+• Laplacian expressed as an 𝑛×𝑛 matrix 𝚫 = 𝐃 − 𝐖
+ • Degree 𝑑$ = ∑2∈𝒩, 𝑤$2 with 𝐃 = diag 𝑑', … , 𝑑;
+
+• Typically sparse with 𝒪 |𝐸| ~𝒪 𝑛 non-zero elements
+Mesh Laplacian                                                          𝑣
+                                                          𝑞
+                                                              ∠$<2
+                                                                       𝑤$2
+                                                                             ∠$=2   𝑝
+                        𝚫𝐱 $ = Q 𝑤$2 𝐱 $ − 𝐱 2
+                                      2∈𝒩,                    𝑢
+
+• Cotangent formula                                               𝑎$
+                                     cot∠$<2 + cot∠$=2
+                         𝑤$2 =
+                                            2𝑎$
+
+
+
+
+MacNeal 1949; Pinkall, Polthier 1993; Meyer et al. 2003
+Mesh Laplacian                                                                            ℓ<2     𝑣
+                                                                                      𝑞
+                                                                                                 𝑤$2
+                                                                                          𝑎$2<         𝑝
+                        𝚫𝐱 $ = Q 𝑤$2 𝐱 $ − 𝐱 2
+                                      2∈𝒩,                                                𝑢
+
+• Intrinsic cotangent formula
+             −ℓ%$2 + ℓ%2< + ℓ%$< −ℓ%$2 + ℓ%2= + ℓ%$=
+       𝑤$2 =                    +
+                   8𝑎$2<               8𝑎$2=
+                                                                                '/%
+       𝑎$2< = 𝑠$2< 𝑠$2< − ℓ$2                         𝑠$2< − ℓ2<   𝑠$2< − ℓ$<
+
+   using Heron’s semiperimeter formula
+
+
+
+MacNeal 1949; Pinkall, Polthier 1993; Meyer et al. 2003
+Graph Laplacian
+                                                                          𝐱2
+                                                               𝐱<
+                                                                         𝑎$2
+              𝚫𝐱 $ = Q 𝑎$2 𝐱 $ − 𝐱 2                                           𝐱=
+                      2∈𝒩,
+                                                                    𝐱$
+                   = 𝑑$ 𝐱 $ − Q 𝑎$2 𝐱 2
+                              2∈𝒩,
+
+                   = ϕ 𝐱 $ , 𝐗 𝒩,
+
+
+• Linear local permutation-invariant aggregator ϕ 𝐱 $ , 𝐗 𝒩,
+
+• Node-wise permutation-equivariant linear function 𝐅 𝐗 = 𝚫𝐗
+ Flavours of GNNs
+
+
+                  𝑎!!                                𝛼!!              𝐱-                𝐦!!
+𝐱-                                 𝐱-
+      𝑎!-                                𝛼!-                                𝐦!-
+                  𝐱!    𝑎!)   𝐱)                     𝐱!    𝛼!)   𝐱)                     𝐱!      𝐦!)        𝐱)
+
+                        𝑎!/                                𝛼!/                                𝐦!/
+            𝑎!.                                𝛼!.                                𝐦!.
+                              𝐱/                                 𝐱/                                   𝐱/
+     𝐱.                                 𝐱.                                   𝐱.
+
+
+          Convolutional                        Attentional                 Generic Message Passing
+
+     𝜙 𝐱? , S 𝑎?+ 𝜓 𝐱+             𝜙 𝐱? , S 𝛼?+ 𝐱? , 𝐱+ 𝜓 𝐱+                𝜙 𝐱? , S 𝜓 𝐱? , 𝐱+
+              +∈𝒩0                           +∈𝒩0                                  +∈𝒩0
+“Spectral GNNs”
+• Spectral mesh filters1,2
+• Graph Signal Processing3,4
+• Graph Fourier Transform5
+      • Revival of the interest in Graph Neural Networks in the mid-2010s
+      • High complexity: 𝒪 𝑛%
+      • Graph Fourier Transform unstable under perturbations
+
+• Polynomial spectral filters a.k.a. ChebNet:6 𝑝̂ 𝜆 = ∑B@A/ 𝛼@ 𝜆@
+• Rational spectral filters a.k.a. CayleyNet7
+• Spectral filter stability results8–10
+
+1   Taubin et al. 1996; 2Karni, Gotsman 2000; 3Shuman et al. 2013; 4Sandryhaila, Moura 2013;
+5
+    Bruna et al. 2013; 6Defferrard et al. 2016; 7Levie et B 2018; 8Gama et al. 2019; 9Levie et B 2019; 10Kenlay et al. 2019
+Shuman et al. 2013   Sandryhaila, Moura 2013
+Graph Fourier Transform
+
+On undirected graph, the Graph Laplacian is a symmetric matrix admitting an
+eigendecomposition 𝚫 = 𝚽𝚲𝚽 C with orthogonal eigenvectors 𝚽 C𝚽 = 𝐈
+
+• Graph Fourier Transform:                  𝐱U = 𝚽 C 𝐱                        𝒪 𝑛%
+• Inverse Graph Fourier Transform:          𝐱 = 𝚽𝐱U                           𝒪 𝑛%
+
+• Spectral Convolution:                     𝐱⋆𝛙=𝚽        𝚽C 𝐱 V 𝚽C 𝛙
+                                                           • 𝐱U
+                                                  = 𝚽 diag 𝛙                  𝒪 𝑛%
+ChebNet
+
+• Polynomial spectral filter 𝑝̂ 𝜆 = ∑B@A/ 𝛼@ 𝜆@ applied to the Graph Laplacian
+                                            B             B
+
+                         𝑝̂ 𝚫 = 𝚽𝑝̂ 𝚲 𝚽 C = S 𝛼@ 𝚽𝚲@ 𝚽1 = Q 𝛼@ 𝚫@
+                                           @A/           @A/
+
+• No explicit eigendecomposition!
+• Apply powers of the Graph Laplacian – complexity 𝒪 𝑟|𝐸| ~𝒪 𝑛
+• Stable under graph deformations
+• ”Spectral” filter boils down to simple local averaging (“convolutional flavor” of GNN)
+
+
+
+Defferrard et al. 2016
+A problem with polynomial filters…
+
+
+
+
+           1-hop neighbourhoods on meshes of different resolution
+Key Concepts
+
+• Intrinsic differential operators (gradient, divergence, Laplacian)
+• Manifold, Mesh, and Graph Fourier transform
+• Spectral convolution
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 4.4 “Geodesics
+  and Manifolds” and Section 4.6 “Geometric graphs and meshes”
+• M. Bronstein, J. Bruna, Y. LeCun, A. Szlam, P. Vandergheynst, Geometric deep
+  learning: going beyond Euclidean data, IEEE Signal Processing Magazine 34(4):18–42,
+  2017. First position paper on GDL, presenting spectral-type GNNs on graphs and manifolds.
+• D. Shuman et al., The emerging field of Signal Processing on Graph, IEEE Signal
+  Processing Magazine 30(3):83–98, 2013. Spectral analysis on graphs via Laplacians
+• A. Sandryhaila and J. Moura, Big Data Analysis with Signal Processing on Graphs,
+  IEEE Signal Processing Magazine 31(5):80–90, 2014. Spectral analysis on graphs via shift operators
+

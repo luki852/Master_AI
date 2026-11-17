@@ -3,7 +3,7 @@ import nbformat
 from nbclient import NotebookClient
 import os
 
-p = Path('3rd_Semester/UE_Advanced_Machine_Learning/A3/A3_exercise.ipynb').resolve()
+p = Path('3rd_Semester/UE_Advanced_Machine_Learning/A3/A3/A3_exercise.ipynb').resolve()
 os.environ['MPLBACKEND'] = 'module://matplotlib_inline.backend_inline'
 os.environ['OMP_NUM_THREADS'] = '4'
 os.environ['MKL_NUM_THREADS'] = '4'

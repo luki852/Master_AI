@@ -1,0 +1,543 @@
+Groups & Homogeneous Spaces
+     Michael Bronstein – Geometric Deep Learning – Oxford 2024
+Outline
+
+• Spatial generalisation of convolution: Group convolution = transform + match
+• Homogeneous spaces have “global” symmetry structure: the group acts transitively
+• Homogeneous spaces are equivalent to quotient spaces, where we ”factor out” the
+  stabiliser group
+• Regular vs Induces representations and steerability
+• Group convolutions are universal linear equivariants
+• Next lectures: applications of these ideas to Geometric Graphs & extensions to
+  Manifolds, where we need to act locally
+Different Domains
+
+
+
+
+  Sets & Graph      Grids   Homogeneous   Manifolds, Meshes &
+                               spaces      Geometric graphs
+Popular architectures as instances of the Blueprint
+
+
+ Architecture           Domain Ω            Symmetry Group 𝐺
+ CNN                    Grid                Translation
+ Spherical CNN          Sphere / SO(3)      Rotation SO(3)
+ Intrinsic / Mesh CNN   Manifold / Mesh     Isometry Iso(Ω) /
+                                            Gauge Symmetry SO(2)
+ GNN                    Graph               Permutation S!
+ Deep Sets              Set                 Permutation S!
+ Transformer            Complete Graph      Permutation S!
+ LSTM                   1D Grid             Time warping
+GROUP CONVOLUTION
+Convolution, revisited
+Convolution, revisited
+
+
+     convolution = matching shifted filter
+                                            $#
+          𝑥 ⋆ 𝜓 𝑢 = 𝑥, 𝑆! 𝜓 =(                   𝑥 𝑣 𝜓 𝑢 − 𝑣 d𝑣
+                                            "#
+
+            shift vector   shift operator
+
+
+
+
+              domain Ω ≅ symmetry group 𝐺
+                 i.e., ⋆ 𝜓: 𝒳 Ω → 𝒳 Ω
+Group Convolution
+
+
+     convolution = matching transformed filter
+                                                .
+         𝑥 ⋆ 𝜓 𝑔 = 𝑥, 𝜌 𝑔 𝜓 = ( 𝑥 𝑣 𝜓 𝑔"' 𝑣 d𝑣
+                                                %
+
+         group element   group representation
+
+
+
+
+  The convolution outputs a signal on the group 𝐺
+              i.e., ⋆ 𝜓: 𝒳 Ω → 𝒳 𝐺
+Group Convolution Equivariance
+
+
+
+
+                                  Regular representation
+                  𝜌(
+       𝒳 𝐺              𝒳 𝐺      𝜌( 𝑔 𝑥 ℎ = 𝑥 𝑔"' ℎ
+
+      ⋆𝜓               ⋆𝜓
+
+       𝒳 Ω              𝒳 Ω      𝜌' 𝑔 𝑥 𝑢 = 𝑥 𝑔"' 𝑢
+                  𝜌'
+Group Convolution Equivariance
+
+                                  𝜌)
+              𝒳 𝐺                             𝒳 𝐺
+
+           ⋆𝜓                              ⋆𝜓                      Regular representation
+                                 𝜌(
+              𝒳 𝐺                             𝒳 𝐺                 𝜌( 𝑔 𝑥 ℎ = 𝑥 𝑔"' ℎ
+
+           ⋆𝜓                               ⋆𝜓
+
+              𝒳 Ω                             𝒳 Ω                 𝜌' 𝑔 𝑥 𝑢 = 𝑥 𝑔"' 𝑢
+                                 𝜌'
+Note: integration on the group is done w.r.t. the Haar measure.
+Group Convolution Equivariance
+
+
+       Group convolution is 𝐺-equivariant:   𝜌! ℎ 𝑥 ⋆ 𝜓 𝑔 = 𝜌" (ℎ)(𝜓 ⋆ 𝑥)(𝑔)
+
+
+Exercise: prove.
+                                                     Regular representation
+                          𝜌(
+              𝒳 𝐺                   𝒳 𝐺            𝜌( 𝑔 𝑥 ℎ = 𝑥 𝑔"' ℎ
+
+          ⋆𝜓                      ⋆𝜓
+
+              𝒳 Ω                   𝒳 Ω            𝜌' 𝑔 𝑥 𝑢 = 𝑥 𝑔"' 𝑢
+                          𝜌'
+Group Convolution Equivariance
+
+        𝑔
+
+
+                                 𝑔 #!
+
+
+
+
+               𝑥, 𝜌' 𝑔 𝜓     =          𝜌' 𝑔"' 𝑥, 𝜓
+
+
+Matching a signal with transformed filter = matching
+inverse-transformed signal with untransformed filter
+Group Convolution Equivariance
+
+               𝑔
+
+
+                                                𝑔 #!
+
+
+
+
+                         𝑥, 𝜌' 𝑔 𝜓            =        𝜌' 𝑔"' 𝑥, 𝜓
+
+Proof of equivariance:   ( 𝜌! ℎ 𝑥 ⋆ 𝜓) 𝑔 = 𝜌! ℎ 𝑥, 𝜌! 𝑔 𝜓
+                                         = 𝑥, 𝜌! ℎ"! 𝜌! 𝑔 𝜓
+                                         = 𝑥, 𝜌! ℎ"! 𝑔 𝜓
+                                         = 𝜓 ⋆ 𝑥 ℎ"! 𝑔
+                                         = 𝜌# (ℎ)(𝜓 ⋆ 𝑥)(𝑔)
+Convolution with discrete roto-translations
+                               0   𝜋/2   𝜋    3𝜋/2
+
+
+
+                       ⋆𝜓
+
+
+
+
+Cohen, Welling 2016
+Convolution with discrete roto-translations
+                                    0   𝜋/2       𝜋   3𝜋/2
+
+
+
+                               ⋆𝜓
+
+
+
+
+                      𝜌! 𝜋/2             𝜌# 𝜋/2
+
+
+
+
+                               ⋆𝜓
+
+
+
+
+Cohen, Welling 2016
+Group Convolution Equivariance
+  Ω = ℤ×ℤ             Ω = 𝑝4        Ω = 𝑝4        Ω = ℤ×ℤ
+  𝜌 = scalar          𝜌 = regular   𝜌 = regular   𝜌 = scalar
+
+
+
+
+Veeling et al. 2018
+“Convolution is all you need”
+
+          Theorem: any linear equivariant map between regular representations is a
+          group convolution.
+
+                                                                             𝜌(
+                                              𝒳 𝐺                                 𝒳 𝐺
+
+                                         ⋆𝜓                                       ⋆𝜓
+                                                                             𝜌'
+                                              𝒳 𝐺                                 𝒳 𝐺
+Note: This can be considered an extension of the result we have seen before, that any linear translation equivariant
+is a (standard) convolution.
+
+Kondor, Trivedi 2018; Cohen et al. 2019, 2021; Bekkers 2020; Aronsson 2021
+SPHERICAL CNN
+Why sphere?
+
+
+
+
+    Astronomy   Earth sciences   Omnidirectional
+                                    vision
+Convolution on the Sphere
+                                            .
+                              𝑥 ⋆ 𝜓 𝐑 = ( 𝑥 𝐮 𝜓 𝐑"' 𝐮 d𝐮
+                                            *!
+                                                 𝐮
+                      signal on SO 3                                      rotation
+                                                                          transformation
+                                                           𝐑𝐮
+
+
+
+
+                           sphere Ω = 𝑆 "
+                  rotation group 𝐺 = SO 3
+Cohen, Welling 2018                                  spherical signal 𝑥
+Convolution on the Sphere
+                                    .
+                      𝑥⋆𝜓 ⋆𝜙 𝐑 =(       𝑥 ⋆ 𝜓 𝐐 𝜙 𝐑"' 𝐐 d𝐐
+                                +, )
+                                        𝐮        Convolution on
+                                                    SO 3
+                                            𝐑𝐮
+
+
+
+
+Cohen, Welling 2018
+Homogeneous Spaces
+
+
+
+                     𝑢
+                         𝑔
+                             transitive group action
+                         𝑣
+                                ∃𝑔 ∈ 𝐺 s.t. 𝑔𝑢 = 𝑣
+HOMOGENEOUS SPACES
+Homogeneous Spaces
+
+• Consider a domain Ω with a group 𝐺 acting on it 𝐺×Ω → Ω
+• The action of 𝐺 is called transitive if for any 𝑢, 𝑣 ∈ Ω there exists 𝑔 ∈ 𝐺 such that
+                                           𝑔𝑢 = 𝑣
+• In this case, Ω is said to be homogeneous for 𝐺
+
+
+                                             𝑢
+             𝑢
+                                                                      𝑢
+                                                  𝑣
+                  𝑣
+                                                                              𝑣
+
+       Plane + Translation             Sphere + SO 3                  Plane + SO 2
+Stabiliser Subgroup
+
+• Let Ω be homogeneous for 𝐺
+• The stabiliser subgroup of 𝑢 ∈ Ω is 𝐻$ = 𝑔 ∈ 𝐺 s. t. 𝑔𝑢 = 𝑢
+
+
+Note: we say that 𝐻 is a subgroup of 𝐺,∘ , denoted 𝐻 ≤ 𝐺, if 𝐻 ⊂ 𝐺,∘ is also a group with the same operation
+
+Exercise I: show 𝐻$ is indeed a subgroup of 𝐺
+
+Exercise 2: show that the stabiliser at any point is the same, i.e., 𝐻$ ≅ 𝐻% . In an homogeneous space, “every point
+looks the same”
+Stabiliser Subgroup
+
+• Let Ω be homogeneous for 𝐺
+• The stabiliser subgroup is 𝐻 = 𝑔 ∈ 𝐺 s. t. 𝑔𝑢 = 𝑢
+• A homogeneous space is completely characterised by 𝐺 and 𝐻
+
+
+                                                                    𝑢
+            𝑢                          𝑢
+
+
+
+
+          Ω = 𝐺 = ℝ"               Ω = ℝ" , 𝐺 = SE 2           Ω = 𝑆 " , 𝐺 = SO 3
+           𝐻 = id                     𝐻 = SO 2                    𝐻 = SO 2
+Cosets & Quotients
+
+• Let 𝐺 be a group and 𝐻 ≤ 𝐺 a subgroup
+• A (left) coset of 𝐻 in 𝐺 is 𝑔𝐻 = 𝑔ℎ s. t. ℎ ∈ 𝐻 for 𝑔 ∈ 𝐺
+
+Exercise 1: Prove that for any ℎ ∈ 𝐻 and 𝑔 ∈ 𝐺, we have 𝑔ℎ𝐻 = 𝑔𝐻.
+
+Exercise 2: Prove that if 𝑔𝐻 = 𝑔′𝐻, then there exists ℎ ∈ 𝐻 such that 𝑔ℎ = 𝑔′.
+
+Exercise 3: Prove that cosets 𝑔𝐻 and 𝑔′𝐻 are either disjoint or identical, i.e., cosets partition the group.
+Cosets & Quotients
+
+• Let 𝐺 be a group and 𝐻 ≤ 𝐺 a subgroup
+• A (left) coset of 𝐻 in 𝐺 is 𝑔𝐻 = 𝑔ℎ s. t. ℎ ∈ 𝐻 for 𝑔 ∈ 𝐺
+• Cosets partition the group (= equivalence classes of group elements)
+• The set of cosets 𝐺/𝐻 is called the quotient space
+• The group 𝐺 acts on 𝐺/𝐻 as 𝑔 𝑎𝐻 = 𝑔𝑎 𝐻
+Cosets & Quotients
+             𝐻 = 𝑒, 𝑚 ≅ 𝑍#
+
+                    𝑒
+
+                                               𝑒𝐻
+                   𝑚
+
+
+
+
+             𝑚𝑟            𝑚𝑟 #
+                                      𝑟#𝐻                  𝑟𝐻
+         #
+     𝑟                            𝑟
+
+
+
+
+                  𝐺 = 𝐷&                    𝐺/𝐻 = 𝐷& /𝑍#
+Cosets & Quotients
+          𝐻 = 𝑒, 𝑟, 𝑟 # ≅ 𝐶&
+
+                  𝑒                    𝑒𝐻
+
+
+
+                  𝑚                    𝑚𝐻
+
+
+
+
+          𝑚𝑟             𝑚𝑟 #
+
+     𝑟#                         𝑟
+
+
+
+
+                𝐺 = 𝐷&              𝐺/𝐻 = 𝐷& /𝐶&
+Cosets & Quotients
+
+
+
+
+                                       SO 2                𝑆"
+
+
+
+
+Note: We can view SO 3 as a bundle      𝑆 " ≅ SO 3 /SO 2
+with base space 𝑆 # and a fiber SO 2
+Homogeneous Spaces ≅ Quotient Spaces
+
+       Quotient space 𝐺/𝐻 is homogeneous for 𝐺 with stabiliser 𝐻.
+
+
+Exercise: prove.
+
+Proof:
+• To show that 𝐺/𝐻 is homogeneous for 𝐺, let 𝑢 = 𝑎𝐻 and 𝑣 = 𝑏𝐻. Then 𝑏𝑎 "! 𝑢 = 𝑣, i.e., the action of 𝐺 is
+  transitive (∃𝑏𝑎 "! ∈ 𝐺 transforming 𝑢 into 𝑣).
+• To show that 𝐻 is the stabiliser, we choose the point 𝑒𝐻 ∈ 𝐺/𝐻. Then, for any ℎ ∈ 𝐻 we have
+                                                ℎ 𝑒𝐻 = ℎ𝑒 𝐻 = 𝑒𝐻.
+Homogeneous Spaces ≅ Quotient Spaces
+
+       Quotient space 𝐺/𝐻 is homogeneous for 𝐺 with stabiliser 𝐻.
+
+
+Exercise: prove.
+
+
+
+       Let Ω be a homogeneous space for 𝐺 with stabiliser 𝐻$ of some point 𝑢.
+       Then, Ω ≅ 𝐺/𝐻$ and 𝑢 corresponds to 𝑒𝐻.
+
+
+Exercise: prove.
+Example: Permutations
+
+• Let Ω = 1, … , 𝑛 and 𝑆% permutation group
+• Ω is a homogeneous space for 𝑆%
+• Stabiliser group: pick a point 1 ∈ Ω. The subgroup 𝐻! ≤ 𝑆% leaving 1 invariant is the
+  group of permutations of 2, … , 𝑛 equivalent to 𝑆%#!
+
+                                        1
+
+                                              𝑆%#!
+
+
+ • Ω ≅ 𝑆% /𝐻!.
+ • The cardinality Ω ≅ 𝑆% /𝐻! = 𝑛.
+ • The action of 𝑆% on 𝑆% /𝐻! is the action of 𝑆% on Ω.
+INVARIANT FUNCTIONS
+𝐻-invariant functions on 𝐺 ≅ functions on 𝐺/𝐻
+
+• A function 𝑓: 𝐺 → 𝒞 is right 𝐻-invariant if
+        𝑓 𝑔ℎ = 𝑓 𝑔 for all ℎ ∈ 𝐻 and g∈ 𝐺
+
+
+
+   Let 𝑓: 𝐺 → 𝒞 be right 𝐻-invariant. Then,
+   there exists a function 𝑓:̅ 𝐺/𝐻 → 𝒞 such
+   that 𝑓 𝑔 = 𝑓 ̅ 𝑔𝐻 .
+
+                                                 A right SO 2 -invariant function on
+                                                SO 3 , i.e. one that is constant on the
+                                                 circles, is a function on the sphere
+                                                           𝑆 " ≅ SO 3 /SO 2
+Convolution on Spheres and Homogeneous Spaces
+
+• Spherical convolution
+              ⋆: 𝒳 𝑆 " ×𝒳 𝑆 " → 𝒳 𝑆 "
+
+• …is equivalent to a convolution
+            ⋆: 𝒳 𝑆 " ×𝒳 𝑆 " → 𝒳 SO 3
+
+  that is SO 2 -invariant
+
+• Filters must be SO 2 -symmetric (or isotropic)
+                                                   A right SO 2 -invariant function on
+                                                    SO 3 is a function on the sphere
+                                                            𝑆 " ≅ SO 3 /SO 2
+  From Scalar to Regular
+
+                  Constrained filters
+         Fields on G/H transforming according to
+                 “induced representations”
+
+
+                           ?
+ Isotropic filters                                         Unconstrained filters
+Scalar fields on G/H                               Scalar fields on G ≅ Regular fields on G/H
+Feature Fields
+                                             𝜌! ℎ = id
+
+                                        𝑔
+                        𝜋!
+                                                               𝑟   1                 𝑟
+                                                               𝑔 →         1         𝑔
+                                                               𝑏                1    𝑏
+                  Scalar field
+
+
+• Affine group:       𝐺 = ℝ" , + ⋊ 𝐻
+• Stabiliser:         𝐻 = SO 2       “local symmetries”
+• 𝜌-feature field 𝑥: ℝ" → ℝ&
+• 𝜌 = representation of 𝐻 acting on individual pixels (ℝ& ) depending on the type of the
+  field (scalar, vector, tensor, etc.)
+• 𝜋 = ind(' 𝜌 is induced representation describing how 𝜌-feature fields transform
+Feature Fields
+                                    𝜌! ℎ = id
+
+                                𝑔
+                   𝜋!
+                                                𝑟   1            𝑟
+                                                𝑔 →      1       𝑔
+                                                𝑏            1   𝑏
+             Scalar field
+      ∇                     ∇          𝜌# ℎ
+
+                                𝑔
+                                                𝑟O               𝑟O
+                                                𝑟P               𝑟P
+                   𝜋#                           𝑔O   𝐑           𝑔O
+                                                𝑔P →     𝐑       𝑔P
+                                                𝑏O           𝐑   𝑏O
+                                                𝑏P               𝑏P
+             Vector field
+Feature Fields
+
+
+
+
+          𝑟O                                              𝑟O
+               cosθ   −sinθ
+          𝑟P                                              𝑟P
+               sinθ   cosθ
+          𝑔O                  cosθ   −sinθ                𝑔O
+          𝑔P →                sinθ   cosθ                 𝑔P
+          𝑏O                                 cosθ   −sinθ 𝑏O
+          𝑏P                                 sinθ   cosθ 𝑏P
+Transforming Scalar Fields
+
+
+
+
+         𝑥 𝑢                 𝑥 𝑔QR 𝑢
+Transforming Vector Fields
+
+
+
+
+         𝑥 𝑢                 𝑥 𝑔QR 𝑢   𝜌 𝑔 𝑥 𝑔QR 𝑢
+“Convolution is all you need”
+
+          Theorem: any linear equivariant map between induced representations is
+          a convolution with a steerable filter.
+
+• Roto-translation equivariant CNNs on the plane
+• Let 𝐺 = SE 2 , 𝐻 = SO 2 and G/H = ℝ"
+• Equivariant convolution (“steerable CNN”)
+                                                                             &
+                                         𝑥⋆𝜓 ) 𝑢 =V W                              𝑥+ 𝑣 𝜓)+ 𝑣 − 𝑢 d𝑣
+                                                                   ℝ'        +,!
+   where
+   • Feature field 𝑥: ℝ" → ℝ&
+   • Steerable filter 𝜓: ℝ" → ℝ-×& satisfying 𝜓 𝑅#!𝑢 = 𝜌"#! 𝑅 𝜓 𝑢 𝜌! 𝑅
+Kondor, Trivedi 2018l Cohen et al. 2019, 2021; Bekkers 2020; Aronsson 2021
+  Neural Network Architectures
+
+                           local connectivity       weight sharing           steerability
+
+
+
+
+fully connected (MLP)                 locally connected              CNN                steerable CNN
+     non-equivariant                    non-equivariant    translation-equivariant     group-equivariant
+
+
+  Figure: M. Weiler 2021
+Takeways
+
+• Convolution = transform + match, can be defined on homogeneous spaces that have
+  “global” symmetry structure (=the group acts transitively)
+• Homogeneous spaces are equivalent to quotient spaces, where we ”factor out” the
+  stabiliser group
+• Group convolutions are universal linear equivariants
+• Next lecture: application of these ideas to Geometric Graphs and even more general
+  notions of Convolutions and Fourier Transforms on Groups
+Key Concepts
+
+• Group convolution
+• Homogeneous spaces
+• Quotient spaces
+• Stabiliser group
+• Steerable filters
+Main References
+
+• M. Bronstein et al., Geometric deep learning, arXiv:2104.13478, 2021. Section 4.3 “Groups and
+  Homogeneous Spaces” and Section 5.2 “Group equivariant CNNs”
+• T. Cohen et al., A general theory of equivariant CNNs on homogeneous spaces,
+  NeurIPS 2019. Convolutions on homogeneous spaces and all the group-theoretical background
+• M. Weiler, Group-equivariant CNNs, First Italian Summer School on Geometric Deep
+  Learning, Pescara 2022. Convolutions on homogeneous spaces and much more
+
